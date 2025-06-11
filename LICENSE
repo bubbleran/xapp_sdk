@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright [2025] [BubbleRAN]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -199,3 +199,33 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+--- SDK DEVELOPMENT ADDENDUM ---
+
+This section applies specifically to use of the BubbleRAN O-RAN SDK ("SDK").
+
+A. SDK Usage Rights
+   1. You may use the SDK to develop O-RAN xApp  ("Applications")
+   2. Applications may be licensed under any terms, including Apache 2.0
+   3. SDK modifications must be contributed back
+
+B. Compatibility Requirements
+   1. To claim compatibility, Applications must:
+      a. Pass CTS test suite
+      b. Maintain interface compliance
+      c. Display current compatibility badge
+
+C. SDK Modification Restrictions
+   1. Core interface implementations may not be altered
+   2. O-RAN specification compliance must be preserved
+   3. Modified SDKs must retain this addendum
+
+D. Contribution Requirements
+   1. Substantial modifications to xApp interfaces must be 
+      contributed back via GitHub
+   2. You grant BubbleRAN a perpetual license to incorporate your contributions
+
+E. Branding Restrictions
+   1. Applications may request permission form "BubbleRAN" to use their name and logo 
+   2. Must display "Built with BubbleRAN SDK" in documentation
+   3. Compatibility claims require valid Certification ID
