@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0_With_SDK_Addendum-blue.svg)](LICENSE)
 
 The BubbleRAN xApp SDK enables development of O-RAN compliant near-real-time RAN applications. 
-This repository includes both the SDK framework (Apache 2.0 + Addendum) and sample xApps (Apache 2.0).
+This repository includes both the SDK framework ([BubbleRAN Software License](https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)) and xApps ([Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE)).
 
 ## Key Features
 - 🚀 Production-grade xApp SDK and an Open Source xApp samples
@@ -42,10 +42,10 @@ xapp_sdk/
 
 | Software  | License |
 | ------------- |:-------------|
-| xApp SDK				    | BubbleRAN Software License |
-| BubbleRAN xApps		  | Apache 2.0 + Addendum	 |
-| 3rd Party xApps			| Apache 2.0 + Addendum  | 
-| Documentation				| CC-BY-4.0	Guides, specifications, and examples | 
+| xApp SDK				    | ([BubbleRAN Software License](https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf) |
+| BubbleRAN xApps		  | [Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE) |
+| 3rd Party xApps			| [Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE)  | 
+| Documentation				| [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/deed.en)	Guides, specifications, and examples | 
 
 Important: When building xApps using this SDK, your application code can use Apache 2.0 + Addendum, but must agree with the xApp SDK License.
 
