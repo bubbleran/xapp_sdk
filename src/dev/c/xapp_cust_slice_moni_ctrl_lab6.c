@@ -1,23 +1,11 @@
 /*
- * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The OpenAirInterface Software Alliance licenses this file to You under
- * the OAI Public License, Version 1.1  (the "License"); you may not use this file
- * except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.openairinterface.org/?page_id=698
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *-------------------------------------------------------------------------------
- * For more information about the OpenAirInterface (OAI) Software Alliance:
- *      contact@openairinterface.org
- */
+Copyright (C) 2021-2025 BubbleRAN SAS
+
+External application
+Last Changed: 2025-05-02
+Project: MX-XAPP
+Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
+*/
 
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/agent_if/write/sm_ag_if_wr.h"
@@ -48,12 +36,10 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd != NULL);
   assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == SLICE_STATS_V0);
+  (void) e2_node;
 
-  int64_t now = time_now_us_xapp_api();
-  printf("SLICE ind_msg latency = %ld from E2-node type %d ID %d\n",
-         now - rd->ind.slice.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0)
-    assoc_rnti = rd->ind.slice.msg.ue_slice_conf.ues[0].rnti; 
+    assoc_rnti = rd->ind.slice.msg.ue_slice_conf.ues[0].rnti;
 }
 
 static
@@ -65,16 +51,14 @@ void fill_add_mod_slice(slice_conf_t* add)
   uint32_t dl_slice_id[] = {0, 1};
   char* dl_slice_label[] = {"s1", "s2"};
   slice_algorithm_e dl_type = SLICE_ALG_SM_V0_PR;
-  //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_NONE;
   assert(dl_type >= 0);
   char dl_name[10];
   size_t len_dl_name;
   switch (dl_type){
-    case SLICE_ALG_SM_V0_PR:
+   case SLICE_ALG_SM_V0_PR:
       strcpy(dl_name, "PR");
       len_dl_name = strlen("PR");
       break;
-    case SLICE_ALG_SM_V0_NONE:
     default:
       strcpy(dl_name, "NULL");
       len_dl_name = strlen("NULL");
@@ -92,7 +76,6 @@ void fill_add_mod_slice(slice_conf_t* add)
   add_dl->sched_name = malloc(strlen(dl_name));
   assert(add_dl->sched_name != NULL && "memory exhausted");
   memcpy(add_dl->sched_name, dl_name, len_dl_name);
-
 
   add_dl->len_slices = dl_len_slices;
   if (add_dl->len_slices > 0) {
@@ -116,11 +99,15 @@ void fill_add_mod_slice(slice_conf_t* add)
     assert(s->sched != NULL && "Memory exhausted");
     memcpy(s->sched, sched_str, s->len_sched);
 
-    s->params.type = SLICE_ALG_SM_V0_PR;
-    s->params.u.pr.max_ratio = pr_max[i];
-    s->params.u.pr.min_ratio = pr_min[i];
-    s->params.u.pr.dedicated_ratio = pr_ded[i];
-    printf("ADD PR DL SLICE: id %u, max_ratio %d, min_ratio %d, dedicated_ratio %d\n", s->id, s->params.u.pr.max_ratio, s->params.u.pr.min_ratio, s->params.u.pr.dedicated_ratio);
+    if (dl_type == SLICE_ALG_SM_V0_PR) {
+      s->params.type = SLICE_ALG_SM_V0_PR;
+      s->params.u.pr.max_ratio = pr_max[i];
+      s->params.u.pr.min_ratio = pr_min[i];
+      s->params.u.pr.dedicated_ratio = pr_ded[i];
+      printf("ADD PR DL SLICE: id %u, max_ratio %d, min_ratio %d, dedicated_ratio %d\n", s->id, s->params.u.pr.max_ratio, s->params.u.pr.min_ratio, s->params.u.pr.dedicated_ratio);
+    } else {
+      assert(0 != 0 && "Unknown type encountered");
+    }
   }
 
   uint32_t ul_len_slices = 0;
@@ -360,9 +347,9 @@ int main(int argc, char *argv[])
     sleep(5);
 
     // Control ASSOC slice
-    assert(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
-    control_sm_xapp_api(&nodes.n[node_idx].id, SM_SLICE_ID, &ctrl_msg_assoc);
-    sleep(5);
+    //assert(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
+    //control_sm_xapp_api(&nodes.n[node_idx].id, SM_SLICE_ID, &ctrl_msg_assoc);
+    //sleep(5);
   }
 
   // Remove the handle previously returned
@@ -376,5 +363,3 @@ int main(int argc, char *argv[])
 
   printf("Test xApp run SUCCESSFULLY\n");
 }
-
-

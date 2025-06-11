@@ -20,13 +20,17 @@ int main(int argc, char** argv)
   // Retrieve information from the nearRT-RIC
   // Don't forget to free it afterwards!!!
 
+  // Possible naming convention! Feel free to use it or discard it!
+  // global_e2_node_id_sdk_t const* node = &arr.n[0].node ;
+  // ue_id_e2sm_sdk_t const* ue = &arr.n[0].ue_ho[0].ue;
+
   // Step 2
   // Select monitoring variable
-  // e.g., mntr_var_e var = PDCP_SDU_VOLUME_DL;
+  // e.g., mntr_var_e var = UE_THP_DL;
   mntr_var_e var = END_MNTR_VAR_E;
 
   // Step 3 
-  // Call the function e2_node_mntr_xapp_sdk with 
+  // Call the function ue_mntr_xapp_sdk with 
   // the appropiate variables and measure the response latency
   int64_t const t0 = time_now_us_sdk();
   // Code Here!!! 

@@ -32,13 +32,13 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
 {
   printf(" ue_thp_kbs %lf \n", ue_thp_kbs);
 
-  if(ue_thp_kbs > 9999.9 && ue_thp_kbs < 15000.1)
+  if(ue_thp_kbs > 29999.9 && ue_thp_kbs < 35000.1)
     return;
 
   int new_dedicated_prb = dedicated_prb;
-  if(ue_thp_kbs < 10000){
+  if(ue_thp_kbs < 30000){
     new_dedicated_prb += 2; 
-  } else if(ue_thp_kbs > 15000){
+  } else if(ue_thp_kbs > 35000){
     new_dedicated_prb -= 2; 
   } else {
     assert(0!=0 && "Impossible path!");
@@ -51,6 +51,7 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
   char* const sst = "0";
   char* const sd = "1";
   slice_xapp_sdk(node, sst, sd, dedicated_prb);
+  printf("Dedicated PRBs %d\n", dedicated_prb);
 }
 
 int main(int argc, char** argv)
@@ -68,7 +69,7 @@ int main(int argc, char** argv)
   node = &arr_mon.n[0].node;
   ue_id_e2sm_sdk_t const* ue = &arr_mon.n[0].ue_ho[0].ue;
 
-  stop_token_t stop = ue_mntr_cb_xapp_sdk(node, ue, UE_THP_UL, PERIODICITY_1000_MS, cb_fn); 
+  stop_token_t stop = ue_mntr_cb_xapp_sdk(node, ue, UE_THP_DL, PERIODICITY_1000_MS, cb_fn); 
 
   sleep(60);
 

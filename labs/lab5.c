@@ -32,13 +32,13 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
 {
   printf(" ue_thp_kbs %lf \n", ue_thp_kbs);
 
-  if(ue_thp_kbs > 9999.9 && ue_thp_kbs < 15000.1)
+  if(ue_thp_kbs > 29999.9 && ue_thp_kbs < 35000.1)
     return;
 
   int new_dedicated_prb = dedicated_prb;
-  if(ue_thp_kbs < 10000){
+  if(ue_thp_kbs < 30000){
     new_dedicated_prb += 2; 
-  } else if(ue_thp_kbs > 15000){
+  } else if(ue_thp_kbs > 35000){
     new_dedicated_prb -= 2; 
   } else {
     assert(0!=0 && "Impossible path!");
@@ -52,6 +52,7 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
   char* const sd = "1";
   // Step 3
   // Call the function slice_xapp_sdk with the correct arguments 
+  printf("Dedicated PRBs %d\n", dedicated_prb);
 }
 
 int main(int argc, char** argv)
