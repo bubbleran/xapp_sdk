@@ -1,0 +1,31 @@
+BUBBLERAN O-RAN XAPP SDK NOTICES
+
+I. COPYRIGHT
+Copyright BubbleRAN Ltd.
+SPDX-License-Identifier: Apache-2.0 WITH SDK-Addendum
+
+II. THIRD-PARTY COMPONENTS
+1. O-RAN Alliance Specifications
+   - License: O-RAN Alliance Software License
+   - Source: https://www.o-ran.org/specifications
+   - Copyright: © O-RAN Alliance 2024
+
+2. MySQL Connector/C
+   - License: GPL-2.0
+   - Source: https://dev.mysql.com/downloads/connector/c/
+   - Copyright: Oracle Corporation
+
+3. libconfig
+   - License: LGPL-2.1
+   - Source: https://github.com/hyperrealm/libconfig
+   - Copyright: Mark Lindner
+
+III. COMPATIBILITY REQUIREMENTS
+To claim compatibility:
+1. Pass BubbleRAN CTS tests
+2. Push your xApp via merge request
+3. Display current certification badge for your xApp in its README file
+
+IV. TRADEMARKS
+- O-RAN® is a registered trademark of O-RAN Alliance
+- BubbleRAN® is a registered trademark of BubbleRAN SAS
