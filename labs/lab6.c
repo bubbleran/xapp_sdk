@@ -1,23 +1,11 @@
 /*
- * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The OpenAirInterface Software Alliance licenses this file to You under
- * the OAI Public License, Version 1.1  (the "License"); you may not use this file
- * except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.openairinterface.org/?page_id=698
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *-------------------------------------------------------------------------------
- * For more information about the OpenAirInterface (OAI) Software Alliance:
- *      contact@openairinterface.org
- */
+Copyright (C) 2021-2025 BubbleRAN SAS
+
+External application
+Last Changed: 2025-05-02
+Project: MX-XAPP
+Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
+*/
 
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/agent_if/write/sm_ag_if_wr.h"
@@ -357,7 +345,7 @@ int main(int argc, char *argv[])
     }
 
     control_sm_xapp_api(&nodes.n[node_idx].id, SM_SLICE_ID, &ctrl_msg_add);
-    sleep(5);
+    //sleep(5);
 
     // Control ASSOC slice
     assert(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
