@@ -20,9 +20,6 @@ This repository includes both the SDK framework (Apache 2.0 + Addendum) and samp
 xapp_sdk/
 ├── LICENSE              # Apache 2.0 with SDK Addendum
 ├── NOTICES              # Attribution file
-├── COMPLIANCE/
-│   ├── BR-CTS.md        # Test suite documentation
-│   └── SPECIFICATIONS.md # O-RAN interface details
 ├── CONTRIBUTING.md      # Contribution guidelines
 ├── README.md            # Revised documentation
 ├── conf/
@@ -32,13 +29,21 @@ xapp_sdk/
 
 ```
 
+## BubbleRAN Compatibility Test Suites (CTR)
 
-##License Structure
+|Badge	| Requirements| 
+| ------------- |:-------------|
+| [![E2AP](https://img.shields.io/badge/Compliance-Basic-yellow)](https://www.o-ran.org)	      | **CTR-Basic:** Core E2AP tests passed |
+| [![E2SM-1](https://img.shields.io/badge/Compliance-Advanced-orange)](https://www.o-ran.org) 	| **CTR-Advanced:** E2AP + 1 Service Model |
+| [![E2SM-ALL](https://img.shields.io/badge/Compliance-Full-green)](https://www.o-ran.org)    	| **CTR-Full:** All Service Models validated | 
+
+
+## License Structure
 
 | Software  | License |
 | ------------- |:-------------|
-| xApp SDK				   | BubbleRAN Software License |
-| BubbleRAN xApps		    | Apache 2.0 + Addendum	 |
+| xApp SDK				    | BubbleRAN Software License |
+| BubbleRAN xApps		  | Apache 2.0 + Addendum	 |
 | 3rd Party xApps			| Apache 2.0 + Addendum  | 
 | Documentation				| CC-BY-4.0	Guides, specifications, and examples | 
 
