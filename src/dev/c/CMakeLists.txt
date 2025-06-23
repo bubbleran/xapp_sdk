@@ -1,4 +1,16 @@
-set(LIST_XAPP hw xapp_all_moni xapp_cust_moni xapp_ho xapp_oran_moni xapp_oran_rc_slice_ctrl xapp_cust_moni_simple xapp_cust_slice_moni_ctrl )
+set(LIST_XAPP hw 
+              xapp_all_moni 
+              xapp_cust_moni 
+              xapp_cust_moni_simple 
+              xapp_cust_slice_moni_ctrl
+              xapp_get_mcs 
+              xapp_isac_srs
+              xapp_mcs 
+              xapp_oran_ccc_bwp_ctrl
+              xapp_oran_moni 
+              xapp_oran_rc_handover_ctrl
+              xapp_oran_rc_slice_ctrl 
+              )
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/libe42_xapp.a")

@@ -122,4 +122,3 @@ fi
 
  echo "Config file '$CONF_FILE' updated successfully."
 
-

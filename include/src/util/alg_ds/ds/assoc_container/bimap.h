@@ -68,7 +68,7 @@ void* bi_map_extract_right(bi_map_t* map, void* key2, size_t key1_sz, free_fp_ke
 void* bi_map_value_left(bi_map_t* map, bml_iter_t it);
 
 // returns a pointer to the value
-void* bi_map_value_right(bi_map_t* map, bml_iter_t it);
+void* bi_map_value_right(bi_map_t* map, bmr_iter_t it);
 
 // Capacity
 size_t bi_map_size(bi_map_t* map);

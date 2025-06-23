@@ -29,6 +29,7 @@ extern asn_TYPE_operation_t asn_OP_NativeEnumerated_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define NativeEnumerated_compare NativeInteger_compare_kpm_v3_00
+#define NativeEnumerated_copy    NativeInteger_copy_kpm_v3_00
 
 #define NativeEnumerated_constraint asn_generic_no_constraint_kpm_v3_00
 
@@ -38,13 +39,13 @@ extern asn_TYPE_operation_t asn_OP_NativeEnumerated_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-#define NativeEnumerated_decode_xer NativeInteger_decode_xer_kpm_v3_00
-xer_type_encoder_f NativeEnumerated_encode_xer_kpm_v3_00;
+#define NativeEnumerated_decode_xer NativeInteger_decode_xer
+xer_type_encoder_f NativeEnumerated_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f NativeEnumerated_decode_jer;
-jer_type_encoder_f NativeEnumerated_encode_jer;
+jer_type_decoder_f NativeEnumerated_decode_jer_kpm_v3_00;
+jer_type_encoder_f NativeEnumerated_encode_jer_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

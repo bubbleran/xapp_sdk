@@ -25,7 +25,7 @@ der_type_encoder_f der_encode_primitive;
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
 /*
- * A callback specification for the xer_decode_kpm_v3_00_primitive() function below.
+ * A callback specification for the xer_decode_primitive() function below.
  */
 enum xer_pbd_rval {
     XPBD_SYSTEM_FAILURE,   /* System failure (memory shortage, etc) */
@@ -40,9 +40,9 @@ typedef enum xer_pbd_rval(xer_primitive_body_decoder_f)(
 
 /*
  * Specific function to decode simple primitive types.
- * Also see xer_decode_kpm_v3_00_general() in xer_decode_kpm_v3_00r.h
+ * Also see xer_decode_general() in xer_decoder.h
  */
-asn_dec_rval_t xer_decode_kpm_v3_00_primitive(
+asn_dec_rval_t xer_decode_primitive(
     const asn_codec_ctx_t *opt_codec_ctx,
     const asn_TYPE_descriptor_t *type_descriptor, void **struct_ptr,
     size_t struct_size, const char *opt_mname, const void *buf_ptr, size_t size,
@@ -51,7 +51,7 @@ asn_dec_rval_t xer_decode_kpm_v3_00_primitive(
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
 /*
- * A callback specification for the jer_decode_primitive() function below.
+ * A callback specification for the jer_decode_kpm_v3_00_primitive() function below.
  */
 enum jer_pbd_rval {
     JPBD_SYSTEM_FAILURE,   /* System failure (memory shortage, etc) */
@@ -66,9 +66,9 @@ typedef enum jer_pbd_rval(jer_primitive_body_decoder_f)(
 
 /*
  * Specific function to decode simple primitive types.
- * Also see jer_decode_general() in jer_decoder.h
+ * Also see jer_decode_kpm_v3_00_general() in jer_decode_kpm_v3_00r.h
  */
-asn_dec_rval_t jer_decode_primitive(
+asn_dec_rval_t jer_decode_kpm_v3_00_primitive(
     const asn_codec_ctx_t *opt_codec_ctx,
     const asn_TYPE_descriptor_t *type_descriptor, void **struct_ptr,
     size_t struct_size, const void *buf_ptr, size_t size,

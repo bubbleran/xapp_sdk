@@ -25,6 +25,8 @@ void free_kpm_action_def_frm_4(kpm_act_def_format_4_t* src);
 
 bool eq_kpm_action_def_frm_4(kpm_act_def_format_4_t const * m0, kpm_act_def_format_4_t const * m1);
 
+kpm_act_def_format_4_t cp_kpm_action_def_frm_4(const kpm_act_def_format_4_t * src);
+
 #ifdef __cplusplus
 }
 #endif

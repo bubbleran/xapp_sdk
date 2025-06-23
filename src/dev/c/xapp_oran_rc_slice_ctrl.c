@@ -1,13 +1,4 @@
 /*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
-/*
  * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -220,9 +211,9 @@ void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
   // Note: we consider SD is always presented
   const char* sd_str[] = {"0", "0", "1"};
   assert(!strcmp(sst_str[0], "0") && !strcmp(sd_str[0], "0") && "Default slice should be set to sst = 0, sd = 0");
-  int max_ratio[] = {100, 60, 80};
-  int min_ratio[] = {0, 60, 40};
-  int dedicated_ratio[] = {0, 30, 0};
+  int max_ratio[] = {20, 40, 100};
+  int min_ratio[] = {20, 20, 0};
+  int dedicated_ratio[] = {20, 0, 0};
   for (int i = 0; i < num_slice; i++) {
     gen_rrm_policy_ratio_group(&RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param[i],
                                plmnid,
@@ -300,13 +291,18 @@ ue_id_e2sm_t gen_rc_ue_id(ue_id_e2sm_e type)
   return ue_id;
 }
 
+bool filter_node(e2_node_connected_xapp_t const* n)
+{
+  assert(n!= NULL);
+  return n->id.type == e2ap_ngran_gNB_DU || n->id.type == e2ap_ngran_gNB;
+}
+
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 2 && "Configuraiton file needed!");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
@@ -331,6 +327,10 @@ int main(int argc, char *argv[])
 
   int64_t st = time_now_us_xapp_api();
   for(size_t i =0; i < nodes.len; ++i){ 
+    if (filter_node(&nodes.n[i]) == false){
+      continue;
+    }
+
     control_sm_xapp_api(&nodes.n[i].id, SM_RC_ID, &rc_ctrl);
   }
   printf("[xApp]: Control Loop Latency: %ld us\n", time_now_us_xapp_api() - st);

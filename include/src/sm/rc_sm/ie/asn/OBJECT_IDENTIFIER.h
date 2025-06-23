@@ -32,6 +32,7 @@ asn_struct_print_f OBJECT_IDENTIFIER_print_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define OBJECT_IDENTIFIER_compare OCTET_STRING_compare_rc_v1_03
+#define OBJECT_IDENTIFIER_copy    OCTET_STRING_copy_rc_v1_03
 
 asn_constr_check_f OBJECT_IDENTIFIER_constraint_rc_v1_03;
 
@@ -41,13 +42,13 @@ asn_constr_check_f OBJECT_IDENTIFIER_constraint_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-xer_type_decoder_f OBJECT_IDENTIFIER_decode_xer_rc_v1_03;
-xer_type_encoder_f OBJECT_IDENTIFIER_encode_xer_rc_v1_03;
+xer_type_decoder_f OBJECT_IDENTIFIER_decode_xer;
+xer_type_encoder_f OBJECT_IDENTIFIER_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f OBJECT_IDENTIFIER_decode_jer;
-jer_type_encoder_f OBJECT_IDENTIFIER_encode_jer;
+jer_type_decoder_f OBJECT_IDENTIFIER_decode_jer_rc_v1_03;
+jer_type_encoder_f OBJECT_IDENTIFIER_encode_jer_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

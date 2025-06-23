@@ -19,7 +19,7 @@ struct asn_encoding_constraints_s;
  *                        to PER and OER specifications, so we find a value
  *                        at the intersection of these constraints.
  * In case the return differs from ARFILL_OK, the (struct_ptr) contents
- * and (current_length) value remain in their original state.
+ * and (current_length) value remain_kpm_v3_00 in their original state.
  */
 typedef struct asn_random_fill_kpm_v3_00_result_s {
     enum {

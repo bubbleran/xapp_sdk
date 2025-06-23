@@ -1,10 +1,10 @@
 /*
-Copyright (C) 2021-2025 BubbleRAN SAS
+  Copyright (C) 2021-2025 BubbleRAN SAS
 
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
+  External application
+  Last Changed: 2025-05-02
+  Project: MX-XAPP
+  Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
 */
 
 #ifndef CCC_DATA_INFORMATION_ELEMENTS_H
@@ -184,7 +184,6 @@ typedef struct {
     e2sm_ccc_ind_msg_frmt_1_t frmt_1; // 9.2.1.4.1
     e2sm_ccc_ind_msg_frmt_2_t frmt_2; // 9.2.1.4.2
   };
-
 } e2sm_ccc_ind_msg_t;
 
 void free_e2sm_ccc_ind_msg(e2sm_ccc_ind_msg_t* src);

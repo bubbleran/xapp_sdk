@@ -23,6 +23,7 @@ extern asn_TYPE_operation_t asn_OP_GraphicString_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define GraphicString_compare OCTET_STRING_compare_kpm_v3_00
+#define GraphicString_copy    OCTET_STRING_copy_kpm_v3_00
 
 #define GraphicString_constraint asn_generic_unknown_constraint_kpm_v3_00
 
@@ -32,13 +33,13 @@ extern asn_TYPE_operation_t asn_OP_GraphicString_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-#define GraphicString_decode_xer OCTET_STRING_decode_xer_hex_kpm_v3_00
-#define GraphicString_encode_xer OCTET_STRING_encode_xer_kpm_v3_00
+#define GraphicString_decode_xer OCTET_STRING_decode_xer_hex
+#define GraphicString_encode_xer OCTET_STRING_encode_xer
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
 #define GraphicString_decode_jer OCTET_STRING_decode_jer
-#define GraphicString_encode_jer OCTET_STRING_encode_jer
+#define GraphicString_encode_jer OCTET_STRING_encode_jer_kpm_v3_00
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_UPER_SUPPORT)

@@ -47,6 +47,7 @@ asn_struct_print_f INTEGER_print_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 asn_struct_compare_f INTEGER_compare_kpm_v3_00;
+asn_struct_copy_f INTEGER_copy_kpm_v3_00;
 
 #define INTEGER_constraint asn_generic_no_constraint_kpm_v3_00
 
@@ -56,13 +57,13 @@ der_type_encoder_f INTEGER_encode_der;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-xer_type_decoder_f INTEGER_decode_xer_kpm_v3_00;
-xer_type_encoder_f INTEGER_encode_xer_kpm_v3_00;
+xer_type_decoder_f INTEGER_decode_xer;
+xer_type_encoder_f INTEGER_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f INTEGER_decode_jer;
-jer_type_encoder_f INTEGER_encode_jer;
+jer_type_decoder_f INTEGER_decode_jer_kpm_v3_00;
+jer_type_encoder_f INTEGER_encode_jer_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)
@@ -107,6 +108,8 @@ int asn_INTEGER2long_kpm_v3_00(const INTEGER_t *i, long *l);
 int asn_INTEGER2ulong_kpm_v3_00(const INTEGER_t *i, unsigned long *l);
 int asn_long2INTEGER_kpm_v3_00(INTEGER_t *i, long l);
 int asn_ulong2INTEGER_kpm_v3_00(INTEGER_t *i, unsigned long l);
+int asn_INTEGER2int64_kpm_v3_00(const INTEGER_t *i, int64_t *l);
+int asn_INTEGER2uint64_kpm_v3_00(const INTEGER_t *i, uint64_t *l);
 int asn_int642INTEGER_kpm_v3_00(INTEGER_t *i, int64_t l);
 int asn_uint642INTEGER_kpm_v3_00(INTEGER_t *i, uint64_t l);
 

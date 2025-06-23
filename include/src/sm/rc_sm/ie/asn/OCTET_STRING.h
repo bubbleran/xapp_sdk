@@ -29,6 +29,7 @@ asn_struct_print_f OCTET_STRING_print_rc_v1_03_utf8;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 asn_struct_compare_f OCTET_STRING_compare_rc_v1_03;
+asn_struct_copy_f    OCTET_STRING_copy_rc_v1_03;
 
 #define OCTET_STRING_constraint asn_generic_no_constraint_rc_v1_03
 
@@ -38,18 +39,18 @@ der_type_encoder_f OCTET_STRING_encode_der;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-xer_type_decoder_f OCTET_STRING_decode_xer_hex_rc_v1_03;     /* Hexadecimal */
-xer_type_decoder_f OCTET_STRING_decode_xer_binary_rc_v1_03;  /* 01010111010 */
-xer_type_decoder_f OCTET_STRING_decode_xer_utf8_rc_v1_03;    /* ASCII/UTF-8 */
-xer_type_encoder_f OCTET_STRING_encode_xer_rc_v1_03;
-xer_type_encoder_f OCTET_STRING_encode_xer_rc_v1_03_utf8;
+xer_type_decoder_f OCTET_STRING_decode_xer_hex;     /* Hexadecimal */
+xer_type_decoder_f OCTET_STRING_decode_xer_binary;  /* 01010111010 */
+xer_type_decoder_f OCTET_STRING_decode_xer_utf8;    /* ASCII/UTF-8 */
+xer_type_encoder_f OCTET_STRING_encode_xer;
+xer_type_encoder_f OCTET_STRING_encode_xer_utf8;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f OCTET_STRING_decode_jer_hex;     /* Hexadecimal */
-jer_type_decoder_f OCTET_STRING_decode_jer_utf8;    /* ASCII/UTF-8 */
-jer_type_encoder_f OCTET_STRING_encode_jer;
-jer_type_encoder_f OCTET_STRING_encode_jer_utf8;
+jer_type_decoder_f OCTET_STRING_decode_jer_hex_rc_v1_03;     /* Hexadecimal */
+jer_type_decoder_f OCTET_STRING_decode_jer_utf8_rc_v1_03;    /* ASCII/UTF-8 */
+jer_type_encoder_f OCTET_STRING_encode_jer_rc_v1_03;
+jer_type_encoder_f OCTET_STRING_encode_jer_rc_v1_03_utf8;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

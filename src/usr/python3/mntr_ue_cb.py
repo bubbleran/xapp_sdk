@@ -1,14 +1,6 @@
-#/*
-#Copyright (C) 2021-2025 BubbleRAN SAS
-#External application
-#Last Changed: 2025-05-02
-#Project: MX-XAPP
-#Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-#*/
-
+import sys
 import time
 import xapp_usr_sdk as xapp
-import sys
 
 class Monitor(xapp.mntr_cb_fn):
     # Inherit C++ mntr_cb_fn class
@@ -27,9 +19,9 @@ call_back = Monitor().__disown__()
 
 n = nodes[0].node
 ue = nodes[0].ue_ho[0].ue
-token = xapp.mntr_ue_cb(n, ue, xapp.UE_THP_DL, xapp.PERIODICITY_10_MS, call_back)
+token = xapp.mntr_ue_cb(n, ue, xapp.PDCP_SDU_VOLUME_DL, xapp.PERIODICITY_10_MS, call_back)
 
-time.sleep(10)
+time.sleep(3)
 
 xapp.stop_mntr(token)
 

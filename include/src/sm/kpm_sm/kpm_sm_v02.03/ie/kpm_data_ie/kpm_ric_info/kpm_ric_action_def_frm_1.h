@@ -8,9 +8,9 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "../../../../../../lib/sm/ie/cell_global_id.h"
 #include "../data/meas_info_frm_1_lst.h"
 #include "../data/meas_bin_range_info_lst.h"
-#include "../../../../../../lib/sm/ie/cell_global_id.h"
 
 
 // 8.2.1.2.1  E2SM-KPM Action Definition Format 1
@@ -26,7 +26,6 @@ typedef struct{
   size_t meas_bin_range_info_lst_len; // [0, 65535]
   meas_bin_range_info_lst_t *meas_bin_info_lst;
 
-
 } kpm_act_def_format_1_t ;
 
 void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src);
@@ -41,4 +40,3 @@ kpm_act_def_format_1_t cp_kpm_action_def_frm_1(const kpm_act_def_format_1_t * sr
 
 #endif
 
-// done

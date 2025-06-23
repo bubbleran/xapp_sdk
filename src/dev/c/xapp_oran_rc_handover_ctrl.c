@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/rc_sm/ie/ir/ran_param_struct.h"
 #include "../include/src/util/alg_ds/ds/latch_cv/latch_cv.h"
@@ -288,11 +279,10 @@ rc_ctrl_req_data_t hand_over_rc_ctrl_msg(ue_id_e2sm_t const* ue, uint16_t target
 
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 2 && "Configuration file needed");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   poll(NULL, 0, 1000);
 
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();

@@ -23,6 +23,7 @@ extern "C" {
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 asn_struct_compare_f SEQUENCE_OF_compare_kpm_v3_00;
+#define SEQUENCE_OF_copy SET_OF_copy_kpm_v3_00
 
 #define SEQUENCE_OF_constraint SET_OF_constraint_kpm_v3_00
 
@@ -32,13 +33,13 @@ der_type_encoder_f SEQUENCE_OF_encode_der;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-#define SEQUENCE_OF_decode_xer SET_OF_decode_xer_kpm_v3_00
-xer_type_encoder_f SEQUENCE_OF_encode_xer_kpm_v3_00;
+#define SEQUENCE_OF_decode_xer SET_OF_decode_xer
+xer_type_encoder_f SEQUENCE_OF_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-#define SEQUENCE_OF_decode_jer SET_OF_decode_jer
-jer_type_encoder_f SEQUENCE_OF_encode_jer;
+#define SEQUENCE_OF_decode_jer SET_OF_decode_jer_kpm_v3_00
+jer_type_encoder_f SEQUENCE_OF_encode_jer_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

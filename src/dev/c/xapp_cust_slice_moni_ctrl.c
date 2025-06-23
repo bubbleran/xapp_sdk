@@ -1,11 +1,23 @@
 /*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
+ * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The OpenAirInterface Software Alliance licenses this file to You under
+ * the OAI Public License, Version 1.1  (the "License"); you may not use this file
+ * except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.openairinterface.org/?page_id=698
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-------------------------------------------------------------------------------
+ * For more information about the OpenAirInterface (OAI) Software Alliance:
+ *      contact@openairinterface.org
+ */
 
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/agent_if/write/sm_ag_if_wr.h"
@@ -103,7 +115,7 @@ void fill_add_mod_slice(slice_conf_t* add)
   float pct_rsvd = 0.5;
   /// SET DL EDF SLICE PARAMETER///
   int deadline[] = {20, 20, 40};
-  int guaranteed_prbs[] = {10, 4, 10};
+  int guaranteed_prbs[] = {60, 35, 10};
   /// SET DL EEDF SLICE PARAMETER///
   eedf_slice_conf_e eedf_conf[] = {SLICE_SM_EEDF_V0_STATIC, SLICE_SM_EEDF_V0_STATIC, SLICE_SM_EEDF_V0_RATE};
   eedf_static_type_t eedf_static_type[] = {EEDF_STATIC_HARD, EEDF_STATIC_SOFT};
@@ -206,7 +218,8 @@ void fill_add_mod_slice(slice_conf_t* add)
   uint32_t ul_slice_id[] = {0, 2};
   char* ul_slice_label[] = {"s1", "s2"};
 
-  slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NVS;
+  // slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NVS;
+  slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NONE;
   assert(ul_type >= 0);
   if (ul_type != 0)
     ul_len_slices = 2;
@@ -287,7 +300,7 @@ void fill_del_slice(del_slice_conf_t* del)
   assert(del != NULL);
 
   /// SET DL ID ///
-  uint32_t dl_ids[] = {2};
+  uint32_t dl_ids[] = {5};
   del->len_dl = sizeof(dl_ids)/sizeof(dl_ids[0]);
   if (del->len_dl > 0)
     del->dl = calloc(del->len_dl, sizeof(uint32_t));
@@ -297,7 +310,7 @@ void fill_del_slice(del_slice_conf_t* del)
   }
 
   /// SET UL ID ///
-  uint32_t ul_ids[] = {2};
+  uint32_t ul_ids[] = {}; //{2};
   del->len_ul = sizeof(ul_ids)/sizeof(ul_ids[0]);
   if (del->len_ul > 0)
     del->ul = calloc(del->len_ul, sizeof(uint32_t));
@@ -328,12 +341,13 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
     if ((int32_t)assoc->ues[i].dl_id != -1){
       printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].dl_id);
     }
+    /*
     /// SET UL ID ///
     assoc->ues[i].ul_id = 2; // ul_id = -1 means UE will not perform UL association
     if ((int32_t)assoc->ues[i].ul_id != -1){
       printf("ASSOC UL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].ul_id); 
     }
-    
+    */
   }
 }
 
@@ -369,13 +383,18 @@ sm_ag_if_wr_t fill_slice_sm_ctrl_req(uint16_t ran_func_id, slice_ctrl_msg_e type
   return wr;
 }
 
+bool filter_node(e2_node_connected_xapp_t const* n)
+{
+  assert(n!= NULL);
+  return n->id.type == e2ap_ngran_gNB_DU || n->id.type == e2ap_ngran_gNB;
+}
+
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 2 && "Configuraiton file needed!");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_api()
   signal(SIGTERM, sigint_handler);
   sleep(1);
@@ -397,6 +416,9 @@ int main(int argc, char *argv[])
 
   for(size_t i = 0; i < nodes.len; ++i) {
     e2_node_connected_xapp_t *n = &nodes.n[i];
+    if (filter_node(n) == false){
+      continue;
+    }
     for (size_t j = 0; j < n->len_rf; ++j)
       printf("Registered ran func id = %d \n ", n->rf[j].id);
 
@@ -434,8 +456,13 @@ int main(int argc, char *argv[])
     sleep(1);
   }
   // Remove the handle previously returned
-  for(int i = 0; i < nodes.len; ++i)
+  for(int i = 0; i < nodes.len; ++i){
+    e2_node_connected_xapp_t *n = &nodes.n[i];
+    if (filter_node(n) == false){
+      continue;
+    }
     rm_report_sm_xapp_api(slice_handle[i].u.handle);
+  }
 
   if(nodes.len > 0){
     free(slice_handle);

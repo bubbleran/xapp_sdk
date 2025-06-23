@@ -17,9 +17,7 @@ typedef enum {
 	INTEGER_MEAS_VALUE,
 	REAL_MEAS_VALUE,
 	NO_VALUE_MEAS_VALUE,
-
 	END_MEAS_VALUE
-
 } meas_value_e;
 
 typedef struct {
@@ -29,13 +27,12 @@ typedef struct {
 		double	   real_val;
 		void*      no_value; 
 	};
-
 } meas_record_lst_t;
 
 meas_record_lst_t cp_meas_record_lst(meas_record_lst_t const* src);
 
 typedef struct {
-    size_t                    meas_record_len;  // [1, 65535]
+  size_t                    meas_record_len;  // [1, 65535]
 	meas_record_lst_t        *meas_record_lst; 
 	enum_value_e	         *incomplete_flag;  // OPTIONAL, Indicates that the measurements record is not reliable.
 

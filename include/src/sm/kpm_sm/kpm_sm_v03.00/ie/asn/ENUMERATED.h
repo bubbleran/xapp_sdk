@@ -23,6 +23,7 @@ extern asn_TYPE_operation_t asn_OP_ENUMERATED_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define ENUMERATED_compare INTEGER_compare_kpm_v3_00
+#define ENUMERATED_copy    INTEGER_copy_kpm_v3_00
 
 #define ENUMERATED_constraint asn_generic_no_constraint_kpm_v3_00
 
@@ -32,13 +33,13 @@ extern asn_TYPE_operation_t asn_OP_ENUMERATED_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-#define ENUMERATED_decode_xer INTEGER_decode_xer_kpm_v3_00
-#define ENUMERATED_encode_xer INTEGER_encode_xer_kpm_v3_00
+#define ENUMERATED_decode_xer INTEGER_decode_xer
+#define ENUMERATED_encode_xer INTEGER_encode_xer
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f ENUMERATED_decode_jer;
-#define ENUMERATED_encode_jer INTEGER_encode_jer
+jer_type_decoder_f ENUMERATED_decode_jer_kpm_v3_00;
+#define ENUMERATED_encode_jer INTEGER_encode_jer_kpm_v3_00
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

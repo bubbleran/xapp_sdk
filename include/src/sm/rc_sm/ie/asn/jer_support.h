@@ -3,8 +3,8 @@
  * Copyright (c) 2003-2017 Lev Walkin <vlm@lionet.info>. All rights reserved.
  * Redistribution and modifications are permitted subject to BSD license.
  */
-#ifndef	_XER_SUPPORT_H_
-#define	_XER_SUPPORT_H_
+#ifndef	_JER_SUPPORT_H_
+#define	_JER_SUPPORT_H_
 
 #include <asn_system.h>		/* Platform-specific types */
 
@@ -16,16 +16,17 @@ extern "C" {
  * Types of data transferred to the application.
  */
 typedef enum {
-	PXML_TEXT,	/* Plain text between XML tags. */
-	PXML_TAG,	/* A tag, starting with '<'. */
-	PXML_COMMENT,	/* An XML comment, including "<!--" and "-->". */
+	PJSON_TEXT,
+	PJSON_KEY,
+	PJSON_VALUE,
+	PJSON_DLM,
 	/* 
 	 * The following chunk types are reported if the chunk
-	 * terminates the specified XML element.
+	 * terminates the specified JSON element.
 	 */
-	PXML_TAG_END,		/* Tag ended */
-	PXML_COMMENT_END	/* Comment ended */
-} pxml_chunk_type_e;
+	PJSON_KEY_END,	 /* Key ended */
+	PJSON_VALUE_END  /* Value ended */
+} pjson_chunk_type_e;
 
 /*
  * Callback function that is called by the parser when parsed data is
@@ -35,7 +36,7 @@ typedef enum {
  * pxml_feed() call) starting at offset _offset and of _size bytes size. 
  * The chunk is NOT '\0'-terminated.
  */
-typedef int (pxml_callback_f)(pxml_chunk_type_e _type,
+typedef int (pjson_callback_f)(pjson_chunk_type_e _type,
 	const void *_chunk_data, size_t _chunk_size, void *_key);
 
 /*
@@ -45,11 +46,11 @@ typedef int (pxml_callback_f)(pxml_chunk_type_e _type,
  * It will always be lesser than or equal to the specified _size.
  * The next invocation of this function must account the difference.
  */
-ssize_t pxml_parse_rc_v1_03(int *_stateContext, const void *_buf, size_t _size,
-	pxml_callback_f *cb, void *_key);
+ssize_t pjson_parse_rc_v1_03(int *_stateContext, const void *_buf, size_t _size,
+	pjson_callback_f *cb, void *_key);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* _XER_SUPPORT_H_ */
+#endif	/* _JER_SUPPORT_H_ */

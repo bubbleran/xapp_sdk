@@ -23,7 +23,7 @@ Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-
 static void cb_mac(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 {
   assert(rd != NULL);
-  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == MAC_STATS_V0);
 
   mac_ind_msg_t const* msg = &rd->ind.mac.msg;
@@ -34,10 +34,10 @@ static void cb_mac(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
+  assert(argc == 2 && "Configuration file needed");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();

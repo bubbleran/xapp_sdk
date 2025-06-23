@@ -18,11 +18,24 @@ typedef struct {
 } ric_event_trigger_style_item_t;
 
 
+void free_ric_event_trigger_style_list(ric_event_trigger_style_item_t* src);
+
+bool eq_ric_event_trigger_style_list(ric_event_trigger_style_item_t const* src, ric_event_trigger_style_item_t const* m1);
+
+ric_event_trigger_style_item_t cp_ric_event_trigger_style_list(ric_event_trigger_style_item_t const* src);
+
+
 typedef struct {
     byte_array_t name; // 8.3.9
     uint16_t *id; // 8.3.10  -  OPTIONAL
     bin_range_def_t *bin_range_def;  // 8.3.26  -  OPTIONAL; not yet implemented in ASN.1
 } meas_info_for_action_lst_t;
+
+void free_meas_info_for_action_lst( meas_info_for_action_lst_t* src);
+
+bool eq_meas_info_for_action_lst(meas_info_for_action_lst_t const* m0,meas_info_for_action_lst_t const* m1);
+
+meas_info_for_action_lst_t cp_meas_info_for_action_lst(meas_info_for_action_lst_t const* src);
 
 typedef struct {
     ric_service_report_e report_style_type;  // 8.3.3
@@ -34,9 +47,15 @@ typedef struct {
 
     format_ind_hdr_e ind_hdr_format_type;  // 8.3.5
     format_ind_msg_e ind_msg_format_type;  // 8.3.5
-
-
 } ric_report_style_item_t;
+
+void free_ric_report_style_item( ric_report_style_item_t const* src);
+
+bool eq_ric_report_style_item(ric_report_style_item_t const* m0, ric_report_style_item_t const* m1);
+
+ric_report_style_item_t cp_ric_report_style_item(ric_report_style_item_t const* src);
+
+
 
 // Table 7.8-1: for more information about style-format mapping
 

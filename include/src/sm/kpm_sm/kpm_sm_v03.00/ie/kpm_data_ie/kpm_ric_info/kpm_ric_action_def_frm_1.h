@@ -12,6 +12,7 @@ extern "C" {
 #include "../data/meas_info_frm_1_lst.h"
 #include "../data/meas_bin_range_info_lst.h"
 
+
 // 8.2.1.2.1  E2SM-KPM Action Definition Format 1
 typedef struct{
 
@@ -30,6 +31,8 @@ typedef struct{
 void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src);
 
 bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_format_1_t const * m1);
+
+kpm_act_def_format_1_t cp_kpm_action_def_frm_1(const kpm_act_def_format_1_t * src);
 
 #ifdef __cplusplus
 }

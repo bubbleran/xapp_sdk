@@ -8,6 +8,7 @@ extern "C" {
 #include "kpm_ric_ind_msg_frm_1.h"
 #include "kpm_ric_ind_msg_frm_2.h"
 #include "kpm_ric_ind_msg_frm_3.h"
+#include "../../../../../../util/byte_array.h"
 
 //  8.2.1.4   RIC INDICATION MESSAGE IE
 
@@ -26,7 +27,8 @@ typedef struct{
     kpm_ind_msg_format_2_t frm_2;  // 8.2.1.4.2
     kpm_ind_msg_format_3_t frm_3;  // 8.2.1.4.3
   };
-
+  // JSON Representation
+  byte_array_t json;
 } kpm_ind_msg_t;
 
 void free_kpm_ind_msg(kpm_ind_msg_t * src);

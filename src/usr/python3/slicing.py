@@ -1,21 +1,20 @@
-#/*
-#Copyright (C) 2021-2025 BubbleRAN SAS
-#External application
-#Last Changed: 2025-05-02
-#Project: MX-XAPP
-#Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-#*/
-
-import xapp_usr_sdk as xapp
 import sys
+import xapp_usr_sdk as xapp
 
 xapp.init(sys.argv)
 nodes = xapp.e2_nodes(xapp.SLICE_USE_CASE_e)
 assert(len(nodes) > 0 and "Needed at least one E2 node to slice")
 
-n = nodes[0].node
-sst = "0"
-sd = "1"
+node_idx = -1
+for i in range(0, len(nodes)):
+    if (nodes[i].node.type == xapp.e2ap_ngran_gNB_DU_SDK or nodes[i].node.type == xapp.e2ap_ngran_gNB_SDK):
+        node_idx = i
+
+assert(node_idx > -1 and "require node type is gNB or DU")
+
+n = nodes[node_idx].node
+sst = "1"
+sd = "0"
 dedicated_prb = 30
 xapp.slice(n, sst, sd, dedicated_prb)
 

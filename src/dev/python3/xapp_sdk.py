@@ -120,428 +120,6 @@ class SwigPyIterator(object):
 
 # Register SwigPyIterator in _xapp_sdk:
 _xapp_sdk.SwigPyIterator_swigregister(SwigPyIterator)
-class StringMap(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self):
-        return _xapp_sdk.StringMap_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self):
-        return _xapp_sdk.StringMap___nonzero__(self)
-
-    def __bool__(self):
-        return _xapp_sdk.StringMap___bool__(self)
-
-    def __len__(self):
-        return _xapp_sdk.StringMap___len__(self)
-    def __iter__(self):
-        return self.key_iterator()
-    def iterkeys(self):
-        return self.key_iterator()
-    def itervalues(self):
-        return self.value_iterator()
-    def iteritems(self):
-        return self.iterator()
-
-    def __getitem__(self, key):
-        return _xapp_sdk.StringMap___getitem__(self, key)
-
-    def __delitem__(self, key):
-        return _xapp_sdk.StringMap___delitem__(self, key)
-
-    def has_key(self, key):
-        return _xapp_sdk.StringMap_has_key(self, key)
-
-    def keys(self):
-        return _xapp_sdk.StringMap_keys(self)
-
-    def values(self):
-        return _xapp_sdk.StringMap_values(self)
-
-    def items(self):
-        return _xapp_sdk.StringMap_items(self)
-
-    def __contains__(self, key):
-        return _xapp_sdk.StringMap___contains__(self, key)
-
-    def key_iterator(self):
-        return _xapp_sdk.StringMap_key_iterator(self)
-
-    def value_iterator(self):
-        return _xapp_sdk.StringMap_value_iterator(self)
-
-    def __setitem__(self, *args):
-        return _xapp_sdk.StringMap___setitem__(self, *args)
-
-    def asdict(self):
-        return _xapp_sdk.StringMap_asdict(self)
-
-    def __init__(self, *args):
-        _xapp_sdk.StringMap_swiginit(self, _xapp_sdk.new_StringMap(*args))
-
-    def empty(self):
-        return _xapp_sdk.StringMap_empty(self)
-
-    def size(self):
-        return _xapp_sdk.StringMap_size(self)
-
-    def swap(self, v):
-        return _xapp_sdk.StringMap_swap(self, v)
-
-    def begin(self):
-        return _xapp_sdk.StringMap_begin(self)
-
-    def end(self):
-        return _xapp_sdk.StringMap_end(self)
-
-    def rbegin(self):
-        return _xapp_sdk.StringMap_rbegin(self)
-
-    def rend(self):
-        return _xapp_sdk.StringMap_rend(self)
-
-    def clear(self):
-        return _xapp_sdk.StringMap_clear(self)
-
-    def get_allocator(self):
-        return _xapp_sdk.StringMap_get_allocator(self)
-
-    def count(self, x):
-        return _xapp_sdk.StringMap_count(self, x)
-
-    def erase(self, *args):
-        return _xapp_sdk.StringMap_erase(self, *args)
-
-    def find(self, x):
-        return _xapp_sdk.StringMap_find(self, x)
-
-    def lower_bound(self, x):
-        return _xapp_sdk.StringMap_lower_bound(self, x)
-
-    def upper_bound(self, x):
-        return _xapp_sdk.StringMap_upper_bound(self, x)
-    __swig_destroy__ = _xapp_sdk.delete_StringMap
-
-# Register StringMap in _xapp_sdk:
-_xapp_sdk.StringMap_swigregister(StringMap)
-class SwigSubOranSmVector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self):
-        return _xapp_sdk.SwigSubOranSmVector_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self):
-        return _xapp_sdk.SwigSubOranSmVector___nonzero__(self)
-
-    def __bool__(self):
-        return _xapp_sdk.SwigSubOranSmVector___bool__(self)
-
-    def __len__(self):
-        return _xapp_sdk.SwigSubOranSmVector___len__(self)
-
-    def __getslice__(self, i, j):
-        return _xapp_sdk.SwigSubOranSmVector___getslice__(self, i, j)
-
-    def __setslice__(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector___setslice__(self, *args)
-
-    def __delslice__(self, i, j):
-        return _xapp_sdk.SwigSubOranSmVector___delslice__(self, i, j)
-
-    def __delitem__(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector___delitem__(self, *args)
-
-    def __getitem__(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector___getitem__(self, *args)
-
-    def __setitem__(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector___setitem__(self, *args)
-
-    def pop(self):
-        return _xapp_sdk.SwigSubOranSmVector_pop(self)
-
-    def append(self, x):
-        return _xapp_sdk.SwigSubOranSmVector_append(self, x)
-
-    def empty(self):
-        return _xapp_sdk.SwigSubOranSmVector_empty(self)
-
-    def size(self):
-        return _xapp_sdk.SwigSubOranSmVector_size(self)
-
-    def swap(self, v):
-        return _xapp_sdk.SwigSubOranSmVector_swap(self, v)
-
-    def begin(self):
-        return _xapp_sdk.SwigSubOranSmVector_begin(self)
-
-    def end(self):
-        return _xapp_sdk.SwigSubOranSmVector_end(self)
-
-    def rbegin(self):
-        return _xapp_sdk.SwigSubOranSmVector_rbegin(self)
-
-    def rend(self):
-        return _xapp_sdk.SwigSubOranSmVector_rend(self)
-
-    def clear(self):
-        return _xapp_sdk.SwigSubOranSmVector_clear(self)
-
-    def get_allocator(self):
-        return _xapp_sdk.SwigSubOranSmVector_get_allocator(self)
-
-    def pop_back(self):
-        return _xapp_sdk.SwigSubOranSmVector_pop_back(self)
-
-    def erase(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector_erase(self, *args)
-
-    def __init__(self, *args):
-        _xapp_sdk.SwigSubOranSmVector_swiginit(self, _xapp_sdk.new_SwigSubOranSmVector(*args))
-
-    def push_back(self, x):
-        return _xapp_sdk.SwigSubOranSmVector_push_back(self, x)
-
-    def front(self):
-        return _xapp_sdk.SwigSubOranSmVector_front(self)
-
-    def back(self):
-        return _xapp_sdk.SwigSubOranSmVector_back(self)
-
-    def assign(self, n, x):
-        return _xapp_sdk.SwigSubOranSmVector_assign(self, n, x)
-
-    def resize(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector_resize(self, *args)
-
-    def insert(self, *args):
-        return _xapp_sdk.SwigSubOranSmVector_insert(self, *args)
-
-    def reserve(self, n):
-        return _xapp_sdk.SwigSubOranSmVector_reserve(self, n)
-
-    def capacity(self):
-        return _xapp_sdk.SwigSubOranSmVector_capacity(self)
-    __swig_destroy__ = _xapp_sdk.delete_SwigSubOranSmVector
-
-# Register SwigSubOranSmVector in _xapp_sdk:
-_xapp_sdk.SwigSubOranSmVector_swigregister(SwigSubOranSmVector)
-class SwigSubCustSmVector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self):
-        return _xapp_sdk.SwigSubCustSmVector_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self):
-        return _xapp_sdk.SwigSubCustSmVector___nonzero__(self)
-
-    def __bool__(self):
-        return _xapp_sdk.SwigSubCustSmVector___bool__(self)
-
-    def __len__(self):
-        return _xapp_sdk.SwigSubCustSmVector___len__(self)
-
-    def __getslice__(self, i, j):
-        return _xapp_sdk.SwigSubCustSmVector___getslice__(self, i, j)
-
-    def __setslice__(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector___setslice__(self, *args)
-
-    def __delslice__(self, i, j):
-        return _xapp_sdk.SwigSubCustSmVector___delslice__(self, i, j)
-
-    def __delitem__(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector___delitem__(self, *args)
-
-    def __getitem__(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector___getitem__(self, *args)
-
-    def __setitem__(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector___setitem__(self, *args)
-
-    def pop(self):
-        return _xapp_sdk.SwigSubCustSmVector_pop(self)
-
-    def append(self, x):
-        return _xapp_sdk.SwigSubCustSmVector_append(self, x)
-
-    def empty(self):
-        return _xapp_sdk.SwigSubCustSmVector_empty(self)
-
-    def size(self):
-        return _xapp_sdk.SwigSubCustSmVector_size(self)
-
-    def swap(self, v):
-        return _xapp_sdk.SwigSubCustSmVector_swap(self, v)
-
-    def begin(self):
-        return _xapp_sdk.SwigSubCustSmVector_begin(self)
-
-    def end(self):
-        return _xapp_sdk.SwigSubCustSmVector_end(self)
-
-    def rbegin(self):
-        return _xapp_sdk.SwigSubCustSmVector_rbegin(self)
-
-    def rend(self):
-        return _xapp_sdk.SwigSubCustSmVector_rend(self)
-
-    def clear(self):
-        return _xapp_sdk.SwigSubCustSmVector_clear(self)
-
-    def get_allocator(self):
-        return _xapp_sdk.SwigSubCustSmVector_get_allocator(self)
-
-    def pop_back(self):
-        return _xapp_sdk.SwigSubCustSmVector_pop_back(self)
-
-    def erase(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector_erase(self, *args)
-
-    def __init__(self, *args):
-        _xapp_sdk.SwigSubCustSmVector_swiginit(self, _xapp_sdk.new_SwigSubCustSmVector(*args))
-
-    def push_back(self, x):
-        return _xapp_sdk.SwigSubCustSmVector_push_back(self, x)
-
-    def front(self):
-        return _xapp_sdk.SwigSubCustSmVector_front(self)
-
-    def back(self):
-        return _xapp_sdk.SwigSubCustSmVector_back(self)
-
-    def assign(self, n, x):
-        return _xapp_sdk.SwigSubCustSmVector_assign(self, n, x)
-
-    def resize(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector_resize(self, *args)
-
-    def insert(self, *args):
-        return _xapp_sdk.SwigSubCustSmVector_insert(self, *args)
-
-    def reserve(self, n):
-        return _xapp_sdk.SwigSubCustSmVector_reserve(self, n)
-
-    def capacity(self):
-        return _xapp_sdk.SwigSubCustSmVector_capacity(self)
-    __swig_destroy__ = _xapp_sdk.delete_SwigSubCustSmVector
-
-# Register SwigSubCustSmVector in _xapp_sdk:
-_xapp_sdk.SwigSubCustSmVector_swigregister(SwigSubCustSmVector)
-class SwigActNameIdVector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self):
-        return _xapp_sdk.SwigActNameIdVector_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self):
-        return _xapp_sdk.SwigActNameIdVector___nonzero__(self)
-
-    def __bool__(self):
-        return _xapp_sdk.SwigActNameIdVector___bool__(self)
-
-    def __len__(self):
-        return _xapp_sdk.SwigActNameIdVector___len__(self)
-
-    def __getslice__(self, i, j):
-        return _xapp_sdk.SwigActNameIdVector___getslice__(self, i, j)
-
-    def __setslice__(self, *args):
-        return _xapp_sdk.SwigActNameIdVector___setslice__(self, *args)
-
-    def __delslice__(self, i, j):
-        return _xapp_sdk.SwigActNameIdVector___delslice__(self, i, j)
-
-    def __delitem__(self, *args):
-        return _xapp_sdk.SwigActNameIdVector___delitem__(self, *args)
-
-    def __getitem__(self, *args):
-        return _xapp_sdk.SwigActNameIdVector___getitem__(self, *args)
-
-    def __setitem__(self, *args):
-        return _xapp_sdk.SwigActNameIdVector___setitem__(self, *args)
-
-    def pop(self):
-        return _xapp_sdk.SwigActNameIdVector_pop(self)
-
-    def append(self, x):
-        return _xapp_sdk.SwigActNameIdVector_append(self, x)
-
-    def empty(self):
-        return _xapp_sdk.SwigActNameIdVector_empty(self)
-
-    def size(self):
-        return _xapp_sdk.SwigActNameIdVector_size(self)
-
-    def swap(self, v):
-        return _xapp_sdk.SwigActNameIdVector_swap(self, v)
-
-    def begin(self):
-        return _xapp_sdk.SwigActNameIdVector_begin(self)
-
-    def end(self):
-        return _xapp_sdk.SwigActNameIdVector_end(self)
-
-    def rbegin(self):
-        return _xapp_sdk.SwigActNameIdVector_rbegin(self)
-
-    def rend(self):
-        return _xapp_sdk.SwigActNameIdVector_rend(self)
-
-    def clear(self):
-        return _xapp_sdk.SwigActNameIdVector_clear(self)
-
-    def get_allocator(self):
-        return _xapp_sdk.SwigActNameIdVector_get_allocator(self)
-
-    def pop_back(self):
-        return _xapp_sdk.SwigActNameIdVector_pop_back(self)
-
-    def erase(self, *args):
-        return _xapp_sdk.SwigActNameIdVector_erase(self, *args)
-
-    def __init__(self, *args):
-        _xapp_sdk.SwigActNameIdVector_swiginit(self, _xapp_sdk.new_SwigActNameIdVector(*args))
-
-    def push_back(self, x):
-        return _xapp_sdk.SwigActNameIdVector_push_back(self, x)
-
-    def front(self):
-        return _xapp_sdk.SwigActNameIdVector_front(self)
-
-    def back(self):
-        return _xapp_sdk.SwigActNameIdVector_back(self)
-
-    def assign(self, n, x):
-        return _xapp_sdk.SwigActNameIdVector_assign(self, n, x)
-
-    def resize(self, *args):
-        return _xapp_sdk.SwigActNameIdVector_resize(self, *args)
-
-    def insert(self, *args):
-        return _xapp_sdk.SwigActNameIdVector_insert(self, *args)
-
-    def reserve(self, n):
-        return _xapp_sdk.SwigActNameIdVector_reserve(self, n)
-
-    def capacity(self):
-        return _xapp_sdk.SwigActNameIdVector_capacity(self)
-    __swig_destroy__ = _xapp_sdk.delete_SwigActNameIdVector
-
-# Register SwigActNameIdVector in _xapp_sdk:
-_xapp_sdk.SwigActNameIdVector_swigregister(SwigActNameIdVector)
 class IntVector(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2104,8 +1682,6 @@ class del_ul_array(object):
 
 # Register del_ul_array in _xapp_sdk:
 _xapp_sdk.del_ul_array_swigregister(del_ul_array)
-MAX_NUM_CUST_SM = _xapp_sdk.MAX_NUM_CUST_SM
-MAX_NUM_ORAN_SM = _xapp_sdk.MAX_NUM_ORAN_SM
 class swig_ran_function_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2146,73 +1722,6 @@ class E2Node(object):
 
 # Register E2Node in _xapp_sdk:
 _xapp_sdk.E2Node_swigregister(E2Node)
-class swig_sub_cust_sm_t(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    name = property(_xapp_sdk.swig_sub_cust_sm_t_name_get, _xapp_sdk.swig_sub_cust_sm_t_name_set)
-    time = property(_xapp_sdk.swig_sub_cust_sm_t_time_get, _xapp_sdk.swig_sub_cust_sm_t_time_set)
-
-    def __init__(self):
-        _xapp_sdk.swig_sub_cust_sm_t_swiginit(self, _xapp_sdk.new_swig_sub_cust_sm_t())
-    __swig_destroy__ = _xapp_sdk.delete_swig_sub_cust_sm_t
-
-# Register swig_sub_cust_sm_t in _xapp_sdk:
-_xapp_sdk.swig_sub_cust_sm_t_swigregister(swig_sub_cust_sm_t)
-class swig_act_name_id_t(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    name = property(_xapp_sdk.swig_act_name_id_t_name_get, _xapp_sdk.swig_act_name_id_t_name_set)
-    id = property(_xapp_sdk.swig_act_name_id_t_id_get, _xapp_sdk.swig_act_name_id_t_id_set)
-
-    def __init__(self):
-        _xapp_sdk.swig_act_name_id_t_swiginit(self, _xapp_sdk.new_swig_act_name_id_t())
-    __swig_destroy__ = _xapp_sdk.delete_swig_act_name_id_t
-
-# Register swig_act_name_id_t in _xapp_sdk:
-_xapp_sdk.swig_act_name_id_t_swigregister(swig_act_name_id_t)
-class swig_sub_oran_sm_t(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    name = property(_xapp_sdk.swig_sub_oran_sm_t_name_get, _xapp_sdk.swig_sub_oran_sm_t_name_set)
-    time = property(_xapp_sdk.swig_sub_oran_sm_t_time_get, _xapp_sdk.swig_sub_oran_sm_t_time_set)
-    format = property(_xapp_sdk.swig_sub_oran_sm_t_format_get, _xapp_sdk.swig_sub_oran_sm_t_format_set)
-    ran_type = property(_xapp_sdk.swig_sub_oran_sm_t_ran_type_get, _xapp_sdk.swig_sub_oran_sm_t_ran_type_set)
-    act_len = property(_xapp_sdk.swig_sub_oran_sm_t_act_len_get, _xapp_sdk.swig_sub_oran_sm_t_act_len_set)
-    actions = property(_xapp_sdk.swig_sub_oran_sm_t_actions_get, _xapp_sdk.swig_sub_oran_sm_t_actions_set)
-
-    def __init__(self):
-        _xapp_sdk.swig_sub_oran_sm_t_swiginit(self, _xapp_sdk.new_swig_sub_oran_sm_t())
-    __swig_destroy__ = _xapp_sdk.delete_swig_sub_oran_sm_t
-
-# Register swig_sub_oran_sm_t in _xapp_sdk:
-_xapp_sdk.swig_sub_oran_sm_t_swigregister(swig_sub_oran_sm_t)
-class swig_fr_args_t(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    ip = property(_xapp_sdk.swig_fr_args_t_ip_get, _xapp_sdk.swig_fr_args_t_ip_set)
-    e42_port = property(_xapp_sdk.swig_fr_args_t_e42_port_get, _xapp_sdk.swig_fr_args_t_e42_port_set)
-    conf_file = property(_xapp_sdk.swig_fr_args_t_conf_file_get, _xapp_sdk.swig_fr_args_t_conf_file_set)
-    libs_dir = property(_xapp_sdk.swig_fr_args_t_libs_dir_get, _xapp_sdk.swig_fr_args_t_libs_dir_set)
-    sub_cust_sm_len = property(_xapp_sdk.swig_fr_args_t_sub_cust_sm_len_get, _xapp_sdk.swig_fr_args_t_sub_cust_sm_len_set)
-    sub_cust_sm = property(_xapp_sdk.swig_fr_args_t_sub_cust_sm_get, _xapp_sdk.swig_fr_args_t_sub_cust_sm_set)
-    sub_oran_sm_len = property(_xapp_sdk.swig_fr_args_t_sub_oran_sm_len_get, _xapp_sdk.swig_fr_args_t_sub_oran_sm_len_set)
-    sub_oran_sm = property(_xapp_sdk.swig_fr_args_t_sub_oran_sm_get, _xapp_sdk.swig_fr_args_t_sub_oran_sm_set)
-
-    def __init__(self):
-        _xapp_sdk.swig_fr_args_t_swiginit(self, _xapp_sdk.new_swig_fr_args_t())
-    __swig_destroy__ = _xapp_sdk.delete_swig_fr_args_t
-
-# Register swig_fr_args_t in _xapp_sdk:
-_xapp_sdk.swig_fr_args_t_swigregister(swig_fr_args_t)
-
-def get_cust_sm_conf():
-    return _xapp_sdk.get_cust_sm_conf()
-
-def get_oran_sm_conf():
-    return _xapp_sdk.get_oran_sm_conf()
-
-def get_conf(mainkey):
-    return _xapp_sdk.get_conf(mainkey)
 
 def init(argv):
     return _xapp_sdk.init(argv)
@@ -3985,6 +3494,7 @@ SLICE_SM_EEDF_V0_RATE = _xapp_sdk.SLICE_SM_EEDF_V0_RATE
 SLICE_SM_EEDF_V0_END = _xapp_sdk.SLICE_SM_EEDF_V0_END
 EEDF_STATIC_HARD = _xapp_sdk.EEDF_STATIC_HARD
 EEDF_STATIC_SOFT = _xapp_sdk.EEDF_STATIC_SOFT
+END_EEDF_STATIC = _xapp_sdk.END_EEDF_STATIC
 class eedf_static_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -4009,18 +3519,18 @@ class eedf_rate_t(object):
 
 # Register eedf_rate_t in _xapp_sdk:
 _xapp_sdk.eedf_rate_t_swigregister(eedf_rate_t)
-class eedf_slice_u(object):
+class eedf_slice2_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    fixed = property(_xapp_sdk.eedf_slice_u_fixed_get, _xapp_sdk.eedf_slice_u_fixed_set)
-    rate = property(_xapp_sdk.eedf_slice_u_rate_get, _xapp_sdk.eedf_slice_u_rate_set)
+    fixed = property(_xapp_sdk.eedf_slice2_t_fixed_get, _xapp_sdk.eedf_slice2_t_fixed_set)
+    rate = property(_xapp_sdk.eedf_slice2_t_rate_get, _xapp_sdk.eedf_slice2_t_rate_set)
 
     def __init__(self):
-        _xapp_sdk.eedf_slice_u_swiginit(self, _xapp_sdk.new_eedf_slice_u())
-    __swig_destroy__ = _xapp_sdk.delete_eedf_slice_u
+        _xapp_sdk.eedf_slice2_t_swiginit(self, _xapp_sdk.new_eedf_slice2_t())
+    __swig_destroy__ = _xapp_sdk.delete_eedf_slice2_t
 
-# Register eedf_slice_u in _xapp_sdk:
-_xapp_sdk.eedf_slice_u_swigregister(eedf_slice_u)
+# Register eedf_slice2_t in _xapp_sdk:
+_xapp_sdk.eedf_slice2_t_swigregister(eedf_slice2_t)
 class eedf_slice_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -4463,6 +3973,8 @@ class gtp_ind_msg_t(object):
     len = property(_xapp_sdk.gtp_ind_msg_t_len_get, _xapp_sdk.gtp_ind_msg_t_len_set)
     ngut = property(_xapp_sdk.gtp_ind_msg_t_ngut_get, _xapp_sdk.gtp_ind_msg_t_ngut_set)
     tstamp = property(_xapp_sdk.gtp_ind_msg_t_tstamp_get, _xapp_sdk.gtp_ind_msg_t_tstamp_set)
+    json = property(_xapp_sdk.gtp_ind_msg_t_json_get, _xapp_sdk.gtp_ind_msg_t_json_set)
+    len_json = property(_xapp_sdk.gtp_ind_msg_t_len_json_get, _xapp_sdk.gtp_ind_msg_t_len_json_set)
 
     def __init__(self):
         _xapp_sdk.gtp_ind_msg_t_swiginit(self, _xapp_sdk.new_gtp_ind_msg_t())
@@ -4666,6 +4178,7 @@ class kpm_ind_msg_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     type = property(_xapp_sdk.kpm_ind_msg_t_type_get, _xapp_sdk.kpm_ind_msg_t_type_set)
+    json = property(_xapp_sdk.kpm_ind_msg_t_json_get, _xapp_sdk.kpm_ind_msg_t_json_set)
 
     def __init__(self):
         _xapp_sdk.kpm_ind_msg_t_swiginit(self, _xapp_sdk.new_kpm_ind_msg_t())

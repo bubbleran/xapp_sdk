@@ -98,6 +98,11 @@ typedef struct {
   gtp_ngu_t_stats_t* ngut;
 
   int64_t tstamp;
+
+  // JSON representation of the struct. It does not
+  // get encoded/decoded
+  char* json;
+  size_t len_json;
 } gtp_ind_msg_t;
 
 void free_gtp_ind_msg(gtp_ind_msg_t* src); 
