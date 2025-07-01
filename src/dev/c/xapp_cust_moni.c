@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
         assert(tc_handle[i].success == true);
 
       } else {
-        assert(0!=0 && "unknown SM in .conf");
+        assert(0!=0 && "unknown SM in .ymal");
       }
     }
 

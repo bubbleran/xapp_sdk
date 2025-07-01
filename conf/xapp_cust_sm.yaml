@@ -31,6 +31,8 @@ xapp:
 
 xapp_sub_cust_sm:
     runtime_sec: 10
+    # runtime_sec is ignored in xapp_all_moni
+    # only be used in xapp_oran_moni & xapp_cust_moni
     1:
         name: mac  
         # periodicity possible values: 

@@ -31,15 +31,9 @@ xapp:
 
 xapp_sub_oran_sm:
     runtime_sec: 42
+    # runtime_sec is ignored in xapp_all_moni
+    # only be used in xapp_oran_moni & xapp_cust_moni
     1:
-        name: rc
-        format: 1
-        ran_type: ngran_gNB
-        actions:
-            # 8.2.2 RAN Parameters for Report Service Style 2
-            # RRC_STATE_CHANGED 
-            id: 202
-    2:
         name: kpm
         periodicity_ms: 1000
         format: 4
@@ -52,8 +46,8 @@ xapp_sub_oran_sm:
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
             - name: RRU.PrbTotUl
-            - name: CARR.WBCQIDist.BinX.BinY.BinZ
-    3:
+            - name: CARR.MUPDSCHMCSDist.BinX
+    2:
         name: kpm
         periodicity_ms: 1000
         format: 4
@@ -64,7 +58,7 @@ xapp_sub_oran_sm:
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
             - name: RRU.PrbTotUl
-    4:
+    3:
         name: kpm
         periodicity_ms: 1000
         format: 4

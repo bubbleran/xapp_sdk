@@ -522,7 +522,7 @@ int main(int argc, char *argv[])
         n_rc_handle += 1;
 
       } else {
-        assert(0!=0 && "unknown SM in .conf");
+        assert(0!=0 && "unknown SM in .ymal");
       }
     }
 

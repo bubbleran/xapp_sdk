@@ -1,6 +1,10 @@
 #ifndef XAPP_SUB_ORAN_SM_CONF_MIR_H
 #define XAPP_SUB_ORAN_SM_CONF_MIR_H 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -43,6 +47,9 @@ sub_oran_sm_conf_t init_no_license_sub_oran_sm_conf(const char* file);
 
 void free_sub_oran_sm_conf(sub_oran_sm_conf_t* conf);
 
+#ifdef __cplusplus
+}
 #endif
 
+#endif
 

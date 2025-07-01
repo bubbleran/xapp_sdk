@@ -112,17 +112,17 @@ class SLICECallback(ric.slice_cb):
 
 
 def get_cust_tti(tti):
-    if tti == "1_ms":
+    if tti == 1:
         return ric.Interval_ms_1
-    elif tti == "2_ms":
+    elif tti == 2:
         return ric.Interval_ms_2
-    elif tti == "5_ms":
+    elif tti == 5:
         return ric.Interval_ms_5
-    elif tti == "10_ms":
+    elif tti == 10:
         return ric.Interval_ms_10
-    elif tti == "100_ms":
+    elif tti == 100:
         return ric.Interval_ms_100
-    elif tti == "1000_ms":
+    elif tti == 1000:
         return ric.Interval_ms_1000
     else:
         print(f"Unknown tti {tti}")
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     # Start
     ric.init(sys.argv)
-    cust_sm = ric.get_cust_sm_conf()
+    cust_sm = ric.get_sub_cust_sm_conf(sys.argv) #get_cust_sm_conf()
 
     conn = ric.conn_e2_nodes()
     assert(len(conn) > 0)
@@ -159,9 +159,9 @@ if __name__ == '__main__':
         print("Global E2 Node [" + str(i) + "]: PLMN MNC = " + str(conn[i].id.plmn.mnc))
 
 
-    for sm_info in cust_sm:
-        sm_name = sm_info.name
-        sm_time = sm_info.time
+    for sm_info in cust_sm.sub_cust_sm:
+        sm_name = sm_info.name.upper()
+        sm_time = sm_info.periodicity_ms
         tti = get_cust_tti(sm_time)
 
         if sm_name == "MAC":
@@ -207,7 +207,7 @@ if __name__ == '__main__':
         else:
             print(f"not yet implemented function to send subscription for {sm_name}")
 
-    time.sleep(10)
+    time.sleep(cust_sm.runtime_sec)
 
     ### End
     for i in range(0, len(mac_hndlr)):

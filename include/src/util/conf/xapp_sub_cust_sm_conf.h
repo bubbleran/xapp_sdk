@@ -1,6 +1,10 @@
 #ifndef XAPP_SUB_CUST_SM_CONF_MIR_H
 #define XAPP_SUB_CUST_SM_CONF_MIR_H 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 
 typedef struct{
@@ -21,5 +25,9 @@ sub_cust_sm_conf_t init_sub_cust_sm_conf(const char* file);
 sub_cust_sm_conf_t init_no_license_sub_cust_sm_conf(const char* file);
 
 void free_sub_cust_sm_conf(sub_cust_sm_conf_t* conf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

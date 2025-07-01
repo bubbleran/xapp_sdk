@@ -221,10 +221,10 @@ int main(int argc, char *argv[])
   defer({ free(hndl); });
 
   ccc_sub_data_t ccc_sub = {0};
-  defer({free_ccc_sub_data(&ccc_sub);});
   ccc_sub.et = gen_ev_trig();
   ccc_sub.sz_ad = 1;
   ccc_sub.ad = calloc(ccc_sub.sz_ad, sizeof(e2sm_ccc_action_def_t));
+  defer({free_ccc_sub_data(&ccc_sub);});
   assert(ccc_sub.ad != NULL);
   ccc_sub.ad[0] = gen_act_def();
 
