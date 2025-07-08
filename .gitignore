@@ -1,0 +1,15 @@
+# Ignore specific configuration and script files
+conf/debug.yaml
+conf/e2_agent.yaml
+conf/e2ag_amr.yaml
+conf/mapping_ricmon.json
+conf/ric.yaml
+conf/update_conf.sh
+
+include/src/lib/aind_event.h
+include/src/lib/async_event.h
+include/src/lib/correlation_events.h
+include/src/lib/ind_event.h
+include/src/lib/pending_event_ric.h
+include/src/lib/pending_events.h
+

@@ -35,7 +35,7 @@ xapp_sub_oran_sm:
     # only be used in xapp_oran_moni & xapp_cust_moni
     1:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 1000 # 1000, 100, 10, 5, 2, 1 supported
         format: 4
         ran_type: ngran_gNB
         actions:

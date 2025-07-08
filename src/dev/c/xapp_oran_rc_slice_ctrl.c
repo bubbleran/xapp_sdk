@@ -331,7 +331,9 @@ int main(int argc, char *argv[])
       continue;
     }
 
-    control_sm_xapp_api(&nodes.n[i].id, SM_RC_ID, &rc_ctrl);
+    sm_ans_xapp_t ans = control_sm_xapp_api(&nodes.n[i].id, SM_RC_ID, &rc_ctrl);
+    if(ans.success == false)
+      printf("Error sending the control message!\n");
   }
   printf("[xApp]: Control Loop Latency: %ld us\n", time_now_us_xapp_api() - st);
   free_rc_ctrl_req_data(&rc_ctrl);

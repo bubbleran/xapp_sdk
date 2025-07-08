@@ -102,4 +102,14 @@ bool eq_cause(const cause_t* m0, const cause_t* m1);
 
 cause_t cp_cause(cause_t const* src);
 
+char const* str_cause(cause_t src);
+
+// Similar to std::expected 
+// https://en.cppreference.com/w/cpp/utility/expected.html
+// Either success == true, or success == false and cause active 
+typedef struct{
+  bool success;
+  cause_t cause;
+} expected_cause_t;
+
 #endif

@@ -35,6 +35,7 @@
 #include "../write/subscription_aperiod.h"
 #include "../write/subscription_period.h"
 #include "../../sm_proc_data.h"
+#include "../../../lib/e2ap/e2ap_cause_wrapper.h"
 
 typedef enum {
   CTRL_OUTCOME_SM_AG_IF_ANS_V0,
@@ -76,6 +77,7 @@ typedef struct{
     e2sm_ccc_ctrl_out_t ccc;
     isac_ctrl_out_t isac;
   };
+  expected_cause_t exp;
 } sm_ag_if_ans_ctrl_t;
 
 
