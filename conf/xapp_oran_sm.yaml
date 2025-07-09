@@ -46,6 +46,10 @@ xapp_sub_oran_sm:
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
             - name: RRU.PrbTotUl
+            - name: RRU.PrbUsedDl
+            - name: RRU.PrbUsedUl
+            - name: RRU.PrbAvailDl
+            - name: RRU.PrbAvailUl
             - name: CARR.MUPDSCHMCSDist.BinX
     2:
         name: kpm
@@ -58,6 +62,10 @@ xapp_sub_oran_sm:
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
             - name: RRU.PrbTotUl
+            - name: RRU.PrbUsedDl
+            - name: RRU.PrbUsedUl
+            - name: RRU.PrbAvailDl
+            - name: RRU.PrbAvailUl
     3:
         name: kpm
         periodicity_ms: 1000
