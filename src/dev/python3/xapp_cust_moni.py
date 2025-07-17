@@ -1,12 +1,3 @@
-#/*
-#Copyright (C) 2021-2025 BubbleRAN SAS
-
-#External application
-#Last Changed: 2025-05-02
-#Project: MX-XAPP
-#Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-#*/
-
 import time
 import os
 import pdb
@@ -121,17 +112,17 @@ class SLICECallback(ric.slice_cb):
 
 
 def get_cust_tti(tti):
-    if tti == "1_ms":
+    if tti == 1:
         return ric.Interval_ms_1
-    elif tti == "2_ms":
+    elif tti == 2:
         return ric.Interval_ms_2
-    elif tti == "5_ms":
+    elif tti == 5:
         return ric.Interval_ms_5
-    elif tti == "10_ms":
+    elif tti == 10:
         return ric.Interval_ms_10
-    elif tti == "100_ms":
+    elif tti == 100:
         return ric.Interval_ms_100
-    elif tti == "1000_ms":
+    elif tti == 1000:
         return ric.Interval_ms_1000
     else:
         print(f"Unknown tti {tti}")
@@ -159,7 +150,7 @@ if __name__ == '__main__':
 
     # Start
     ric.init(sys.argv)
-    cust_sm = ric.get_cust_sm_conf()
+    cust_sm = ric.get_sub_cust_sm_conf(sys.argv) #get_cust_sm_conf()
 
     conn = ric.conn_e2_nodes()
     assert(len(conn) > 0)
@@ -168,50 +159,55 @@ if __name__ == '__main__':
         print("Global E2 Node [" + str(i) + "]: PLMN MNC = " + str(conn[i].id.plmn.mnc))
 
 
-    for sm_info in cust_sm:
-        sm_name = sm_info.name
-        sm_time = sm_info.time
+    for sm_info in cust_sm.sub_cust_sm:
+        sm_name = sm_info.name.upper()
+        sm_time = sm_info.periodicity_ms
         tti = get_cust_tti(sm_time)
 
         if sm_name == "MAC":
             for i in range(0, len(conn)):
-                # MAC
-                mac_cb = MACCallback()
-                hndlr = ric.report_mac_sm(conn[i].id, tti, mac_cb)
-                mac_hndlr.append(hndlr)
-                time.sleep(1)
+                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_DU or conn[i].id.type == ric.e2ap_ngran_eNB):
+                    # MAC
+                    mac_cb = MACCallback()
+                    hndlr = ric.report_mac_sm(conn[i].id, tti, mac_cb)
+                    mac_hndlr.append(hndlr)
+                    time.sleep(1)
         elif sm_name == "RLC":
             for i in range(0, len(conn)):
-                # RLC
-                rlc_cb = RLCCallback()
-                hndlr = ric.report_rlc_sm(conn[i].id, tti, rlc_cb)
-                rlc_hndlr.append(hndlr)
-                time.sleep(1)
+                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_DU or conn[i].id.type == ric.e2ap_ngran_eNB):
+                    # RLC
+                    rlc_cb = RLCCallback()
+                    hndlr = ric.report_rlc_sm(conn[i].id, tti, rlc_cb)
+                    rlc_hndlr.append(hndlr)
+                    time.sleep(1)
         elif sm_name == "PDCP":
             for i in range(0, len(conn)):
-                # PDCP
-                pdcp_cb = PDCPCallback()
-                hndlr = ric.report_pdcp_sm(conn[i].id, tti, pdcp_cb)
-                pdcp_hndlr.append(hndlr)
-                time.sleep(1)
+                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_CU or conn[i].id.type == ric.e2ap_ngran_eNB):
+                    # PDCP
+                    pdcp_cb = PDCPCallback()
+                    hndlr = ric.report_pdcp_sm(conn[i].id, tti, pdcp_cb)
+                    pdcp_hndlr.append(hndlr)
+                    time.sleep(1)
         elif sm_name == "GTP":
             for i in range(0, len(conn)):
-                # GTP
-                gtp_cb = GTPCallback()
-                hndlr = ric.report_gtp_sm(conn[i].id, tti, gtp_cb)
-                gtp_hndlr.append(hndlr)
-                time.sleep(1)
+                if (conn[i].id.type == ric.e2ap_ngran_gNB):
+                    # GTP
+                    gtp_cb = GTPCallback()
+                    hndlr = ric.report_gtp_sm(conn[i].id, tti, gtp_cb)
+                    gtp_hndlr.append(hndlr)
+                    time.sleep(1)
         elif sm_name == "SLICE":
             for i in range(0, len(conn)):
-                # SLICE
-                slice_cb = SLICECallback()
-                hndlr = ric.report_slice_sm(conn[i].id, tti, slice_cb)
-                slice_hndlr.append(hndlr)
-                time.sleep(1)
+                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_eNB):
+                    # SLICE
+                    slice_cb = SLICECallback()
+                    hndlr = ric.report_slice_sm(conn[i].id, tti, slice_cb)
+                    slice_hndlr.append(hndlr)
+                    time.sleep(1)
         else:
             print(f"not yet implemented function to send subscription for {sm_name}")
 
-    time.sleep(10)
+    time.sleep(cust_sm.runtime_sec)
 
     ### End
     for i in range(0, len(mac_hndlr)):

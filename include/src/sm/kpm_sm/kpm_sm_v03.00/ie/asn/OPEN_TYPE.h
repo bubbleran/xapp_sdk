@@ -33,6 +33,7 @@ extern "C" {
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define OPEN_TYPE_compare CHOICE_compare_kpm_v3_00
+#define OPEN_TYPE_copy    CHOICE_copy_kpm_v3_00
 
 #define OPEN_TYPE_constraint CHOICE_constraint_kpm_v3_00
 
@@ -48,25 +49,25 @@ asn_dec_rval_t OPEN_TYPE_ber_get(
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-asn_dec_rval_t OPEN_TYPE_xer_get_kpm_v3_00(
+asn_dec_rval_t OPEN_TYPE_xer_get(
     const asn_codec_ctx_t *opt_codec_ctx,
     const asn_TYPE_descriptor_t *parent_type,
     void *parent_structure,
     const asn_TYPE_member_t *element,
     const void *ptr, size_t size);
 #define OPEN_TYPE_decode_xer NULL
-#define OPEN_TYPE_encode_xer CHOICE_encode_xer_kpm_v3_00
+#define OPEN_TYPE_encode_xer CHOICE_encode_xer
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-asn_dec_rval_t OPEN_TYPE_jer_get(
+asn_dec_rval_t OPEN_TYPE_jer_get_kpm_v3_00(
     const asn_codec_ctx_t *opt_codec_ctx,
     const asn_TYPE_descriptor_t *parent_type,
     void *parent_structure,
     const asn_TYPE_member_t *element,
     const void *ptr, size_t size);
 #define OPEN_TYPE_decode_jer NULL
-#define OPEN_TYPE_encode_jer CHOICE_encode_jer
+#define OPEN_TYPE_encode_jer CHOICE_encode_jer_kpm_v3_00
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)
@@ -77,7 +78,10 @@ asn_dec_rval_t OPEN_TYPE_oer_get(
     asn_TYPE_member_t *element, const void *ptr,
     size_t size);
 #define OPEN_TYPE_decode_oer NULL
-#define OPEN_TYPE_encode_oer CHOICE_encode_oer
+asn_enc_rval_t OPEN_TYPE_encode_oer(
+    const asn_TYPE_descriptor_t *type_descriptor,
+    const asn_oer_constraints_t *constraints, const void *struct_ptr,
+    asn_app_consume_bytes_f *consume_bytes_cb, void *app_key);
 #endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_UPER_SUPPORT)

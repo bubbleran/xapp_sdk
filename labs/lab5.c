@@ -30,7 +30,7 @@ static int clamp(int min, int max, int v)
 
 static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
 {
-  printf(" ue_thp_kbs %lf \n", ue_thp_kbs);
+  printf("ue_thp_kbs %lf \n", ue_thp_kbs);
 
   if(ue_thp_kbs > 29999.9 && ue_thp_kbs < 35000.1)
     return;

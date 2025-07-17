@@ -31,16 +31,16 @@ static volatile double real_zero CC_NOTUSED = 0.0;
 extern "C" {
 #endif
 
-typedef enum specialRealValue_rc_v1_03 {
+typedef enum specialRealValue {
     SRV__NOT_A_NUMBER,
     SRV__MINUS_INFINITY,
     SRV__PLUS_INFINITY
-} specialRealValue_e_rc_v1_03;
-extern struct specialRealValue_s_rc_v1_03 {
+} specialRealValue_e;
+extern struct specialRealValue_s {
     char *string;
     size_t length;
     long dv;
-} specialRealValue_rc_v1_03[3];
+} specialRealValue[3];
 
 typedef ASN__PRIMITIVE_TYPE_t REAL_t;
 
@@ -54,6 +54,7 @@ asn_struct_print_f REAL_print_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 asn_struct_compare_f REAL_compare_rc_v1_03;
+asn_struct_copy_f    REAL_copy_rc_v1_03;
 
 #define REAL_constraint asn_generic_no_constraint_rc_v1_03
 
@@ -63,13 +64,13 @@ asn_struct_compare_f REAL_compare_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-xer_type_decoder_f REAL_decode_xer_rc_v1_03;
-xer_type_encoder_f REAL_encode_xer_rc_v1_03;
+xer_type_decoder_f REAL_decode_xer;
+xer_type_encoder_f REAL_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f REAL_decode_jer;
-jer_type_encoder_f REAL_encode_jer;
+jer_type_decoder_f REAL_decode_jer_rc_v1_03;
+jer_type_encoder_f REAL_encode_jer_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

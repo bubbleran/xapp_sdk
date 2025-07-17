@@ -36,5 +36,7 @@ bool eq_ric_gen_id(const ric_gen_id_t* m0, const  ric_gen_id_t* m1);
 
 int cmp_ric_gen_id(const ric_gen_id_t* m0, const  ric_gen_id_t* m1);
 
+ric_gen_id_t cp_ric_gen_id(ric_gen_id_t src);
+
 #endif
 

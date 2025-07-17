@@ -261,7 +261,8 @@ typedef enum {
 
 typedef enum {
   EEDF_STATIC_HARD,
-  EEDF_STATIC_SOFT
+  EEDF_STATIC_SOFT,
+  END_EEDF_STATIC
 } eedf_static_type_t;
 
 typedef struct{
@@ -277,11 +278,11 @@ typedef struct{
 typedef union{
   eedf_static_t fixed;
   eedf_rate_t rate; 
-} eedf_slice_u;
+} eedf_slice2_t;
 
 typedef struct{
   eedf_slice_conf_e conf;
-  eedf_slice_u u;
+  eedf_slice2_t u;
 } eedf_slice_t ;
 
 typedef struct{
@@ -351,7 +352,7 @@ typedef struct{
   uint32_t dl_id;
   uint32_t ul_id;
   uint16_t rnti;
-}ue_slice_assoc_t; 
+} ue_slice_assoc_t; 
 
 typedef struct{
   uint32_t len_ue_slice;

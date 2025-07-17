@@ -1,12 +1,3 @@
-#/*
-#Copyright (C) 2021-2025 BubbleRAN SAS
-
-#External application
-#Last Changed: 2025-05-02
-#Project: MX-XAPP
-#Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-#*/
-
 import time
 import os
 import pdb
@@ -179,7 +170,7 @@ def get_oran_tti(tti):
 ####################
 
 ric.init(sys.argv)
-oran_sm = ric.get_oran_sm_conf()
+oran_sm = ric.get_sub_oran_sm_conf(sys.argv)
 
 conn = ric.conn_e2_nodes()
 assert(len(conn) > 0)
@@ -196,16 +187,16 @@ for i in range(0, len(conn)):
 
 kpm_hndlr = []
 n_hndlr = 0
-for sm_info in oran_sm:
-    sm_name = sm_info.name
+for sm_info in oran_sm.elm:
+    sm_name = sm_info.name.upper()
     if sm_name != "KPM":
         print(f"not support {sm_name} in python")
         continue
-    sm_time = sm_info.time
+    sm_time = sm_info.periodicity_ms
     tti = get_oran_tti(sm_time)
     sm_format = sm_info.format
     ran_type = sm_info.ran_type
-    act_len = sm_info.act_len
+    act_len = len(sm_info.actions)
     act = []
     for a in sm_info.actions:
         act.append(a.name)
@@ -220,7 +211,7 @@ for sm_info in oran_sm:
             time.sleep(1)
 
 
-time.sleep(10)
+time.sleep(oran_sm.runtime_sec)
 
 ### End
 

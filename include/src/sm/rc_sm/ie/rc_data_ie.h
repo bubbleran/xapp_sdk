@@ -240,7 +240,10 @@ typedef struct {
     e2sm_rc_ind_msg_frmt_5_t frmt_5; // 9.2.1.4.5
     e2sm_rc_ind_msg_frmt_6_t frmt_6; // 9.2.1.4.6
   };
-
+  // JSON Representation of the struct. It does not
+  // get encoded/decoded
+  //char* json;
+  //size_t len_json;
 } e2sm_rc_ind_msg_t;
 
 void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src); 

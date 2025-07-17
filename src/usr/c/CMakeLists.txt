@@ -1,4 +1,13 @@
-set(LIST_XAPP xapp_ho_sdk xapp_sdk_moni_ue xapp_sdk_moni xapp_sdk_moni_cb xapp_sdk_moni_ue_cb xapp_slice_sdk xapp_sdk_moni_slice)
+set(LIST_XAPP 
+  xapp_bwp_sdk
+  xapp_ho_sdk 
+  xapp_sdk_moni 
+  xapp_sdk_moni_cb 
+  xapp_sdk_moni_slice
+  xapp_sdk_moni_ue 
+  xapp_sdk_moni_ue_cb 
+  xapp_slice_sdk 
+  )
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_SDK_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/libxapp_sdk_c.a")

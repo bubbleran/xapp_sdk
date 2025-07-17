@@ -15,13 +15,11 @@ typedef enum {
     ONE_OR_MORE_MATCHED_UE,
 
     END_MATCHED_UE
-
 } matched_ue_e;
 
 typedef struct {
     size_t ue_lst_len;  // [1..65535]
     ue_id_e2sm_t *ue_lst;  // 8.3.24
-
 } ue_lst_t;
 
 

@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/mac_sm/mac_sm_id.h"
 #include "../include/src/sm/rlc_sm/rlc_sm_id.h"
@@ -14,12 +5,10 @@ Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-
 #include "../include/src/sm/gtp_sm/gtp_sm_id.h"
 #include "../include/src/sm/slice_sm/slice_sm_id.h"
 
-#include <stdatomic.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-
 
 static void cb_mac(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 {
@@ -30,7 +19,8 @@ static void cb_mac(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   mac_ind_msg_t const* msg = &rd->ind.mac.msg;
 
   int64_t now = time_now_us_xapp_api();
-  printf("MAC ind_msg latency = %ld μs from E2-node type %d ID %d\n", now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+  printf("MAC ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
 static void cb_rlc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
@@ -43,8 +33,8 @@ static void cb_rlc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   rlc_ind_msg_t const* msg = &rd->ind.rlc.msg;
 
   int64_t now = time_now_us_xapp_api();
-
-  printf("RLC ind_msg latency = %ld μs from E2-node type %d ID %d\n", now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+  printf("RLC ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
 static void cb_pdcp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
@@ -57,8 +47,8 @@ static void cb_pdcp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   pdcp_ind_msg_t const* msg = &rd->ind.pdcp.msg;
 
   int64_t now = time_now_us_xapp_api();
-
-  printf("PDCP ind_msg latency = %ld μs from E2-node type %d ID %d\n", now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+  printf("PDCP ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
 static void cb_gtp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
@@ -71,8 +61,8 @@ static void cb_gtp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   gtp_ind_msg_t const* msg = &rd->ind.gtp.msg;
 
   int64_t now = time_now_us_xapp_api();
-
-  printf("GTP ind_msg latency = %ld μs from E2-node type %d ID %d\n", now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+  printf("GTP ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
 static void cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
@@ -85,16 +75,16 @@ static void cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node
   slice_ind_msg_t const* msg = &rd->ind.slice.msg;
 
   int64_t now = time_now_us_xapp_api();
-
-  printf("SLICE ind_msg latency = %ld μs from E2-node type %d ID %d\n", now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+  printf("SLICE ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
+  assert(argc == 2 && "Configuration file needed");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
@@ -137,7 +127,6 @@ int main(int argc, char *argv[])
 
   // Free the memory
   free_e2_node_arr_xapp(&nodes);
-  free_fr_args(&args);
 
   return 0;
 }

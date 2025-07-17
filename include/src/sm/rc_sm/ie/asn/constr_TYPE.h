@@ -144,6 +144,16 @@ typedef int (asn_struct_compare_f)(
 		const void *struct_B);
 
 /*
+ * Copies struct B into struct A.
+ * Allocates memory for struct A, if necessary.
+ */
+typedef int (asn_struct_copy_f)(
+		const struct asn_TYPE_descriptor_s *type_descriptor,
+		void **struct_A,
+		const void *struct_B
+        );
+
+/*
  * Return the outmost tag of the type.
  * If the type is untagged CHOICE, the dynamic operation is performed.
  * NOTE: This function pointer type is only useful internally.
@@ -175,12 +185,13 @@ typedef struct asn_TYPE_operation_s {
     asn_struct_free_f *free_struct;     /* Free the structure */
     asn_struct_print_f *print_struct;   /* Human readable output */
     asn_struct_compare_f *compare_struct; /* Compare two structures */
+    asn_struct_copy_f *copy_struct;       /* Copy method */
     ber_type_decoder_f *ber_decoder;      /* Generic BER decoder */
     der_type_encoder_f *der_encoder;      /* Canonical DER encoder */
-    xer_type_decoder_f *xer_decode_rc_v1_03r;      /* Generic XER decoder */
-    xer_type_encoder_f *xer_encode_rc_v1_03r;      /* [Canonical] XER encoder */
-    jer_type_decoder_f *jer_decoder;      /* Generic JER encoder */
-    jer_type_encoder_f *jer_encoder;      /* Generic JER encoder */
+    xer_type_decoder_f *xer_decoder;      /* Generic XER decoder */
+    xer_type_encoder_f *xer_encoder;      /* [Canonical] XER encoder */
+    jer_type_decoder_f *jer_decode_rc_v1_03r;      /* Generic JER encoder */
+    jer_type_encoder_f *jer_encode_rc_v1_03r;      /* Generic JER encoder */
     oer_type_decoder_f *oer_decoder;      /* Generic OER decoder */
     oer_type_encoder_f *oer_encoder;      /* Canonical OER encoder */
     per_type_decoder_f *uper_decoder;     /* Unaligned PER decoder */
@@ -285,11 +296,22 @@ typedef struct asn_TYPE_tag2member_s {
  * RETURN VALUES:
  * 	 0: The structure is printed.
  * 	-1: Problem dumping the structure.
- * (See also xer_fprint_rc_v1_03() in xer_encode_rc_v1_03r.h)
+ * (See also xer_fprint() in xer_encoder.h)
  */
 int asn_fprint_rc_v1_03(FILE *stream, /* Destination stream descriptor */
                const asn_TYPE_descriptor_t *td, /* ASN.1 type descriptor */
                const void *struct_ptr);         /* Structure to be printed */
+
+/*
+ * Copies a source structure (struct_src) into destination structure 
+ * (struct_dst). Allocates memory for the destination structure, if necessary.
+ * RETURN VALUES:
+ *   0: Copy OK.
+ * 	-1: Problem copying the structure.
+ */
+int asn_copy_rc_v1_03(const asn_TYPE_descriptor_t *td, /* ASN.1 type descriptor */
+             void **struct_dst,               /* Structure to be populated */
+             const void *struct_src);         /* Structure to be copied */
 
 #ifdef __cplusplus
 }

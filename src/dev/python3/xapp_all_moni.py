@@ -1,12 +1,3 @@
-#/*
-#Copyright (C) 2021-2025 BubbleRAN SAS
-
-#External application
-#Last Changed: 2025-05-02
-#Project: MX-XAPP
-#Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-#*/
-
 import time
 import os
 import pdb
@@ -287,17 +278,17 @@ def send_kpm_sub_req(id, tti, action):
     kpm_hndlr.setdefault(key, []).append(hndlr)
 
 def get_cust_tti(tti):
-    if tti == "1_ms":
+    if tti == 1:
         return ric.Interval_ms_1
-    elif tti == "2_ms":
+    elif tti == 2:
         return ric.Interval_ms_2
-    elif tti == "5_ms":
+    elif tti == 5:
         return ric.Interval_ms_5
-    elif tti == "10_ms":
+    elif tti == 10:
         return ric.Interval_ms_10
-    elif tti == "100_ms":
+    elif tti == 100:
         return ric.Interval_ms_100
-    elif tti == "1000_ms":
+    elif tti == 1000:
         return ric.Interval_ms_1000
     else:
         print(f"Unknown tti {tti}")
@@ -321,9 +312,9 @@ def get_oran_tti(tti):
         exit()
 
 def send_subscription_req(nodes, cust_sm, oran_sm):
-    for sm_info in cust_sm:
-        sm_name = sm_info.name
-        sm_time = sm_info.time
+    for sm_info in cust_sm.sub_cust_sm:
+        sm_name = sm_info.name.upper()
+        sm_time = sm_info.periodicity_ms
         tti = get_cust_tti(sm_time)
 
         if sm_name == "MAC" and (nodes.id.type == ric.e2ap_ngran_gNB or nodes.id.type == ric.e2ap_ngran_gNB_DU or nodes.id.type == ric.e2ap_ngran_eNB):
@@ -338,16 +329,16 @@ def send_subscription_req(nodes, cust_sm, oran_sm):
         else:
             print(f"not yet implemented function to send subscription for {sm_name}")
 
-    for sm_info in oran_sm:
-        sm_name = sm_info.name
+    for sm_info in oran_sm.elm:
+        sm_name = sm_info.name.upper()
         if sm_name != "KPM":
             print(f"not support {sm_name} in python")
             continue
-        sm_time = sm_info.time
+        sm_time = sm_info.periodicity_ms
         tti = get_oran_tti(sm_time)
         sm_format = sm_info.format
         ran_type = sm_info.ran_type
-        act_len = sm_info.act_len
+        act_len = len(sm_info.actions)
         act = []
         for a in sm_info.actions:
             act.append(a.name)
@@ -476,10 +467,13 @@ def clean_hndlr(id):
 ####################
 
 ric.init(sys.argv)
-cust_sm = ric.get_cust_sm_conf()
+
+cust_oran = ric.get_sub_all_sm_conf(sys.argv)
+
+cust_sm = cust_oran.cust;
 # for i in range(0, len(cust_sm)):
 #     print(cust_sm[i].name, cust_sm[i].time)
-oran_sm = ric.get_oran_sm_conf()
+oran_sm = cust_oran.oran; 
 
 signal.signal(signal.SIGINT, sig_handler)
 

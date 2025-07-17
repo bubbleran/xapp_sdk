@@ -13,7 +13,9 @@ extern "C" {
 typedef enum {
 	START_IND,
 	END_IND,
+
 	END_START_END_IND
+
 } start_end_ind_e;
 
 
@@ -43,11 +45,10 @@ typedef struct{
   uint16_t  			  *ssbIndex;		/* OPTIONAL */
   uint16_t  			  *nonGoB_beamformModeIndex;  /* OPTIONAL */
   uint8_t   			  *mimoModeIndex;    /* OPTIONAL, 1 = SU-MIMO, 2 = MU-MIMO  ask Mikel */
-
 } label_info_lst_t;
 
 //void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src);
-label_info_lst_t cp_label_info(label_info_lst_t const *src); 
+label_info_lst_t cp_label_info(label_info_lst_t const *src);
 
 bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2);
 

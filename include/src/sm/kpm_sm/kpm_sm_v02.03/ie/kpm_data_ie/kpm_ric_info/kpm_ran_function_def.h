@@ -1,16 +1,15 @@
-#ifndef RAN_FUNCTION_DEFINITION_KPM_V2_01_H
-#define RAN_FUNCTION_DEFINITION_KPM_V2_01_H
+#ifndef RAN_FUNCTION_DEFINITION_KPM_V2_03_H
+#define RAN_FUNCTION_DEFINITION_KPM_V2_03_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "../../../../../../lib/sm/ie/ran_function_name.h"
 #include "kpm_ric_event_trigger_def.h"
 #include "kpm_ric_action_def.h"
 #include "kpm_ric_ind_hdr.h"
 #include "kpm_ric_ind_msg.h"
-
-#include "../../../../../../lib/sm/ie/ran_function_name.h"
 
 typedef struct {
     style_ric_event_trigger_e style_type; // 8.3.3
@@ -62,11 +61,12 @@ ric_report_style_item_t cp_ric_report_style_item(ric_report_style_item_t const* 
 
 
 
+
 /* 8.2.2.1  RAN Function Definition IE */
 
 typedef struct {
     ran_function_name_t name;  // 8.3.2
-    
+
     size_t sz_ric_event_trigger_style_list;  // [0, 63]
     ric_event_trigger_style_item_t *ric_event_trigger_style_list;
 
@@ -75,11 +75,13 @@ typedef struct {
 
 } kpm_ran_function_def_t;
 
+
 void free_kpm_ran_function_def(kpm_ran_function_def_t* src);
 
 bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function_def_t const * m1);
 
-kpm_ran_function_def_t cp_kpm_ran_function_def(kpm_ran_function_def_t const * src);
+kpm_ran_function_def_t cp_kpm_ran_function_def( kpm_ran_function_def_t  const* src);
+
 
 #ifdef __cplusplus
 }

@@ -23,6 +23,7 @@
 #define SM_PROCEDURES_DATA_H 
 
 #include "../lib/e2ap/e2ap_ran_function_wrapper.h"
+#include "../lib/e2ap/e2ap_cause_wrapper.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -94,6 +95,8 @@ void free_sm_ctrl_req_data(sm_ctrl_req_data_t*);
 typedef struct{
   uint8_t* ctrl_out;
   size_t len_out;
+ 
+  expected_cause_t exp;
 } sm_ctrl_out_data_t;
 
 void free_sm_ctrl_out_data(sm_ctrl_out_data_t*);

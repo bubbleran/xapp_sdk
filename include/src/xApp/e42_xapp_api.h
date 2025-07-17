@@ -32,10 +32,9 @@ extern "C" {
 #include "e2_node_arr_xapp.h"
 #include "../sm/agent_if/read/sm_ag_if_rd.h"
 #include "../sm/agent_if/write/sm_ag_if_wr.h"
-#include "../util/conf_file.h"
 
 
-void init_xapp_api(fr_args_t const*);
+void init_xapp_api(const char* conf_file);
   
 bool try_stop_xapp_api(void);     
 

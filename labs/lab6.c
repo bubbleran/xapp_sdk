@@ -277,11 +277,11 @@ sm_ag_if_wr_t fill_slice_sm_ctrl_req(uint16_t ran_func_id, slice_ctrl_msg_e type
 
 int main(int argc, char *argv[])
 {
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 2 && "Configuraiton file needed!");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
+
   signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_api()
   signal(SIGTERM, sigint_handler);
   sleep(1);
@@ -364,5 +364,4 @@ int main(int argc, char *argv[])
 
   printf("Test xApp run SUCCESSFULLY\n");
 }
-
 

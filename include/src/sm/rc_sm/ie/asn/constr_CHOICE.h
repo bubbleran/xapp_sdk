@@ -46,6 +46,7 @@ asn_struct_print_f CHOICE_print_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 asn_struct_compare_f CHOICE_compare_rc_v1_03;
+asn_struct_copy_f    CHOICE_copy_rc_v1_03;
 
 asn_constr_check_f CHOICE_constraint_rc_v1_03;
 
@@ -55,13 +56,13 @@ der_type_encoder_f CHOICE_encode_der;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-xer_type_decoder_f CHOICE_decode_xer_rc_v1_03;
-xer_type_encoder_f CHOICE_encode_xer_rc_v1_03;
+xer_type_decoder_f CHOICE_decode_xer;
+xer_type_encoder_f CHOICE_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
-jer_type_decoder_f CHOICE_decode_jer;
-jer_type_encoder_f CHOICE_encode_jer;
+jer_type_decoder_f CHOICE_decode_jer_rc_v1_03;
+jer_type_encoder_f CHOICE_encode_jer_rc_v1_03;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_OER_SUPPORT)

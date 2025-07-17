@@ -1,13 +1,4 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
-#ifndef SERVING_CELL_PCI_SM_H
+#ifndef SERVING_CELL_PCI_SM_H 
 #define SERVING_CELL_PCI_SM_H  
 
 #include "rat_type.h"

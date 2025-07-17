@@ -93,6 +93,7 @@ typedef struct{
   int64_t src_addr; // filter wildcard (i.e., -1) indicates matches all
   int64_t dst_addr;
   int32_t tos;
+  int32_t ip_size;
 } L3_filter_t;
 
 void free_L3_filter(L3_filter_t*);
@@ -331,8 +332,6 @@ void free_tc_ctrl_sch_prio(tc_sch_prio_t* prio);
 tc_sch_prio_t cp_tc_sch_prio(tc_sch_prio_t const*);
 
 bool eq_tc_sch_prio(tc_sch_prio_t const* m0, tc_sch_prio_t const* m1);
-
-
 
 typedef struct{
   tc_sch_e type; 

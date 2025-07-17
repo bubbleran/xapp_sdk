@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/util/alg_ds/ds/lock_guard/lock_guard.h"
 #include "../include/src/util/alg_ds/ds/latch_cv/latch_cv.h"
@@ -184,9 +175,7 @@ e2sm_ccc_ctrl_msg_t gen_msg(cell_global_id_t* const cell_local_id)
 
 int main(int argc, char *argv[])
 {
-  assert(argc > 3 && "Require bwp_context(1 = dl, 2 = ul), rb start and number of rbs");
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 5 && "Require bwp_context(1 = dl, 2 = ul), rb start and number of rbs e.g., xapp.yaml 1 0 51");
   for (int i = argc - 1; i > 0; i--){
     if(i == argc - 1)
       NUMBER_OF_RBS = atoi(argv[i]);
@@ -207,7 +196,7 @@ int main(int argc, char *argv[])
   }
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
@@ -232,10 +221,10 @@ int main(int argc, char *argv[])
   defer({ free(hndl); });
 
   ccc_sub_data_t ccc_sub = {0};
-  defer({free_ccc_sub_data(&ccc_sub);});
   ccc_sub.et = gen_ev_trig();
   ccc_sub.sz_ad = 1;
   ccc_sub.ad = calloc(ccc_sub.sz_ad, sizeof(e2sm_ccc_action_def_t));
+  defer({free_ccc_sub_data(&ccc_sub);});
   assert(ccc_sub.ad != NULL);
   ccc_sub.ad[0] = gen_act_def();
 

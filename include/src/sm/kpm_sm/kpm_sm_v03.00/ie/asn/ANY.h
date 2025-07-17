@@ -29,6 +29,7 @@ extern asn_OCTET_STRING_specifics_t asn_SPC_ANY_specs_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
 
 #define ANY_compare OCTET_STRING_compare_kpm_v3_00
+#define ANY_copy    OCTET_STRING_copy_kpm_v3_00
 
 #define ANY_constraint asn_generic_no_constraint_kpm_v3_00
 
@@ -38,13 +39,13 @@ extern asn_OCTET_STRING_specifics_t asn_SPC_ANY_specs_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_XER_SUPPORT)
-#define ANY_decode_xer OCTET_STRING_decode_xer_hex_kpm_v3_00
-xer_type_encoder_f ANY_encode_xer_kpm_v3_00;
+#define ANY_decode_xer OCTET_STRING_decode_xer_hex
+xer_type_encoder_f ANY_encode_xer;
 #endif  /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_JER_SUPPORT)
 jer_type_decoder_f ANY_decode_jer;
-jer_type_encoder_f ANY_encode_jer;
+jer_type_encoder_f ANY_encode_jer_kpm_v3_00;
 #endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
 
 #if !defined(ASN_DISABLE_UPER_SUPPORT)

@@ -64,12 +64,15 @@ typedef struct{
         kpm_act_def_format_4_t frm_4;  // 8.2.1.2.4
         kpm_act_def_format_5_t frm_5;  // 8.2.1.2.5
     };
-
+  // JSON representation
+  byte_array_t json;
 } kpm_act_def_t;
 
-void free_kpm_action_def(kpm_act_def_t * src);
+void free_kpm_action_def(kpm_act_def_t* src);
 
 bool eq_kpm_action_def(kpm_act_def_t const * m0, kpm_act_def_t const * m1);
+
+kpm_act_def_t cp_kpm_action_def(const kpm_act_def_t * src);
 
 #ifdef __cplusplus
 }

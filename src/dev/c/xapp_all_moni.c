@@ -1,23 +1,37 @@
 /*
-Copyright (C) 2021-2025 BubbleRAN SAS
+ * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The OpenAirInterface Software Alliance licenses this file to You under
+ * the OAI Public License, Version 1.1  (the "License"); you may not use this file
+ * except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.openairinterface.org/?page_id=698
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-------------------------------------------------------------------------------
+ * For more information about the OpenAirInterface (OAI) Software Alliance:
+ *      contact@openairinterface.org
+ */
 
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
-#include "../include/src/xApp/e42_xapp_api.h"
-#include "../include/src/util/alg_ds/alg/defer.h"
-#include "../include/src/sm/mac_sm/mac_sm_id.h"
-#include "../include/src/sm/rlc_sm/rlc_sm_id.h"
-#include "../include/src/sm/pdcp_sm/pdcp_sm_id.h"
-#include "../include/src/sm/gtp_sm/gtp_sm_id.h"
-#include "../include/src/sm/slice_sm/slice_sm_id.h"
-#include "../include/src/sm/kpm_sm/kpm_sm_id_wrapper.h"
-#include "../include/src/sm/rc_sm/rc_sm_id.h"
-#include "../include/src/util/e2ap_ngran_types.h"
-#include "../include/src/util/alg_ds/ds/lock_guard/lock_guard.h"
+#include "src/xApp/e42_xapp_api.h"
+#include "src/util/alg_ds/alg/defer.h"
+#include "src/util/time_now_us.h"
+#include "src/sm/mac_sm/mac_sm_id.h"
+#include "src/sm/rlc_sm/rlc_sm_id.h"
+#include "src/sm/pdcp_sm/pdcp_sm_id.h"
+#include "src/sm/gtp_sm/gtp_sm_id.h"
+#include "src/sm/slice_sm/slice_sm_id.h"
+#include "src/sm/kpm_sm/kpm_sm_id_wrapper.h"
+#include "src/sm/rc_sm/rc_sm_id.h"
+#include "src/util/e2ap_ngran_types.h"
+#include "src/util/alg_ds/ds/lock_guard/lock_guard.h"
+#include "src/util/conf/xapp_sub_all_sm_conf.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,15 +47,14 @@ static void sigint_handler(int sig)
   exit_flag = true;
 }
 
-static
-pthread_mutex_t mtx;
+static pthread_mutex_t mtx;
 
 static
 void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 {
   assert(rd != NULL);
 
-  int64_t now = time_now_us_xapp_api();
+  int64_t now = time_now_us();
   if (rd->ind.type == MAC_STATS_V0) {
     printf("MAC ind_msg latency = %lu from E2-node type %d ID %d\n",
            now - rd->ind.mac.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
@@ -261,14 +274,12 @@ static e2sm_rc_ev_trg_frmt_2_t gen_rc_ev_trig_frm_2(void)
 static
 e2sm_rc_event_trigger_t gen_rc_ev_trig(e2sm_rc_ev_trigger_format_e act_frm)
 {
+  assert(act_frm == FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT && "Not supported format");
+
   e2sm_rc_event_trigger_t dst = {0};
 
-  if (act_frm == FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT) {
-    dst.format = FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT;
-    dst.frmt_2 = gen_rc_ev_trig_frm_2();
-  } else {
-    assert(0!=0 && "not support event trigger type");
-  }
+  dst.format = FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT;
+  dst.frmt_2 = gen_rc_ev_trig_frm_2();
 
   return dst;
 }
@@ -285,23 +296,27 @@ kpm_event_trigger_def_t gen_kpm_ev_trig(uint64_t period)
 }
 
 static
-meas_info_format_1_lst_t gen_meas_info_format_1_lst(const act_name_id_t act)
+meas_info_format_1_lst_t gen_meas_info_format_1_lst(act_name_id_t const* act)
 {
   meas_info_format_1_lst_t dst = {0};
 
   // use id
-  if (!strcasecmp(act.name, "null")) {
+  if (act->type == INT32_ACT_NAME_ID_E) {
     dst.meas_type.type = ID_MEAS_TYPE;
-    dst.meas_type.id = act.id;
-  } else { // use name
+    dst.meas_type.id = act->id;
+  } else if(act->type == STRING_ACT_NAME_ID_E) { // use name
     dst.meas_type.type = NAME_MEAS_TYPE;
     // ETSI TS 128 552
-    dst.meas_type.name = cp_str_to_ba(act.name);
+    dst.meas_type.name = cp_str_to_ba(act->name);
+  } else {
+    assert(0!=0 && "Unknown action type");
   }
 
   dst.label_info_lst_len = 1;
   dst.label_info_lst = calloc(1, sizeof(label_info_lst_t));
   assert(dst.label_info_lst != NULL && "Memory exhausted");
+
+  // No Label
   dst.label_info_lst[0].noLabel = calloc(1, sizeof(enum_value_e));
   assert(dst.label_info_lst[0].noLabel != NULL && "Memory exhausted");
   *dst.label_info_lst[0].noLabel = TRUE_ENUM_VALUE;
@@ -310,26 +325,25 @@ meas_info_format_1_lst_t gen_meas_info_format_1_lst(const act_name_id_t act)
 }
 
 static
-kpm_act_def_format_1_t gen_kpm_act_def_frmt_1(const sub_oran_sm_t sub_sm, uint32_t period_ms, e2_node_connected_xapp_t* n)
+kpm_act_def_format_1_t gen_kpm_act_def_frmt_1(elm_oran_sm_conf_t const* elm , uint32_t period_ms)
 {
-  (void) n;
   kpm_act_def_format_1_t dst = {0};
 
   dst.gran_period_ms = period_ms;
 
-  dst.meas_info_lst_len = sub_sm.act_len;
+  dst.meas_info_lst_len = elm->sz_act;
   dst.meas_info_lst = calloc(dst.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(dst.meas_info_lst != NULL && "Memory exhausted");
 
   for(size_t i = 0; i < dst.meas_info_lst_len; i++) {
-    dst.meas_info_lst[i] = gen_meas_info_format_1_lst(sub_sm.actions[i]);
+    dst.meas_info_lst[i] = gen_meas_info_format_1_lst(&elm->actions[i]);
   }
 
   return dst;
 }
 
 static
-test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, int value)
+test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, const int value[])
 {
   test_info_lst_t dst = {0};
 
@@ -348,17 +362,20 @@ test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, int va
 
   dst.test_cond_value->octet_string_value = calloc(1, sizeof(byte_array_t));
   assert(dst.test_cond_value->octet_string_value != NULL && "Memory exhausted");
-  const size_t len_nssai = 1;
+  const size_t len_nssai = 4;
   dst.test_cond_value->octet_string_value->len = len_nssai;
   dst.test_cond_value->octet_string_value->buf = calloc(len_nssai, sizeof(uint8_t));
   assert(dst.test_cond_value->octet_string_value->buf != NULL && "Memory exhausted");
-  dst.test_cond_value->octet_string_value->buf[0] = value;
+  dst.test_cond_value->octet_string_value->buf[0] = value[0];
+  dst.test_cond_value->octet_string_value->buf[1] = value[1];
+  dst.test_cond_value->octet_string_value->buf[2] = value[2];
+  dst.test_cond_value->octet_string_value->buf[3] = value[3];
 
   return dst;
 }
 
 static
-kpm_act_def_format_4_t gen_kpm_act_def_frmt_4(const sub_oran_sm_t sub_sm, uint32_t period_ms, e2_node_connected_xapp_t* n)
+kpm_act_def_format_4_t gen_kpm_act_def_frmt_4(elm_oran_sm_conf_t const* elm, uint32_t period_ms)
 {
   kpm_act_def_format_4_t dst = {0};
 
@@ -371,43 +388,44 @@ kpm_act_def_format_4_t gen_kpm_act_def_frmt_4(const sub_oran_sm_t sub_sm, uint32
 
   // Filter connected UEs by S-NSSAI criteria
   test_cond_type_e const type = S_NSSAI_TEST_COND_TYPE;
-  test_cond_e const condition = EQUAL_TEST_COND;
-  int const value = 1;
-  *test_info_lst = filter_predicate(type, condition, value);
+  test_cond_e const condition = GREATERTHAN_TEST_COND; // EQUAL_TEST_COND
+  // 8.3.11 Measurement label snssai
+  //  All zeros should not be allowed in 3gpp
+  //  or OAI will crash
+  //  We just want to get all the UEs...
+  int const nssai[] = {0,0,0,0}; // sst, sd16, sd8, sd0
+  *test_info_lst = filter_predicate(type, condition, nssai);
 
   // Action definition Format 1
-  dst.action_def_format_1 = gen_kpm_act_def_frmt_1(sub_sm, period_ms, n);  // 8.2.1.2.1
+  dst.action_def_format_1 = gen_kpm_act_def_frmt_1(elm, period_ms);  // 8.2.1.2.1
 
   return dst;
 }
 
 static
-e2sm_rc_act_def_frmt_1_t gen_rc_act_def_frm_1(const sub_oran_sm_t sub_sm)
+e2sm_rc_act_def_frmt_1_t gen_rc_act_def_frm_1(elm_oran_sm_conf_t const* elm)
 {
   e2sm_rc_act_def_frmt_1_t act_def_frm_1 = {0};
 
   // Parameters to be Reported List
   // [1-65535]
   // 8.2.2
-  act_def_frm_1.sz_param_report_def = sub_sm.act_len;
+  act_def_frm_1.sz_param_report_def = elm->sz_act;
   act_def_frm_1.param_report_def = calloc(act_def_frm_1.sz_param_report_def, sizeof(param_report_def_t));
   assert(act_def_frm_1.param_report_def != NULL && "Memory exhausted");
 
   // Current UE ID RAN Parameter
   for (size_t i = 0; i < act_def_frm_1.sz_param_report_def; i++) {
     // use id
-    if (!strcasecmp(sub_sm.actions[i].name, "null")) {
-      act_def_frm_1.param_report_def[i].ran_param_id = sub_sm.actions[i].id;
-    } else { // use name
-      assert(0!=0 && "not supported Name for RC action definition\n");
-    }
+    assert(elm->actions[i].type == INT32_ACT_NAME_ID_E);
+    act_def_frm_1.param_report_def[i].ran_param_id = elm->actions[i].id;
   }
 
   return act_def_frm_1;
 }
 
 static
-e2sm_rc_action_def_t gen_rc_act_def(const sub_oran_sm_t sub_sm, uint32_t ric_style_type, e2sm_rc_act_def_format_e act_frmt)
+e2sm_rc_action_def_t gen_rc_act_def(elm_oran_sm_conf_t const* sub_sm, uint32_t ric_style_type, e2sm_rc_act_def_format_e act_frmt)
 {
   e2sm_rc_action_def_t dst = {0};
   dst.ric_style_type = ric_style_type;
@@ -422,16 +440,16 @@ e2sm_rc_action_def_t gen_rc_act_def(const sub_oran_sm_t sub_sm, uint32_t ric_sty
 }
 
 static
-kpm_act_def_t gen_kpm_act_def(const sub_oran_sm_t sub_sm, format_action_def_e act_frm, uint32_t period_ms, e2_node_connected_xapp_t* n)
+kpm_act_def_t gen_kpm_act_def(elm_oran_sm_conf_t const* elm, format_action_def_e act_frm, uint32_t period_ms)
 {
   kpm_act_def_t dst = {0};
 
   if (act_frm == FORMAT_1_ACTION_DEFINITION) {
     dst.type = FORMAT_1_ACTION_DEFINITION;
-    dst.frm_1 = gen_kpm_act_def_frmt_1(sub_sm, period_ms, n);
+    dst.frm_1 = gen_kpm_act_def_frmt_1(elm, period_ms);
   } else if (act_frm == FORMAT_4_ACTION_DEFINITION) {
     dst.type = FORMAT_4_ACTION_DEFINITION;
-    dst.frm_4 = gen_kpm_act_def_frmt_4(sub_sm, period_ms, n);
+    dst.frm_4 = gen_kpm_act_def_frmt_4(elm, period_ms);
   } else {
     assert(0!=0 && "not support action definition type");
   }
@@ -442,8 +460,39 @@ kpm_act_def_t gen_kpm_act_def(const sub_oran_sm_t sub_sm, format_action_def_e ac
 size_t max_handle = 256;
 size_t c_handle = 0;
 
+char* tbl_period_ms[] = {
+  "1_ms",
+  "2_ms", 
+  "5_ms",
+  "10_ms", 
+  "100_ms",
+  "1000_ms",
+};
+
+static 
+char* convert_size_to_string(size_t periodicity_ms)
+{
+  if(periodicity_ms == 1){
+    return tbl_period_ms[0];
+  } else if(periodicity_ms == 2){
+    return tbl_period_ms[1];
+  } else if(periodicity_ms == 5){
+    return tbl_period_ms[2];
+  } else if(periodicity_ms == 10){
+    return tbl_period_ms[3];
+  } else if(periodicity_ms == 100){
+    return tbl_period_ms[4];
+  } else if(periodicity_ms == 1000){
+    return tbl_period_ms[5];
+  } else {
+    assert(0!=0 && "unknown value!");
+  }
+
+  return NULL;
+}
+
 static
-void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xapp_t* handle, fr_args_t args) {
+void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xapp_t* handle, sub_all_sm_conf_t const* conf) {
   // send subscription request to each e2 nodes
   if (E2AP_NODE_IS_MONOLITHIC(n->id.type))
     printf("E2 node idx %ld info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s\n",
@@ -465,52 +514,58 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
   for (size_t j = 0; j < n->len_rf; j++)
     printf("Registered E2 node idx %ld, supported RAN Func ID = %d\n ", n_idx, n->rf[j].id);
 
-  uint16_t num_cust_sm = args.sub_cust_sm_len;
-  for (int32_t i = 0; i < num_cust_sm; i++) {
+  size_t num_cust_sm = conf->cust.sz_sub_cust_sm;
+  for (size_t i = 0; i < num_cust_sm; i++) {
     uint16_t sm_id;
     bool do_sub = false;
-    if (!strcasecmp(args.sub_cust_sm[i].name, "mac")) {
+    char* name = conf->cust.sub_cust_sm[i].name;
+    if (!strcasecmp(name, "mac")) {
       sm_id = SM_MAC_ID;
       if (n->id.type == e2ap_ngran_gNB || n->id.type == e2ap_ngran_gNB_DU || n->id.type == e2ap_ngran_eNB)
         do_sub = true;
-    } else if (!strcasecmp(args.sub_cust_sm[i].name, "rlc")) {
+    } else if (!strcasecmp(name, "rlc")) {
       sm_id = SM_RLC_ID;
       if (n->id.type == e2ap_ngran_gNB || n->id.type == e2ap_ngran_gNB_DU || n->id.type == e2ap_ngran_eNB)
         do_sub = true;
-    } else if (!strcasecmp(args.sub_cust_sm[i].name, "pdcp")) {
+    } else if (!strcasecmp(name, "pdcp")) {
       sm_id = SM_PDCP_ID;
       if (n->id.type == e2ap_ngran_gNB || n->id.type == e2ap_ngran_gNB_CU || n->id.type == e2ap_ngran_eNB)
         do_sub = true;
-    } else if (!strcasecmp(args.sub_cust_sm[i].name, "gtp")) {
+    } else if (!strcasecmp(name, "gtp")) {
       sm_id = SM_GTP_ID;
       if (n->id.type == e2ap_ngran_gNB)
         do_sub = true;
-    } else if (!strcasecmp(args.sub_cust_sm[i].name, "slice")) {
+    } else if (!strcasecmp(name, "slice")) {
       sm_id = SM_SLICE_ID;
       if (n->id.type == e2ap_ngran_gNB || n->id.type == e2ap_ngran_eNB)
         do_sub = true;
     } else {
-      assert(0!=0 && "unknown SM in .conf");
+      assert(0!=0 && "unknown SM in .ymal");
     }
 
     if (!do_sub)
       continue;
     printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
-    handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, (void*)args.sub_cust_sm[i].time, sm_cb_all);
+
+    // No-owning char*
+   const char* period = convert_size_to_string(conf->cust.sub_cust_sm[i].periodicity_ms);
+
+    handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, (void*)period, sm_cb_all);
     assert(handle[c_handle].success == true);
     c_handle+=1;
   }
 
-  uint16_t num_oran_sm = args.sub_oran_sm_len;
+  uint16_t num_oran_sm = conf->oran.sz_elm;
   for (int32_t i = 0; i < num_oran_sm; i++) {
+    elm_oran_sm_conf_t const* elm = &conf->oran.elm[i];
     uint16_t sm_id;
-    if (!strcasecmp(args.sub_oran_sm[i].name, "kpm")) {
+    if (!strcasecmp(elm->name, "kpm")) {
       sm_id = SM_KPM_ID;
       kpm_sub_data_t kpm_sub = {0};
       defer({ free_kpm_sub_data(&kpm_sub); });
 
       // KPM Event Trigger
-      uint64_t period_ms = args.sub_oran_sm[i].time;
+      uint64_t period_ms = elm->periodicity_ms;
       kpm_sub.ev_trg_def = gen_kpm_ev_trig(period_ms);
       printf("[xApp]: reporting period = %lu [ms]\n", period_ms);
 
@@ -518,26 +573,26 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
       kpm_sub.sz_ad = 1;
       kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
       assert(kpm_sub.ad != NULL && "Memory exhausted");
-      format_action_def_e act_type = FORMAT_1_ACTION_DEFINITION;
-      if (args.sub_oran_sm[i].format == 1)
+      format_action_def_e act_type;
+      if (elm->format == 1)
         act_type = FORMAT_1_ACTION_DEFINITION;
-      else if (args.sub_oran_sm[i].format == 4)
+      else if (elm->format == 4)
         act_type = FORMAT_4_ACTION_DEFINITION;
       else
         assert(0!=0 && "not supported action definition format");
 
-      *kpm_sub.ad = gen_kpm_act_def((const sub_oran_sm_t)args.sub_oran_sm[i], act_type, period_ms, n);
+      *kpm_sub.ad = gen_kpm_act_def(elm, act_type, period_ms);
 
       // TODO: implement e2ap_ngran_eNB
       if (n->id.type == e2ap_ngran_eNB)
         continue;
-      if (strcasecmp(args.sub_oran_sm[i].ran_type, get_e2ap_ngran_name(n->id.type)))
+      if (strcasecmp(elm->ran_type, get_e2ap_ngran_name(n->id.type)))
         continue;
       printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
       handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, &kpm_sub, sm_cb_all);
       assert(handle[c_handle].success == true);
       c_handle+=1;
-    } else if (!strcasecmp(args.sub_oran_sm[i].name, "rc")) {
+    } else if (!strcasecmp(elm->name, "rc")) {
       sm_id = SM_RC_ID;
       rc_sub_data_t rc_sub = {0};
       defer({ free_rc_sub_data(&rc_sub); });
@@ -549,35 +604,40 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
       rc_sub.sz_ad = 1;
       rc_sub.ad = calloc(rc_sub.sz_ad, sizeof(e2sm_rc_action_def_t));
       assert(rc_sub.ad != NULL && "Memory exhausted");
-      assert(args.sub_oran_sm[i].format == 1);
-      e2sm_rc_act_def_format_e act_type = FORMAT_1_E2SM_RC_ACT_DEF;
+      e2sm_rc_act_def_format_e act_type;
+      if (elm->format == 1)
+        act_type = FORMAT_1_E2SM_RC_ACT_DEF;
+      else
+        assert(0!=0 && "not supported action definition format");
 
       // use RIC style 2 by default
-      *rc_sub.ad = gen_rc_act_def((const sub_oran_sm_t)args.sub_oran_sm[i], 2, act_type);
+      *rc_sub.ad = gen_rc_act_def(elm, 2, act_type);
 
       // RC HO only supports for e2ap_ngran_gNB
       if (n->id.type == e2ap_ngran_eNB || n->id.type == e2ap_ngran_gNB_CU || n->id.type == e2ap_ngran_gNB_DU)
         continue;
-      if (strcasecmp(args.sub_oran_sm[i].ran_type, get_e2ap_ngran_name(n->id.type)))
+      if (strcasecmp(elm->ran_type, get_e2ap_ngran_name(n->id.type)))
         continue;
       printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
       handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, &rc_sub, sm_cb_all);
       assert(handle[c_handle].success == true);
       c_handle+=1;
     } else {
-      assert(0!=0 && "unknown SM in .conf");
+      assert(0!=0 && "unknown SM in .ymal");
     }
   }
 }
 
 int main(int argc, char *argv[])
 {
-  srand(time(0));
-  fr_args_t args = init_fr_args(argc, argv);
-  defer({ free_fr_args(&args); });
+  assert(argc == 2 && "Configuration file needed!");
 
   //Init the xApp
-  init_xapp_api(&args);
+  init_xapp_api(argv[1]);
+  sub_all_sm_conf_t conf = init_sub_all_sm_conf(argv[1]);
+  defer({ free_sub_all_sm_conf(&conf); });
+  sleep(1);
+
   signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_api()
   signal(SIGTERM, sigint_handler);
   sleep(1);
@@ -608,7 +668,7 @@ int main(int argc, char *argv[])
   defer({ free_e2_node_arr_xapp(&nodes); });
   for (size_t i = 0; i < nodes.len; i++) {
     printf("Sending subscription \n");
-    send_subscription_req(&nodes.n[i], i, handle, args);
+    send_subscription_req(&nodes.n[i], i, handle, &conf);
   }
 
   // case2: send subscription req to the new connected e2 node
@@ -640,7 +700,7 @@ int main(int argc, char *argv[])
           }
           if (new_type || new_nb_id) {
             printf("/////////////// send sub req to new E2 node, nb_id %d, type %s //////////////\n", cur_nodes.n[i].id.nb_id.nb_id, get_e2ap_ngran_name(cur_nodes.n[i].id.type));
-            send_subscription_req(&cur_nodes.n[i], i, handle, args);
+            send_subscription_req(&cur_nodes.n[i], i, handle, &conf);
           }
         }
       }
@@ -669,6 +729,4 @@ int main(int argc, char *argv[])
 
   printf("Test xApp run SUCCESSFULLY\n");
 }
-
-
 
