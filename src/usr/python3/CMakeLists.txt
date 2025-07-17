@@ -21,6 +21,9 @@ list(APPEND lst_dst "${dst_dir}mntr.py")
 list(APPEND lst_src "${src_dir}slicing.py")
 list(APPEND lst_dst "${dst_dir}slicing.py")
 
+list(APPEND lst_src "${src_dir}bwp.py")
+list(APPEND lst_dst "${dst_dir}bwp.py")
+
 list(APPEND lst_src "${src_dir}../../../lib/_xapp_usr_sdk.so")
 list(APPEND lst_dst "${dst_dir}_xapp_usr_sdk.so")
 
