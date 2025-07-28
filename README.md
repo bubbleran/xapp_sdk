@@ -94,7 +94,7 @@ sudo ldconfig
 ## Run the xApp (i.e helloworld in c)
 
 ```
-./src/dev/c/hw -c ../conf/default.conf
+./src/dev/c/hw ../conf/xapp.yaml
 ```
 
 ## Run the xApp (i.e helloworld in python)
@@ -102,7 +102,7 @@ sudo ldconfig
 ```
 cd build/src/usr/python3 
 
-python3 mntr.py -c ../../../conf/default.conf
+python3 mntr.py ../../../conf/xapp.yaml
 ```
 
 
