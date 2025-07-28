@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "xapp_sdk_api.h"
 
 int main(int argc, char** argv)
@@ -23,8 +24,10 @@ int main(int argc, char** argv)
   assert(arr.n[idx].ue_ho[0].ho.target_pci != NULL && "Target physical cell ID needed!");
   assert(arr.n[idx].ue_ho[0].ho.target_ssb_nr_arfcn != NULL && "Target ssb ARFCN needed!");
 
-  uint16_t target_pci = arr.n[idx].ue_ho[0].ho.target_pci[0]; 
-  size_t target_ssb_nr_arfcn = arr.n[idx].ue_ho[0].ho.target_ssb_nr_arfcn[0];
+  uint16_t const target_pci = *arr.n[idx].ue_ho[0].ho.target_pci;
+  size_t const target_ssb_nr_arfcn = *arr.n[idx].ue_ho[0].ho.target_ssb_nr_arfcn;
+
+  printf("target_pci %u target_ssb_nr_arfcn %lu\n", target_pci, target_ssb_nr_arfcn);
 
   ho_xapp_sdk(node, ue, target_pci, target_ssb_nr_arfcn);
 
