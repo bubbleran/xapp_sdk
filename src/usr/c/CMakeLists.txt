@@ -10,11 +10,11 @@ set(LIST_XAPP
   )
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
-  set(E42_SDK_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/libxapp_sdk_c.a")
+  set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c.a")
 elseif(XAPP_DB STREQUAL "SQLITE3_XAPP")
-  set(E42_SDK_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/libxapp_sdk_c_sqlite3.a")
+  set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c_sqlite3.a")
 else(XAPP_DB STREQUAL "MYSQL_XAPP")
-  set(E42_SDK_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/libxapp_sdk_c_mysql.a")
+  set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c_mysql.a")
 endif()
 
 foreach(XAPP ${LIST_XAPP})
@@ -30,6 +30,7 @@ foreach(XAPP ${LIST_XAPP})
                           -lm
                           -lsctp
                           -lmysqlclient
+                          -ldl
                           )
 
     target_compile_definitions(${XAPP} PUBLIC ${E2AP_VERSION} ${KPM_VERSION}) 
