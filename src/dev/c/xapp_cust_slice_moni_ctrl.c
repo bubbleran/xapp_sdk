@@ -49,10 +49,27 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == SLICE_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("SLICE ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("SLICE ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.slice.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
-  if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0)
+
+  slice_ind_msg_t const* ind_msg = &rd->ind.slice.msg;
+  for (uint32_t i = 0; i < ind_msg->slice_conf.dl.len_slices; i++) {
+    printf("Slice idx/total %d/%d, Id %d, slice sched algo %s\n",
+           i,
+           ind_msg->slice_conf.dl.len_slices,
+           ind_msg->slice_conf.dl.slices[i].id,
+           ind_msg->slice_conf.dl.sched_name);
+  }
+  if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0) {
+    // get the first rnti for later assoc ctrl
     assoc_rnti = rd->ind.slice.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
+    for (uint32_t i = 0; i < rd->ind.slice.msg.ue_slice_conf.ues->len_dl; i++) {
+      printf("UE RNTI %4x, assoc dl id/total %d/%d\n",
+             rd->ind.slice.msg.ue_slice_conf.ues->rnti,
+             rd->ind.slice.msg.ue_slice_conf.ues->dl_id[i],
+             rd->ind.slice.msg.ue_slice_conf.ues->len_dl);
+    }
+  }
 }
 
 static
@@ -68,7 +85,8 @@ void fill_add_mod_slice(slice_conf_t* add)
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_NVS;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EDF;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EEDF;
-  slice_algorithm_e dl_type = SLICE_ALG_SM_V0_PR;
+  //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_PR;
+  slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EPR;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_NONE;
   assert(dl_type >= 0);
   if (dl_type != 0)
@@ -99,6 +117,10 @@ void fill_add_mod_slice(slice_conf_t* add)
       strcpy(dl_name, "PR");
       len_dl_name = strlen("PR");
       break;
+    case SLICE_ALG_SM_V0_EPR:
+      strcpy(dl_name, "EPR");
+      len_dl_name = strlen("EPR");
+      break;
     case SLICE_ALG_SM_V0_NONE:
     default:
       strcpy(dl_name, "NULL");
@@ -126,6 +148,17 @@ void fill_add_mod_slice(slice_conf_t* add)
   int pr_max[] = {20, 40, 100};
   int pr_min[] = {20, 20, 0};
   int pr_ded[] = {0, 20, 0};
+  /// SET DL EPR SLICE PARAMETER/// // TODO: check value constraint
+  int ePR_max[] = {50, 70, 70};
+  int ePR_min[] = {20, 30, 40};
+  int ePR_ded[] = {10, 20, 30};
+  // Check constraint
+  for (size_t i = 0; i < dl_len_slices; i++) {
+    if (dl_type == SLICE_ALG_SM_V0_PR)
+      assert(100 >= pr_max[i] && pr_max[i] >= pr_min[i] && pr_min[i] >= pr_ded[i] && pr_ded[i] >= 0 && "Failed to meet RRM Policy Constraint");
+    else if (dl_type == SLICE_ALG_SM_V0_EPR)
+      assert(100 >= ePR_max[i] && ePR_max[i] >= ePR_min[i] && ePR_min[i] >= ePR_ded[i] && ePR_ded[i] >= 0 && "Failed to meet RRM Policy Constraint");
+  }
 
   /// DL SLICE CONTROL INFO ///
   ul_dl_slice_conf_t* add_dl = &add->dl;
@@ -209,6 +242,12 @@ void fill_add_mod_slice(slice_conf_t* add)
       s->params.u.pr.min_ratio = pr_min[i];
       s->params.u.pr.dedicated_ratio = pr_ded[i];
       printf("ADD PR DL SLICE: id %u, max_ratio %d, min_ratio %d, dedicated_ratio %d\n", s->id, s->params.u.pr.max_ratio, s->params.u.pr.min_ratio, s->params.u.pr.dedicated_ratio);
+    } else if (dl_type == SLICE_ALG_SM_V0_EPR) {
+      s->params.type = SLICE_ALG_SM_V0_EPR;
+      s->params.u.epr.max_ratio = ePR_max[i];
+      s->params.u.epr.min_ratio = ePR_min[i];
+      s->params.u.epr.dedicated_ratio = ePR_ded[i];
+      printf("ADD ePR DL SLICE: id %u, max_ratio %d, min_ratio %d, dedicated_ratio %d\n", s->id, s->params.u.epr.max_ratio, s->params.u.epr.min_ratio, s->params.u.epr.dedicated_ratio);
     } else {
       assert(0 != 0 && "Unknown type encountered");
     }
@@ -337,15 +376,60 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
     /// SET RNTI ///
     assoc->ues[i].rnti = assoc_rnti; // TODO: get rnti from sm_cb_slice()
     /// SET DL ID ///
-    assoc->ues[i].dl_id = 2; // dl_id = -1 means UE will not perform DL association
-    if ((int32_t)assoc->ues[i].dl_id != -1){
-      printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].dl_id);
+    assoc->ues[i].len_dl = 1;
+    assert(assoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
+    if (assoc->ues[i].len_dl > 0) {
+      assoc->ues[i].dl_id = calloc(assoc->ues[i].len_dl, sizeof(uint32_t));
+      assert(assoc->ues[i].dl_id != NULL && "Memory exhausted");
+    }
+    /// SET DL ID ///
+    uint32_t dl_id[2] = {2}; // TODO: get the DL slice id from sm_cb_slice()
+    for (uint32_t j = 0; j < assoc->ues[i].len_dl; ++j) {
+      assoc->ues[i].dl_id[j] = dl_id[j];
+      printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].dl_id[j]);
     }
     /*
     /// SET UL ID ///
     assoc->ues[i].ul_id = 2; // ul_id = -1 means UE will not perform UL association
     if ((int32_t)assoc->ues[i].ul_id != -1){
       printf("ASSOC UL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].ul_id); 
+    }
+    */
+  }
+}
+
+static
+void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
+{
+  assert(deassoc != NULL);
+
+  /// SET ASSOC UE NUMBER ///
+  deassoc->len_ue_slice = 1;
+  if(deassoc->len_ue_slice > 0){
+    deassoc->ues = calloc(deassoc->len_ue_slice, sizeof(ue_slice_assoc_t));
+    assert(deassoc->ues);
+  }
+
+  for(uint32_t i = 0; i < deassoc->len_ue_slice; ++i) {
+    /// SET RNTI ///
+    deassoc->ues[i].rnti = assoc_rnti; // TODO: get rnti from sm_cb_slice()
+    /// SET DL ID ///
+    deassoc->ues[i].len_dl = 1;
+    assert(deassoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
+    if (deassoc->ues[i].len_dl > 0) {
+      deassoc->ues[i].dl_id = calloc(deassoc->ues[i].len_dl, sizeof(uint32_t));
+      assert(deassoc->ues[i].dl_id != NULL && "Memory exhausted");
+    }
+    uint32_t dl_id[1] = {2}; // TODO: get the DL slice id from sm_cb_slice()
+    for (uint32_t j = 0; j < deassoc->ues[i].len_dl; ++j) {
+      deassoc->ues[i].dl_id[j] = dl_id[j];
+      printf("DEASSOC DL SLICE: 0x%x, id %u\n", deassoc->ues[i].rnti, deassoc->ues[i].dl_id[j]);
+    }
+    /*
+    /// SET UL ID ///
+    deassoc->ues[i].ul_id = 2; // ul_id = -1 means UE will not perform UL association
+    if ((int32_t)deassoc->ues[i].ul_id != -1){
+      printf("DEASSOC UL SLICE: 0x%x, id %u\n", deassoc->ues[i].rnti, deassoc->ues[i].ul_id);
     }
     */
   }
@@ -374,6 +458,10 @@ sm_ag_if_wr_t fill_slice_sm_ctrl_req(uint16_t ran_func_id, slice_ctrl_msg_e type
       /// ASSOC SLICE ///
       wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
       fill_assoc_ue_slice(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice);
+    } else if (type == SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC) {
+      /// DEASSOC SLICE ///
+      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC;
+      fill_deassoc_ue_slice(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice);
     } else {
       assert(0 != 0 && "Unknown slice ctrl type");
     }
@@ -395,8 +483,10 @@ int main(int argc, char *argv[])
 
   //Init the xApp
   init_xapp_api(argv[1]);
-  signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_api()
-  signal(SIGTERM, sigint_handler);
+  void (*fp_rc)(int) = signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_ap  
+  assert(fp_rc != SIG_ERR);
+  fp_rc = signal(SIGTERM, sigint_handler);
+  assert(fp_rc != SIG_ERR);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
@@ -406,7 +496,7 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes len = %d\n", nodes.len);
 
   // SLICE indication
-  const char* inter_t = "5_ms";
+  const char* inter_t = "1000_ms";
   sm_ans_xapp_t* slice_handle = NULL;
 
   if(nodes.len > 0){
@@ -433,7 +523,6 @@ int main(int argc, char *argv[])
     // Control ADD slice
     sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_ADD);
     control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_add);
-    free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg);
 
     sleep(5);
 
@@ -443,6 +532,19 @@ int main(int argc, char *argv[])
     free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg);
 
     sleep(5);
+
+    // Control DEASSOC slice
+    if (ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.len_slices > 0 &&
+         (ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices[0].params.type == SLICE_ALG_SM_V0_NVS ||
+          ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices[0].params.type == SLICE_ALG_SM_V0_EPR)) {
+
+      sm_ag_if_wr_t ctrl_msg_deassoc = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC);
+      control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_deassoc);
+      free_slice_ctrl_msg(&ctrl_msg_deassoc.ctrl.slice_req_ctrl.msg);
+
+      sleep(5);
+    }
+    free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg);
 
     // Control DEL slice
     sm_ag_if_wr_t ctrl_msg_del = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_DEL);

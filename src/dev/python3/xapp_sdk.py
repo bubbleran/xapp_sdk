@@ -1905,29 +1905,6 @@ class ACT_NAME_ID_Vector(object):
 
 # Register ACT_NAME_ID_Vector in _xapp_sdk_python:
 _xapp_sdk_python.ACT_NAME_ID_Vector_swigregister(ACT_NAME_ID_Vector)
-class ue_slice_assoc_array(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, nelements):
-        _xapp_sdk_python.ue_slice_assoc_array_swiginit(self, _xapp_sdk_python.new_ue_slice_assoc_array(nelements))
-    __swig_destroy__ = _xapp_sdk_python.delete_ue_slice_assoc_array
-
-    def __getitem__(self, index):
-        return _xapp_sdk_python.ue_slice_assoc_array___getitem__(self, index)
-
-    def __setitem__(self, index, value):
-        return _xapp_sdk_python.ue_slice_assoc_array___setitem__(self, index, value)
-
-    def cast(self):
-        return _xapp_sdk_python.ue_slice_assoc_array_cast(self)
-
-    @staticmethod
-    def frompointer(t):
-        return _xapp_sdk_python.ue_slice_assoc_array_frompointer(t)
-
-# Register ue_slice_assoc_array in _xapp_sdk_python:
-_xapp_sdk_python.ue_slice_assoc_array_swigregister(ue_slice_assoc_array)
 class slice_array(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -1951,6 +1928,52 @@ class slice_array(object):
 
 # Register slice_array in _xapp_sdk_python:
 _xapp_sdk_python.slice_array_swigregister(slice_array)
+class ue_slice_assoc_array(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _xapp_sdk_python.ue_slice_assoc_array_swiginit(self, _xapp_sdk_python.new_ue_slice_assoc_array(nelements))
+    __swig_destroy__ = _xapp_sdk_python.delete_ue_slice_assoc_array
+
+    def __getitem__(self, index):
+        return _xapp_sdk_python.ue_slice_assoc_array___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _xapp_sdk_python.ue_slice_assoc_array___setitem__(self, index, value)
+
+    def cast(self):
+        return _xapp_sdk_python.ue_slice_assoc_array_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _xapp_sdk_python.ue_slice_assoc_array_frompointer(t)
+
+# Register ue_slice_assoc_array in _xapp_sdk_python:
+_xapp_sdk_python.ue_slice_assoc_array_swigregister(ue_slice_assoc_array)
+class assoc_dl_array(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _xapp_sdk_python.assoc_dl_array_swiginit(self, _xapp_sdk_python.new_assoc_dl_array(nelements))
+    __swig_destroy__ = _xapp_sdk_python.delete_assoc_dl_array
+
+    def __getitem__(self, index):
+        return _xapp_sdk_python.assoc_dl_array___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _xapp_sdk_python.assoc_dl_array___setitem__(self, index, value)
+
+    def cast(self):
+        return _xapp_sdk_python.assoc_dl_array_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _xapp_sdk_python.assoc_dl_array_frompointer(t)
+
+# Register assoc_dl_array in _xapp_sdk_python:
+_xapp_sdk_python.assoc_dl_array_swigregister(assoc_dl_array)
 class del_dl_array(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2214,6 +2237,20 @@ class swig_slice_conf_t(object):
 
 # Register swig_slice_conf_t in _xapp_sdk_python:
 _xapp_sdk_python.swig_slice_conf_t_swigregister(swig_slice_conf_t)
+class swig_ue_slice_assoc_t(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    len_dl = property(_xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_set)
+    dl_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_set)
+    ul_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_set)
+    rnti = property(_xapp_sdk_python.swig_ue_slice_assoc_t_rnti_get, _xapp_sdk_python.swig_ue_slice_assoc_t_rnti_set)
+
+    def __init__(self):
+        _xapp_sdk_python.swig_ue_slice_assoc_t_swiginit(self, _xapp_sdk_python.new_swig_ue_slice_assoc_t())
+    __swig_destroy__ = _xapp_sdk_python.delete_swig_ue_slice_assoc_t
+
+# Register swig_ue_slice_assoc_t in _xapp_sdk_python:
+_xapp_sdk_python.swig_ue_slice_assoc_t_swigregister(swig_ue_slice_assoc_t)
 class swig_ue_slice_conf_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -3733,6 +3770,7 @@ SLICE_ALG_SM_V0_SCN19 = _xapp_sdk_python.SLICE_ALG_SM_V0_SCN19
 SLICE_ALG_SM_V0_EDF = _xapp_sdk_python.SLICE_ALG_SM_V0_EDF
 SLICE_ALG_SM_V0_EEDF = _xapp_sdk_python.SLICE_ALG_SM_V0_EEDF
 SLICE_ALG_SM_V0_PR = _xapp_sdk_python.SLICE_ALG_SM_V0_PR
+SLICE_ALG_SM_V0_EPR = _xapp_sdk_python.SLICE_ALG_SM_V0_EPR
 SLICE_ALG_SM_V0_END = _xapp_sdk_python.SLICE_ALG_SM_V0_END
 class static_slice_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -3965,6 +4003,7 @@ class slice_params_u(object):
     edf = property(_xapp_sdk_python.slice_params_u_edf_get, _xapp_sdk_python.slice_params_u_edf_set)
     eedf = property(_xapp_sdk_python.slice_params_u_eedf_get, _xapp_sdk_python.slice_params_u_eedf_set)
     pr = property(_xapp_sdk_python.slice_params_u_pr_get, _xapp_sdk_python.slice_params_u_pr_set)
+    epr = property(_xapp_sdk_python.slice_params_u_epr_get, _xapp_sdk_python.slice_params_u_epr_set)
 
     def __init__(self):
         _xapp_sdk_python.slice_params_u_swiginit(self, _xapp_sdk_python.new_slice_params_u())
@@ -4029,6 +4068,7 @@ _xapp_sdk_python.slice_conf_t_swigregister(slice_conf_t)
 class ue_slice_assoc_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    len_dl = property(_xapp_sdk_python.ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.ue_slice_assoc_t_dl_id_set)
     ul_id = property(_xapp_sdk_python.ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.ue_slice_assoc_t_ul_id_set)
     rnti = property(_xapp_sdk_python.ue_slice_assoc_t_rnti_get, _xapp_sdk_python.ue_slice_assoc_t_rnti_set)
@@ -4122,6 +4162,7 @@ def eq_slice_ctrl_hdr(m0, m1):
 SLICE_CTRL_SM_V0_ADD = _xapp_sdk_python.SLICE_CTRL_SM_V0_ADD
 SLICE_CTRL_SM_V0_DEL = _xapp_sdk_python.SLICE_CTRL_SM_V0_DEL
 SLICE_CTRL_SM_V0_UE_SLICE_ASSOC = _xapp_sdk_python.SLICE_CTRL_SM_V0_UE_SLICE_ASSOC
+SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC = _xapp_sdk_python.SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC
 SLICE_CTRL_SM_V0_END = _xapp_sdk_python.SLICE_CTRL_SM_V0_END
 class del_slice_conf_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")

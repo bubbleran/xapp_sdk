@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
   for (size_t i = 0; i < nodes.len; i++) {
     e2ap_ngran_node_t ran_type = nodes.n[i].id.type;
     if (E2AP_NODE_IS_MONOLITHIC(ran_type))
-      printf("E2 node %ld info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s\n",
+      printf("E2 node %lu info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s\n",
              i,
              nodes.n[i].id.nb_id.nb_id,
              nodes.n[i].id.plmn.mcc,
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
              nodes.n[i].id.plmn.mnc_digit_len,
              get_e2ap_ngran_name(ran_type));
     else
-      printf("E2 node %ld info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s, cu_du_id %lu\n",
+      printf("E2 node %ld info: nb_id %u, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s, cu_du_id %lu\n",
              i,
              nodes.n[i].id.nb_id.nb_id,
              nodes.n[i].id.plmn.mcc,
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
              get_e2ap_ngran_name(ran_type),
              *nodes.n[i].id.cu_du_id);
 
-    printf("E2 node %ld supported RAN function's IDs:", i);
+    printf("E2 node %lu supported RAN function's IDs:", i);
     for (size_t j = 0; j < nodes.n[i].len_rf; j++)
       printf(", %d", nodes.n[i].rf[j].id);
     printf("\n");

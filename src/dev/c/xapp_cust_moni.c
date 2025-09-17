@@ -42,7 +42,7 @@ void sm_cb_mac(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == MAC_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("MAC ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("MAC ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.mac.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
@@ -55,7 +55,7 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == RLC_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("RLC ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("RLC ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.rlc.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
@@ -68,7 +68,7 @@ void sm_cb_pdcp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == PDCP_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("PDCP ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("PDCP ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.pdcp.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
@@ -81,7 +81,7 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == GTP_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("GTP ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("GTP ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.gtp.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
@@ -94,7 +94,7 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   assert(rd->ind.type == SLICE_STATS_V0);
 
   int64_t now = time_now_us_xapp_api();
-  printf("SLICE ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("SLICE ind_msg latency = %ld from E2-node type %d ID %u\n",
          now - rd->ind.slice.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
@@ -107,7 +107,7 @@ void sm_cb_tc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   (void)e2_node;
 
   int64_t now = time_now_us_xapp_api();
-  printf("%ld, TC ind_msg latency = %ld from E2-node type %d ID %d\n",
+  printf("%ld, TC ind_msg latency = %ld from E2-node type %d ID %u\n",
          time_now_us_xapp_api(), now - rd->ind.tc.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 
 //  tc_ind_msg_t const* ind = &rd->ind.tc.msg;
@@ -231,32 +231,32 @@ int main(int argc, char *argv[])
 
       const char* period = convert_periodicity(conf.sub_cust_sm[j].periodicity_ms);
       if (!strcasecmp(conf.sub_cust_sm[j].name, "mac")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_MAC_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_MAC_ID, i, n->id.nb_id.nb_id);
         mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_MAC_ID, (void*)period, sm_cb_mac);
         assert(mac_handle[i].success == true);
 
       } else if (!strcasecmp(conf.sub_cust_sm[j].name, "rlc")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_RLC_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_RLC_ID, i, n->id.nb_id.nb_id);
         rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_RLC_ID, (void*)period, sm_cb_rlc);
         assert(rlc_handle[i].success == true);
 
       } else if (!strcasecmp(conf.sub_cust_sm[j].name, "pdcp")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_PDCP_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_PDCP_ID, i, n->id.nb_id.nb_id);
         pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_PDCP_ID, (void*)period, sm_cb_pdcp);
         assert(pdcp_handle[i].success == true);
 
       } else if (!strcasecmp(conf.sub_cust_sm[j].name, "gtp")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_GTP_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_GTP_ID, i, n->id.nb_id.nb_id);
         gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_GTP_ID, (void*)period, sm_cb_gtp);
         assert(gtp_handle[i].success == true);
 
       } else if (!strcasecmp(conf.sub_cust_sm[j].name, "slice")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_SLICE_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_SLICE_ID, i, n->id.nb_id.nb_id);
         slice_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, (void*)period, sm_cb_slice);
         assert(slice_handle[i].success == true);
 
       } else if (!strcasecmp(conf.sub_cust_sm[j].name, "tc")) {
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_TC_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_TC_ID, i, n->id.nb_id.nb_id);
         tc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_TC_ID, (void*)period, sm_cb_tc);
         assert(tc_handle[i].success == true);
 

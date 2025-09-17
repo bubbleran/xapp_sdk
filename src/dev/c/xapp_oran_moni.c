@@ -82,7 +82,7 @@ static void sm_cb_rc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const* e2_node
 
           printf("gNB UE with amf_ue_ngap_id = %lu %s\n", msg_frm_2->seq_ue_id[i].ue_id.gnb.amf_ue_ngap_id, str_rrc_state[rrc_state]);
           } else {
-            printf("Only RRC status changed supported by now, but ran_param_id %d received!\n", ran_param_id);
+            printf("Only RRC status changed supported by now, but ran_param_id %u received!\n", ran_param_id);
           }
         break;
       }
@@ -118,7 +118,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
            e2_node->type, e2_node->nb_id.nb_id);
 #elif defined(KPM_V3_00)
     // collectStartTime (64bit) unit is micro-second
-    printf("KPM-v3 ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+    printf("KPM-v3 ind_msg latency = %lu μs from E2-node type %d ID %d\n",
            now - hdr_frm_1->collectStartTime,
            e2_node->type, e2_node->nb_id.nb_id);
 #else
@@ -130,7 +130,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
       for (size_t i = 0; i < msg_frm_1->meas_data_lst_len; i++) {
         for (size_t j = 0; j < msg_frm_1->meas_data_lst[i].meas_record_len; j++) {
           if (msg_frm_1->meas_data_lst[i].meas_record_lst[j].value == INTEGER_MEAS_VALUE)
-            printf("meas record INTEGER_MEAS_VALUE value %d\n",msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
+            printf("meas record INTEGER_MEAS_VALUE value %u\n",msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
           else if (msg_frm_1->meas_data_lst[i].meas_record_lst[j].value == REAL_MEAS_VALUE)
             printf("meas record REAL_MEAS_VALUE value %f\n", msg_frm_1->meas_data_lst[i].meas_record_lst[j].real_val);
           else
@@ -185,7 +185,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
                       break;
 
                     case INTEGER_MEAS_VALUE:
-                      printf("%s = %d\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
+                      printf("%s = %u\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
                       break;
 
                     default:
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
           continue;
         if (strcasecmp(conf.elm[j].ran_type, get_e2ap_ngran_name(n->id.type)))
           continue;
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_KPM_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_KPM_ID, i, n->id.nb_id.nb_id);
         kpm_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_KPM_ID, &kpm_sub, sm_cb_kpm);
         assert(kpm_handle[i].success == true);
         n_kpm_handle += 1;
@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
           continue;
         if (strcasecmp(conf.elm[j].ran_type, get_e2ap_ngran_name(n->id.type)))
           continue;
-        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %d\n", SM_RC_ID, i, n->id.nb_id.nb_id);
+        printf("xApp subscribes RAN Func ID %d in E2 node idx %d, nb_id %u\n", SM_RC_ID, i, n->id.nb_id.nb_id);
         rc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_RC_ID, &rc_sub, sm_cb_rc);
         assert(rc_handle[i].success == true);
         n_rc_handle += 1;

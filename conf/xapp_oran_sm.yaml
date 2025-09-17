@@ -51,6 +51,7 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
             - name: CARR.MUPDSCHMCSDist.BinX
+            - name: CARR.WBCQIDist.BinX.BinY.BinZ 
     2:
         name: kpm
         periodicity_ms: 1000

@@ -56,19 +56,19 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 
   int64_t now = time_now_us();
   if (rd->ind.type == MAC_STATS_V0) {
-    printf("MAC ind_msg latency = %lu from E2-node type %d ID %d\n",
+    printf("MAC ind_msg latency = %ld from E2-node type %d ID %u\n",
            now - rd->ind.mac.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   } else if (rd->ind.type == RLC_STATS_V0) {
-    printf("RLC ind_msg latency = %lu from E2-node type %d ID %d\n",
+    printf("RLC ind_msg latency = %ld from E2-node type %d ID %u\n",
            now - rd->ind.rlc.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   } else if (rd->ind.type == PDCP_STATS_V0) {
-    printf("PDCP ind_msg latency = %lu from E2-node type %d ID %d\n",
+    printf("PDCP ind_msg latency = %ld from E2-node type %d ID %u\n",
            now - rd->ind.pdcp.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   } else if (rd->ind.type == GTP_STATS_V0) {
-    printf("GTP ind_msg latency = %ld from E2-node type %d ID %d\n",
+    printf("GTP ind_msg latency = %ld from E2-node type %d ID %u\n",
            now - rd->ind.gtp.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   } else if (rd->ind.type == SLICE_STATS_V0) {
-    printf("SLICE ind_msg latency = %ld from E2-node type %d ID %d\n",
+    printf("SLICE ind_msg latency = %ld from E2-node type %d ID %u\n",
            now - rd->ind.slice.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
   } else if (rd->ind.type == KPM_STATS_V3_0) {
     if (rd->ind.kpm.ind.hdr.kpm_ric_ind_hdr_format_1.collectStartTime) {
@@ -84,7 +84,7 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
            e2_node->type, e2_node->nb_id.nb_id);
 #elif defined(KPM_V3_00)
         // collectStartTime (64bit) unit is micro-second
-    printf("KPM-v3 ind_msg latency = %ld μs from E2-node type %d ID %d\n",
+    printf("KPM-v3 ind_msg latency = %lu μs from E2-node type %d ID %u\n",
            now - hdr_frm_1->collectStartTime,
            e2_node->type, e2_node->nb_id.nb_id);
 #else
@@ -119,7 +119,7 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
                     {
                       case INTEGER_MEAS_VALUE: {
                         //printf("meas record INTEGER_MEAS_VALUE value %d\n",msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
-                        printf("%s = %d\n", meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
+                        printf("%s = %u\n", meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
                         break;
                       }
 
@@ -198,7 +198,7 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
                           break;
 
                         case INTEGER_MEAS_VALUE:
-                          printf("%s = %d\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
+                          printf("%s = %u\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
                           break;
 
                         default:
@@ -495,7 +495,7 @@ static
 void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xapp_t* handle, sub_all_sm_conf_t const* conf) {
   // send subscription request to each e2 nodes
   if (E2AP_NODE_IS_MONOLITHIC(n->id.type))
-    printf("E2 node idx %ld info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s\n",
+    printf("E2 node idx %ld info: nb_id %u, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s\n",
            n_idx,
            n->id.nb_id.nb_id,
            n->id.plmn.mcc,
@@ -503,7 +503,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
            n->id.plmn.mnc_digit_len,
            get_e2ap_ngran_name(n->id.type));
   else
-    printf("E2 node idx %ld info: nb_id %d, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s, cu_du_id %lu\n",
+    printf("E2 node idx %ld info: nb_id %u, mcc %d, mnc %d, mnc_digit_len %d, ran_type %s, cu_du_id %lu\n",
            n_idx,
            n->id.nb_id.nb_id,
            n->id.plmn.mcc,
@@ -512,7 +512,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
            get_e2ap_ngran_name(n->id.type),
            *n->id.cu_du_id);
   for (size_t j = 0; j < n->len_rf; j++)
-    printf("Registered E2 node idx %ld, supported RAN Func ID = %d\n ", n_idx, n->rf[j].id);
+    printf("Registered E2 node idx %lu, supported RAN Func ID = %d\n ", n_idx, n->rf[j].id);
 
   size_t num_cust_sm = conf->cust.sz_sub_cust_sm;
   for (size_t i = 0; i < num_cust_sm; i++) {
@@ -545,7 +545,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
 
     if (!do_sub)
       continue;
-    printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
+    printf("xApp subscribes RAN Func ID %d in E2 node idx %lu, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
 
     // No-owning char*
    const char* period = convert_size_to_string(conf->cust.sub_cust_sm[i].periodicity_ms);
@@ -588,7 +588,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
         continue;
       if (strcasecmp(elm->ran_type, get_e2ap_ngran_name(n->id.type)))
         continue;
-      printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
+      printf("xApp subscribes RAN Func ID %d in E2 node idx %lu, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
       handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, &kpm_sub, sm_cb_all);
       assert(handle[c_handle].success == true);
       c_handle+=1;
@@ -604,7 +604,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
       rc_sub.sz_ad = 1;
       rc_sub.ad = calloc(rc_sub.sz_ad, sizeof(e2sm_rc_action_def_t));
       assert(rc_sub.ad != NULL && "Memory exhausted");
-      e2sm_rc_act_def_format_e act_type;
+      e2sm_rc_act_def_format_e act_type = END_E2SM_RC_ACT_DEF;
       if (elm->format == 1)
         act_type = FORMAT_1_E2SM_RC_ACT_DEF;
       else
@@ -618,7 +618,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
         continue;
       if (strcasecmp(elm->ran_type, get_e2ap_ngran_name(n->id.type)))
         continue;
-      printf("xApp subscribes RAN Func ID %d in E2 node idx %ld, nb_id %d\n", sm_id, n_idx, n->id.nb_id.nb_id);
+      printf("xApp subscribes RAN Func ID %d in E2 node idx %lu, nb_id %u\n", sm_id, n_idx, n->id.nb_id.nb_id);
       handle[c_handle] = report_sm_xapp_api(&n->id, sm_id, &rc_sub, sm_cb_all);
       assert(handle[c_handle].success == true);
       c_handle+=1;
@@ -638,13 +638,17 @@ int main(int argc, char *argv[])
   defer({ free_sub_all_sm_conf(&conf); });
   sleep(1);
 
-  signal(SIGINT, sigint_handler); // we override the signal mask set in init_xapp_api()
-  signal(SIGTERM, sigint_handler);
+  void (*fp_rc)(int) = signal(SIGINT, sigint_handler);
+  assert(fp_rc != SIG_ERR);
+  // we override the signal mask set in init_xapp_api()
+  fp_rc = signal(SIGTERM, sigint_handler);
+  assert(fp_rc != SIG_ERR);
+
   sleep(1);
 
   sm_ans_xapp_t *handle = NULL;
   if (max_handle > 0) {
-    handle = calloc(max_handle, sizeof(sm_ans_xapp_t *));
+    handle = calloc(max_handle, sizeof(sm_ans_xapp_t));
     assert(handle != NULL);
   }
 
@@ -654,7 +658,7 @@ int main(int argc, char *argv[])
     // get the original connected e2 nodes info
     size_t tmp_len = e2_nodes_len_xapp_api();
     if (tmp_len > nodes_len) {
-      printf("Update connected E2 nodes len = %ld\n", tmp_len);
+      printf("Update connected E2 nodes len = %lu\n", tmp_len);
       nodes_len = tmp_len;
     } else {
       printf("No E2 node connects\n");
@@ -676,7 +680,7 @@ int main(int argc, char *argv[])
     size_t cur_nodes_len = e2_nodes_len_xapp_api();
 
     if (cur_nodes_len != nodes_len) {
-      printf("/////// detect E2 nodes len update, new len = %ld, old len = %ld ///////\n", cur_nodes_len, nodes_len);
+      printf("/////// detect E2 nodes len update, new len = %lu, old len = %lu ///////\n", cur_nodes_len, nodes_len);
 
       if (cur_nodes_len != 0) {
         // get the new e2 nodes info
@@ -699,7 +703,7 @@ int main(int argc, char *argv[])
             if (nodes.n[j].id.nb_id.nb_id == cur_nb_id) new_nb_id = 0;
           }
           if (new_type || new_nb_id) {
-            printf("/////////////// send sub req to new E2 node, nb_id %d, type %s //////////////\n", cur_nodes.n[i].id.nb_id.nb_id, get_e2ap_ngran_name(cur_nodes.n[i].id.type));
+            printf("/////////////// send sub req to new E2 node, nb_id %u, type %s //////////////\n", cur_nodes.n[i].id.nb_id.nb_id, get_e2ap_ngran_name(cur_nodes.n[i].id.type));
             send_subscription_req(&cur_nodes.n[i], i, handle, &conf);
           }
         }

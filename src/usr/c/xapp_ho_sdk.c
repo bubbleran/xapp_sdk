@@ -21,14 +21,14 @@ int main(int argc, char** argv)
   global_e2_node_id_sdk_t const* node = &arr.n[idx].node;
   ue_id_e2sm_sdk_t const* ue = &arr.n[idx].ue_ho[0].ue;
 
+  assert(arr.n[idx].ue_ho[0].ho.sz_nghbr_cell != 0 && "No neighbor cell found!");
   assert(arr.n[idx].ue_ho[0].ho.target_pci != NULL && "Target physical cell ID needed!");
   assert(arr.n[idx].ue_ho[0].ho.target_ssb_nr_arfcn != NULL && "Target ssb ARFCN needed!");
 
   uint16_t const target_pci = *arr.n[idx].ue_ho[0].ho.target_pci;
   size_t const target_ssb_nr_arfcn = *arr.n[idx].ue_ho[0].ho.target_ssb_nr_arfcn;
 
-  printf("target_pci %u target_ssb_nr_arfcn %lu\n", target_pci, target_ssb_nr_arfcn);
-
+  printf("Send handover ctrl msg: target_pci %u target_ssb_nr_arfcn %lu\n", target_pci, target_ssb_nr_arfcn);
   ho_xapp_sdk(node, ue, target_pci, target_ssb_nr_arfcn);
 
   free_arr_node_data(&arr);
