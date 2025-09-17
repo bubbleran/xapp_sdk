@@ -3,13 +3,14 @@ set(LIST_XAPP hw
               xapp_cust_moni 
               xapp_cust_moni_simple 
               xapp_cust_slice_moni_ctrl
+	      xapp_cust_isac_srs
               xapp_get_mcs 
-              xapp_isac_srs
               xapp_mcs 
               xapp_oran_ccc_bwp_ctrl
               xapp_oran_moni 
               xapp_oran_rc_handover_ctrl
-              xapp_oran_rc_slice_ctrl 
+              xapp_oran_rc_slice_ctrl
+	      xapp_oran_llc_srs
               )
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
