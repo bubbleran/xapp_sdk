@@ -85,6 +85,7 @@ bool eq_pdcp_ind_hdr(pdcp_ind_hdr_t* m0, pdcp_ind_hdr_t* m1);
 /////////////////////////////////////
 
 typedef struct{
+  uint32_t ran_ue_id;
   uint32_t txpdu_pkts;     /* aggregated number of tx packets */
   uint32_t txpdu_bytes;    /* aggregated bytes of tx packets */
   uint32_t txpdu_sn;       /* current sequence number of last tx packet (or TX_NEXT) */

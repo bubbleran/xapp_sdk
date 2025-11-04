@@ -30,6 +30,7 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "../../../../../util/byte_array.h"
 
 
 
@@ -44,6 +45,9 @@ bool eq_e2ap_plmn(const e2ap_plmn_t* m0, const e2ap_plmn_t* m1);
 e2ap_plmn_t cp_e2ap_plmn(const e2ap_plmn_t* src);
 
 int cmp_e2ap_plmn(const e2ap_plmn_t* m0, const e2ap_plmn_t* m1);
+
+
+byte_array_t cp_e2ap_plmn_to_ba(e2ap_plmn_t const* src);
 
 #ifdef __cplusplus
 }

@@ -2240,6 +2240,7 @@ _xapp_sdk_python.swig_slice_conf_t_swigregister(swig_slice_conf_t)
 class swig_ue_slice_assoc_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_set)
     len_dl = property(_xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_set)
     ul_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_set)
@@ -2866,6 +2867,7 @@ class mac_ue_stats_impl_t(object):
     ul_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_harq_set)
     dl_num_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_dl_num_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_dl_num_harq_set)
     ul_num_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_num_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_num_harq_set)
+    ran_ue_id = property(_xapp_sdk_python.mac_ue_stats_impl_t_ran_ue_id_get, _xapp_sdk_python.mac_ue_stats_impl_t_ran_ue_id_set)
     rnti = property(_xapp_sdk_python.mac_ue_stats_impl_t_rnti_get, _xapp_sdk_python.mac_ue_stats_impl_t_rnti_set)
     dl_aggr_prb = property(_xapp_sdk_python.mac_ue_stats_impl_t_dl_aggr_prb_get, _xapp_sdk_python.mac_ue_stats_impl_t_dl_aggr_prb_set)
     ul_aggr_prb = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_aggr_prb_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_aggr_prb_set)
@@ -3171,6 +3173,7 @@ def eq_rlc_ind_hdr(m0, m1):
 class rlc_radio_bearer_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_ran_ue_id_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_ran_ue_id_set)
     txpdu_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_pkts_set)
     txpdu_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_bytes_set)
     txpdu_wt_ms = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_wt_ms_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_wt_ms_set)
@@ -3477,6 +3480,7 @@ def eq_pdcp_ind_hdr(m0, m1):
 class pdcp_radio_bearer_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_ran_ue_id_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_ran_ue_id_set)
     txpdu_pkts = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_pkts_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_pkts_set)
     txpdu_bytes = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_bytes_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_bytes_set)
     txpdu_sn = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_sn_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_sn_set)
@@ -4068,6 +4072,7 @@ _xapp_sdk_python.slice_conf_t_swigregister(slice_conf_t)
 class ue_slice_assoc_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_set)
     len_dl = property(_xapp_sdk_python.ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.ue_slice_assoc_t_dl_id_set)
     ul_id = property(_xapp_sdk_python.ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.ue_slice_assoc_t_ul_id_set)
@@ -4397,6 +4402,7 @@ def eq_gtp_ind_hdr(m0, m1):
 class gtp_ngu_t_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.gtp_ngu_t_stats_t_ran_ue_id_get, _xapp_sdk_python.gtp_ngu_t_stats_t_ran_ue_id_set)
     rnti = property(_xapp_sdk_python.gtp_ngu_t_stats_t_rnti_get, _xapp_sdk_python.gtp_ngu_t_stats_t_rnti_set)
     teidgnb = property(_xapp_sdk_python.gtp_ngu_t_stats_t_teidgnb_get, _xapp_sdk_python.gtp_ngu_t_stats_t_teidgnb_set)
     teidupf = property(_xapp_sdk_python.gtp_ngu_t_stats_t_teidupf_get, _xapp_sdk_python.gtp_ngu_t_stats_t_teidupf_set)

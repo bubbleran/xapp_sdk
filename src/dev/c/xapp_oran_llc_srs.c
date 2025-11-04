@@ -108,7 +108,12 @@ void cb(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   assert(frmt_4->sz_seq_ue_info > 0 && "At least one UE connected needed for this example!");
   // Change this array for getting the SRS from a second UE ID
   ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[0].ue_id);
-  printf("Control ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
+  if (ue_id.type == GNB_UE_ID_E2SM)
+    printf("Control ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
+  else if (ue_id.type == GNB_DU_UE_ID_E2SM)
+    printf("Control ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
+  else
+    assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
 
   src_e2_node = cp_global_e2_node_id(n);
 
@@ -208,33 +213,46 @@ int main(int argc, char *argv[])
 
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
   defer({ free_e2_node_arr_xapp(&arr); });
- 
-  assert(arr.len == 1 && "This xApp supposes only one E2 Node");
 
-  // Init latch to syncronize threads
-  latch = init_latch_cv(arr.len);
-  defer({ free_latch_cv(&latch); } );
+  for (size_t i = 0; i < arr.len; i++) {
+    e2ap_ngran_node_t const type = arr.n[i].id.type;
+    int const nb_id = arr.n[i].id.nb_id.nb_id;
 
-  // Generate RAN CONTROL Subscription
-  rc_sub_data_t rc_sub = on_demand_rc_sub();
-  defer({ free_rc_sub_data(&rc_sub); });
+    if (type == e2ap_ngran_gNB_CU) {
+      printf("We don't collect SRS signal from E2 Node nb_id %d (type gNB-CU)\n", nb_id);
+      continue;
+    }
 
-  // Retrieve information about the E2 Nodes in the callback func (cb)
-  sm_ans_xapp_t hndl = report_sm_xapp_api(&arr.n[0].id, SM_RC_ID, &rc_sub, cb);
-  assert(hndl.success == true);
+    if (type != e2ap_ngran_gNB && type != e2ap_ngran_gNB_DU)
+      assert(0 != 0 && "unsupported E2 node type in this xApp");
 
-  // Syncronize. Wait until all the previous messages arrive using a latch
-  wait_latch_cv(&latch);
+    global_e2_node_id_t* target_e2node = &arr.n[i].id;
 
-  llc_sub_data_t llc_sub = gen_llc_sub(&ue_id);
+    // Init latch to syncronize threads
+    latch = init_latch_cv(1);
+    defer({ free_latch_cv(&latch); } );
 
-  // Retrieve information about the E2 Nodes in the callback func (cb)
-  hndl = report_sm_xapp_api(&arr.n[0].id, SM_LLC_ID, &llc_sub, cb_sm_llc);
-  assert(hndl.success == true);
+    // Generate RAN CONTROL Subscription
+    rc_sub_data_t rc_sub = on_demand_rc_sub();
+    defer({ free_rc_sub_data(&rc_sub); });
 
-  poll(NULL, 0, 100000);
+    // Retrieve information about the E2 Nodes in the callback func (cb)
+    sm_ans_xapp_t hndl = report_sm_xapp_api(target_e2node, SM_RC_ID, &rc_sub, cb);
+    assert(hndl.success == true);
 
-  rm_report_sm_xapp_api(hndl.u.handle);
+    // Syncronize. Wait until all the previous messages arrive using a latch
+    wait_latch_cv(&latch);
+
+    llc_sub_data_t llc_sub = gen_llc_sub(&ue_id);
+
+    // Retrieve information about the E2 Nodes in the callback func (cb)
+    hndl = report_sm_xapp_api(target_e2node, SM_LLC_ID, &llc_sub, cb_sm_llc);
+    assert(hndl.success == true);
+
+    poll(NULL, 0, 100000);
+
+    rm_report_sm_xapp_api(hndl.u.handle);
+  }
 
   return 0;
 }

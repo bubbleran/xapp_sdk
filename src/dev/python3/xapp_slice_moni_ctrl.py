@@ -14,7 +14,7 @@ import xapp_sdk as ric
 ####################
 ####  SLICE INDICATION MSG TO JSON
 ####################
-assoc_rnti = 0
+assoc_ran_ue_id = 0
 def slice_ind_to_dict_json(ind):
 
     slice_stats = {
@@ -214,7 +214,7 @@ def slice_ind_to_dict_json(ind):
             ul_dict["slices"].append(slices_dict)
 
     # UE
-    global assoc_rnti
+    global assoc_ran_ue_id
     ue_dict = slice_stats["UE"]
     if ind.ue_slice_stats.len_ue_slice <= 0:
         ue_dict["num_of_ues"] = ind.ue_slice_stats.len_ue_slice
@@ -233,12 +233,13 @@ def slice_ind_to_dict_json(ind):
             if u.ul_id >= 0 and ul_dict["num_of_slices"] > 0:
                 ul_id = u.ul_id
             ues_dict = {
+                "ran_ue_id" : u.ran_ue_id,
                 "rnti" : hex(u.rnti),
                 "assoc_dl_slice_id" : dl_id,
                 "assoc_ul_slice_id" : ul_id
             }
             ue_dict["ues"].append(ues_dict)
-            assoc_rnti = u.rnti
+            assoc_ran_ue_id = u.ran_ue_id
 
     ind_dict = slice_stats
     ind_json = json.dumps(ind_dict)
@@ -269,9 +270,9 @@ class SLICECallback(ric.slice_cb):
                 dl_id = []
                 for id in ue.dl_id:
                     dl_id.append(id)
-                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, rnti {ue.rnti}, assoc dl id {dl_id}')
+                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl id {dl_id}')
             else:
-                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, rnti {ue.rnti}, assoc dl len {ue.len_dl}')
+                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl len {ue.len_dl}')
         slice_ind_to_dict_json(ind)
 
 ####################
@@ -566,7 +567,7 @@ assoc_ue_slice = {
     "num_ues" : 1,
     "ues" : [
         {
-            "rnti" : assoc_rnti, # TODO: get rnti from slice_ind_to_dict_json()
+            "ran_ue_id" : assoc_ran_ue_id,
             "assoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
             "assoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
         }
@@ -580,7 +581,7 @@ deassoc_ue_slice = {
     "num_ues" : 1,
     "ues" : [
         {
-            "rnti" : assoc_rnti, # TODO: get rnti from slice_ind_to_dict_json()
+            "ran_ue_id" : assoc_ran_ue_id,
             "deassoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
             "deassoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
         }
@@ -654,7 +655,7 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
         assoc = ric.ue_slice_assoc_array(ctrl_msg["num_ues"])
         for i in range(ctrl_msg["num_ues"]):
             a = ric.ue_slice_assoc_t()
-            a.rnti = ctrl_msg["ues"][i]["rnti"] # TODO: assign the rnti after get the indication msg from slice_ind_to_dict_json()
+            a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
             a.ul_id = ctrl_msg["ues"][i]["assoc_ul_slice_id"]
 
             a.len_dl = 1 # each ctrl msg only allow ctrl one slice
@@ -663,7 +664,7 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
             a.dl_id = assoc_dl_id
 
             assoc[i] = a
-            # print("ASSOC DL SLICE: <rnti:", a.rnti, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
+            # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
         msg.u.ue_slice.ues = assoc
 
     elif (ctrl_type == "DEASSOC_UE_SLICE"):
@@ -673,7 +674,7 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
         deassoc = ric.ue_slice_assoc_array(ctrl_msg["num_ues"])
         for i in range(ctrl_msg["num_ues"]):
             a = ric.ue_slice_assoc_t()
-            a.rnti = ctrl_msg["ues"][i]["rnti"] # TODO: assign the rnti after get the indication msg from slice_ind_to_dict_json()
+            a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
             a.ul_id = ctrl_msg["ues"][i]["deassoc_ul_slice_id"]
 
             a.len_dl = 1 # each ctrl msg only allow ctrl one slice
@@ -682,7 +683,7 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
             a.dl_id = deassoc_dl_id
 
             deassoc[i] = a
-            # print("ASSOC DL SLICE: <rnti:", a.rnti, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
+            # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
         msg.u.ue_slice.ues = deassoc
 
     return msg
@@ -736,9 +737,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -747,9 +748,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL DEASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-deassoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -771,9 +772,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -795,9 +796,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -819,9 +820,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -843,9 +844,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -854,9 +855,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL DEASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-deassoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)

@@ -39,7 +39,7 @@ static void sigint_handler(int sig)
 }
 
 _Atomic
-uint16_t assoc_rnti = 0;
+uint32_t assoc_ran_ue_id = 0;
 
 static
 void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
@@ -62,9 +62,10 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
   }
   if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0) {
     // get the first rnti for later assoc ctrl
-    assoc_rnti = rd->ind.slice.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
+    assoc_ran_ue_id = rd->ind.slice.msg.ue_slice_conf.ues->ran_ue_id;
     for (uint32_t i = 0; i < rd->ind.slice.msg.ue_slice_conf.ues->len_dl; i++) {
-      printf("UE RNTI %4x, assoc dl id/total %d/%d\n",
+      printf("UE RAN_UE_ID %u, RNTI %4x, assoc dl id/total %d/%d\n",
+             rd->ind.slice.msg.ue_slice_conf.ues->ran_ue_id,
              rd->ind.slice.msg.ue_slice_conf.ues->rnti,
              rd->ind.slice.msg.ue_slice_conf.ues->dl_id[i],
              rd->ind.slice.msg.ue_slice_conf.ues->len_dl);
@@ -374,7 +375,7 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
 
   for(uint32_t i = 0; i < assoc->len_ue_slice; ++i) {
     /// SET RNTI ///
-    assoc->ues[i].rnti = assoc_rnti; // TODO: get rnti from sm_cb_slice()
+    assoc->ues[i].ran_ue_id = assoc_ran_ue_id;
     /// SET DL ID ///
     assoc->ues[i].len_dl = 1;
     assert(assoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
@@ -386,7 +387,7 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
     uint32_t dl_id[2] = {2}; // TODO: get the DL slice id from sm_cb_slice()
     for (uint32_t j = 0; j < assoc->ues[i].len_dl; ++j) {
       assoc->ues[i].dl_id[j] = dl_id[j];
-      printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].dl_id[j]);
+      printf("ASSOC DL SLICE: RAN UE ID %u, id %u\n", assoc->ues[i].ran_ue_id, assoc->ues[i].dl_id[j]);
     }
     /*
     /// SET UL ID ///
@@ -412,7 +413,7 @@ void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
 
   for(uint32_t i = 0; i < deassoc->len_ue_slice; ++i) {
     /// SET RNTI ///
-    deassoc->ues[i].rnti = assoc_rnti; // TODO: get rnti from sm_cb_slice()
+    deassoc->ues[i].ran_ue_id = assoc_ran_ue_id;
     /// SET DL ID ///
     deassoc->ues[i].len_dl = 1;
     assert(deassoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
@@ -423,7 +424,7 @@ void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
     uint32_t dl_id[1] = {2}; // TODO: get the DL slice id from sm_cb_slice()
     for (uint32_t j = 0; j < deassoc->ues[i].len_dl; ++j) {
       deassoc->ues[i].dl_id[j] = dl_id[j];
-      printf("DEASSOC DL SLICE: 0x%x, id %u\n", deassoc->ues[i].rnti, deassoc->ues[i].dl_id[j]);
+      printf("DEASSOC DL SLICE: RAN UE ID %u, id %u\n", deassoc->ues[i].ran_ue_id, deassoc->ues[i].dl_id[j]);
     }
     /*
     /// SET UL ID ///
@@ -516,7 +517,7 @@ int main(int argc, char *argv[])
     assert(slice_handle[i].success == true);
     sleep(2);
 
-    while(assoc_rnti == 0) {
+    while(assoc_ran_ue_id == 0) {
       sleep(1);
     }
 

@@ -351,6 +351,7 @@ typedef struct{
 } slice_conf_t ;
 
 typedef struct{
+  uint32_t ran_ue_id;
   uint32_t len_dl;
   uint32_t* dl_id;
   uint32_t ul_id;

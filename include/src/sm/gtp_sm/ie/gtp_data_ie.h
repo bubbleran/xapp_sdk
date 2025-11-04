@@ -87,6 +87,7 @@ bool eq_gtp_ind_hdr(gtp_ind_hdr_t* m0, gtp_ind_hdr_t* m1);
 
 typedef struct {
   // ngu tunnel stats
+  uint32_t ran_ue_id;
   uint32_t rnti; // user id
   uint32_t teidgnb; // tunnel id from gnb
   uint32_t teidupf; // tunnel id from upf

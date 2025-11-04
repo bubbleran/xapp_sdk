@@ -86,6 +86,8 @@ bool eq_rlc_ind_hdr(rlc_ind_hdr_t* m0, rlc_ind_hdr_t* m1);
 /////////////////////////////////////
 
 typedef struct {
+  uint32_t ran_ue_id;
+
   /* PDU stats */
   /* TX */
   uint32_t txpdu_pkts;         /* aggregated number of transmitted RLC PDUs */

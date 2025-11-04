@@ -372,8 +372,8 @@ typedef struct {
 
 typedef struct {
   uint16_t rnti;
-  uint16_t ue_id;
   uint16_t rb_id;
+  uint32_t ran_ue_id;
 
   // pipeline
   tc_sch_t sch;
@@ -427,7 +427,7 @@ bool eq_tc_call_proc_id(tc_call_proc_id_t* m0, tc_call_proc_id_t* m1);
 /////////////////////////////////////
 
 typedef struct {
-  uint16_t rnti;
+  uint32_t ran_ue_id;
   uint16_t rb_id;
 } tc_ctrl_hdr_t;
 
