@@ -18,7 +18,7 @@ static
 latch_cv_t latch;
 
 static
-global_e2_node_id_t src_e2_node;
+global_e2_node_id_t src_e2_node = {0};
 
 // Event Trigger 
 static
@@ -105,13 +105,27 @@ void cb(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   assert(ind->msg.format == FORMAT_4_E2SM_RC_IND_MSG);
   e2sm_rc_ind_msg_frmt_4_t const* frmt_4 = &ind->msg.frmt_4; // 9.2.1.4.4
 
-  assert(frmt_4->sz_seq_ue_info > 0 && "At least one UE connected needed for this example!");
+  //assert(frmt_4->sz_seq_ue_info > 0 && "At least one UE connected needed for this example!");
+  if (frmt_4->sz_seq_ue_info <= 0) {
+    printf("No UE connected to E2 Node id %d\n", n->nb_id.nb_id);
+    return;
+  }
+
+  for (size_t i = 0; i < frmt_4->sz_seq_ue_info; i++) {
+    ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
+    if (ue_id.type == GNB_UE_ID_E2SM)
+      printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb.ran_ue_id, n->nb_id.nb_id);
+    else if (ue_id.type == GNB_DU_UE_ID_E2SM)
+      printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB-DU) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb_du.ran_ue_id, n->nb_id.nb_id);
+    else
+      assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
+  }
   // Change this array for getting the SRS from a second UE ID
-  ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[0].ue_id);
+//  ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[0].ue_id);
   if (ue_id.type == GNB_UE_ID_E2SM)
-    printf("Control ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
+    printf("Monitor ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
   else if (ue_id.type == GNB_DU_UE_ID_E2SM)
-    printf("Control ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
+    printf("Monitor ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
   else
     assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
 
@@ -119,6 +133,32 @@ void cb(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 
   // Syncronize. Notify that one message arrived
   count_down_latch_cv(&latch);
+}
+
+//void write_iq_to_file(const char* filename, const uint8_t* buf, size_t len) {
+//  FILE* f = fopen(filename, "wb");
+//  if (!f) {
+//    perror("fopen");
+//    return;
+//  }
+//  fwrite(buf, 1, len, f);   // write raw bytes
+//  fclose(f);
+//}
+
+void write_iq_text(const char* filename, const uint8_t* buf, size_t len, int64_t collect_time) {
+  FILE* f = fopen(filename, "w");
+  if (!f) return;
+
+  // buf = [I_l, I_h, Q_l, Q_h]
+  for (size_t i = 0; i < len; i++) {
+    size_t o = 4 * i; // offset into buf
+    int16_t I = buf[o] | (buf[o+1] << 8);
+    int16_t Q = buf[o+2] | (buf[o+3] << 8);
+    //printf("%zd: I=%d, Q=%d\n", i, I, Q);
+    fprintf(f, "%ld %d %d\n", collect_time, I, Q);
+  }
+
+  fclose(f);
 }
 
 static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n) 
@@ -131,28 +171,52 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   llc_ind_data_t const* ind = &rd->ind.llc.ind;
 
   assert(ind->msg.format == FORMAT_1_E2SM_LLC_IND_MSG && "Only Aperiodic event supported");
-  e2sm_llc_ind_msg_frmt_1_t const* frmt_1 = &ind->msg.frmt_1; 
-  
+  e2sm_llc_ind_msg_frmt_1_t const* frmt_1 = &ind->msg.frmt_1;
   assert(frmt_1->ll_info_type == SRS_LL_INFO_TYPE_E && "srs samples expected");
-  printf("sz_srs_rx_antenna %ld\n", frmt_1->srs.sz_srs_rx_antenna);
 
-  int64_t t1 = time_now_us();
+
   int64_t t0 = 0;
   memcpy(&t0,frmt_1->slot_tstamp.slot_start_time, 8);
-  printf("Latency %ld us\n", t1-t0);
-  
-  srs_rx_antenna_t const* rx = &frmt_1->srs.rx[0];
-  assert(rx->sz_srs_symbols == 1); 
-  
-  size_t sz = rx->symbol[0].raw_iq.len; 
-  uint8_t* buf = rx->symbol[0].raw_iq.buf;
-  for(size_t i = 0; i < sz; i +=4){
-    int16_t im = *(int16_t*)&buf[i];  
-    int16_t re = *(int16_t*)&buf[i+2];  
-    (void)im;
-    (void)re;
+  printf("receive ind msg from gnb-du id %u, msg latency %lu us\n", n->nb_id.nb_id, time_now_us() - t0);
+
+  for(size_t i = 0; i < frmt_1->srs.sz_srs_rx_antenna; i++) {
+    srs_rx_antenna_t* rx = &frmt_1->srs.rx[i];
+    for (size_t j = 0; j < rx->sz_srs_symbols; j++) {
+      srs_symbol_t* symbol = &rx->symbol[j];
+      byte_array_t raw_iq = symbol->raw_iq;
+      // for (size_t i = 0; i < raw_iq.len; i++) {
+      //   size_t o = 4 * i; // offset into buf
+      //   int16_t I = raw_iq.buf[o] | (raw_iq.buf[o+1] << 8);
+      //   int16_t Q = raw_iq.buf[o+2] | (raw_iq.buf[o+3] << 8);
+      //   //printf("%zd: I=%d, Q=%d\n", i, I, Q);
+      //   //printf("%d %d\n", I, Q);
+      // }
+      size_t sz = raw_iq.len / 3 / 4; // rx, noise, estimated // sizeof(c16_t) = 4
+      // Offsets in bytes
+      size_t rx_offset     = 0;
+      size_t noise_offset  = 4 * sz;
+      size_t est_offset    = 4 * sz * 2;
+
+      char filename_rx[256], filename_noise[256], filename_estimated[256];
+      snprintf(filename_rx, sizeof(filename_rx),
+               "iq_srs_rx_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+      write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
+
+      snprintf(filename_noise, sizeof(filename_noise),
+               "iq_srs_noise_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+      write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
+
+      snprintf(filename_estimated, sizeof(filename_estimated),
+               "iq_srs_estimated_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+      write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
+//      printf("sz_srs_rx_antenna %lu, rx %lu, sz_srs_symbols %lu, symbol %lu\n",
+//             frmt_1->srs.sz_srs_rx_antenna,
+//             i,
+//             rx->sz_srs_symbols,
+//             j);
+    }
+
   }
-  printf("Message of SRS arrived for RIC Request ID %d AMF UE ID %ld \n", rd->ric_req_id, ue_id.gnb.amf_ue_ngap_id);  
 }
 
 static 
@@ -180,7 +244,9 @@ llc_sub_data_t gen_llc_sub(ue_id_e2sm_t* ue_id)
   dst.et.frmt_1.ev_trg_ue_info = calloc(1, sizeof(ev_trg_ue_info_t));
   assert(dst.et.frmt_1.ev_trg_ue_info != NULL && "Memory exhausted");
 
-  dst.et.frmt_1.ev_trg_ue_info->sz_assoc_ue_info = 1; 
+
+  // subscribe to specifc UE
+  dst.et.frmt_1.ev_trg_ue_info->sz_assoc_ue_info = 1;
   dst.et.frmt_1.ev_trg_ue_info->assoc_ue_info = calloc(1, sizeof(assoc_ue_info_llc_t));
   assert(dst.et.frmt_1.ev_trg_ue_info->assoc_ue_info != NULL && "Memory exhausted" );
   dst.et.frmt_1.ev_trg_ue_info->assoc_ue_info[0].ev_trg_id_ue = 1; 
@@ -214,9 +280,10 @@ int main(int argc, char *argv[])
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
   defer({ free_e2_node_arr_xapp(&arr); });
 
+
   for (size_t i = 0; i < arr.len; i++) {
     e2ap_ngran_node_t const type = arr.n[i].id.type;
-    int const nb_id = arr.n[i].id.nb_id.nb_id;
+    uint32_t const nb_id = arr.n[i].id.nb_id.nb_id;
 
     if (type == e2ap_ngran_gNB_CU) {
       printf("We don't collect SRS signal from E2 Node nb_id %d (type gNB-CU)\n", nb_id);
@@ -226,7 +293,9 @@ int main(int argc, char *argv[])
     if (type != e2ap_ngran_gNB && type != e2ap_ngran_gNB_DU)
       assert(0 != 0 && "unsupported E2 node type in this xApp");
 
+    // WARNING: This xAPP ONLY can support subscription to one E2 node which connects to at least one UE
     global_e2_node_id_t* target_e2node = &arr.n[i].id;
+    printf("Send RC and LLC subscriptions to target_nb_id %d\n", target_e2node->nb_id.nb_id);
 
     // Init latch to syncronize threads
     latch = init_latch_cv(1);
@@ -249,9 +318,11 @@ int main(int argc, char *argv[])
     hndl = report_sm_xapp_api(target_e2node, SM_LLC_ID, &llc_sub, cb_sm_llc);
     assert(hndl.success == true);
 
-    poll(NULL, 0, 100000);
+    // sleep for 180 seconds
+    sleep(180);
 
     rm_report_sm_xapp_api(hndl.u.handle);
+    break;
   }
 
   return 0;
