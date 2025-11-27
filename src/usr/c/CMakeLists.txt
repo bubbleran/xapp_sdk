@@ -29,9 +29,12 @@ foreach(XAPP ${LIST_XAPP})
                           -lpthread
                           -lm
                           -lsctp
-                          -lmysqlclient
                           -ldl
                           )
+
+    if(XAPP_DB STREQUAL "MYSQL_XAPP")
+        target_link_libraries(${XAPP} PUBLIC -lmysqlclient)
+    endif()
 
     target_compile_definitions(${XAPP} PUBLIC ${E2AP_VERSION} ${KPM_VERSION}) 
 endforeach()
