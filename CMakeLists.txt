@@ -13,7 +13,7 @@ set(E2AP_VERSION "E2AP_V3" CACHE STRING "E2AP version")
 set(KPM_VERSION "KPM_V3_00" CACHE STRING "The KPM SM version to use")
 
 set(XAPP_DB "NONE_XAPP" CACHE STRING "xApp DB")
-set_property(CACHE XAPP_DB PROPERTY STRINGS "MYSQL_XAPP" "SQLITE3_XAPP" "NONE_XAPP")
+set_property(CACHE XAPP_DB PROPERTY STRINGS "VICTORIAMETRICS_XAPP" "MYSQL_XAPP" "SQLITE3_XAPP" "NONE_XAPP")
 message(STATUS "Selected xApp DB : ${XAPP_DB}")
 
 # include src files
@@ -35,6 +35,8 @@ elseif(XAPP_DB STREQUAL "SQLITE3_XAPP")
   set(_source "${CMAKE_SOURCE_DIR}/lib/libe42_xapp_shared_sqlite3.so")
 elseif(XAPP_DB STREQUAL "MYSQL_XAPP")
   set(_source "${CMAKE_SOURCE_DIR}/lib/libe42_xapp_shared_mysql.so")
+elseif(XAPP_DB STREQUAL "VICTORIAMETRICS_XAPP")
+  set(_source "${CMAKE_SOURCE_DIR}/lib/libe42_xapp_shared_vm.so")
 endif()
 
 install(CODE "
