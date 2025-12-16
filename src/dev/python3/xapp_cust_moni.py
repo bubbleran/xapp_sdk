@@ -1,232 +1,252 @@
 import time
 import os
-import pdb
-import csv
 import sys
+import signal
+from tabulate import tabulate
+
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-# print("Current Directory:", cur_dir)
 sdk_path = cur_dir + "/../xapp_sdk/"
 sys.path.append(sdk_path)
 
 import xapp_sdk as ric
 
-####################
-#### MAC INDICATION CALLBACK
-####################
+# -----------------------------------------------------------------------------
+# Callbacks
+# -----------------------------------------------------------------------------
 
-# MACCallback class is defined and derived from C++ class mac_cb
 class MACCallback(ric.mac_cb):
-    # Define Python class 'constructor'
     def __init__(self):
-        # Call C++ base class constructor
-        ric.mac_cb.__init__(self)
-    # Override C++ method: virtual void handle(swig_mac_ind_msg_t a) = 0;
+        super().__init__()
     def handle(self, ind):
-        # Print swig_mac_ind_msg_t
         if len(ind.ue_stats) > 0:
             t_now = time.time_ns() / 1000.0
             t_mac = ind.tstamp / 1.0
             t_diff = t_now - t_mac
             print(f"MAC Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
-            # with open(file_name, 'a', newline='', buffering=1024) as f:
-            #     writer = csv.writer(f)
-            #     writer.writerow([ind.id.nb_id.nb_id, ind.id.type, "MAC", t_diff])
-            # print('MAC rnti = ' + str(ind.ue_stats[0].rnti))
-
-####################
-#### RLC INDICATION CALLBACK
-####################
 
 class RLCCallback(ric.rlc_cb):
-    # Define Python class 'constructor'
     def __init__(self):
-        # Call C++ base class constructor
-        ric.rlc_cb.__init__(self)
-    # Override C++ method: virtual void handle(swig_rlc_ind_msg_t a) = 0;
+        super().__init__()
     def handle(self, ind):
-        # Print swig_rlc_ind_msg_t
         if len(ind.rb_stats) > 0:
             t_now = time.time_ns() / 1000.0
             t_rlc = ind.tstamp / 1.0
-            t_diff= t_now - t_rlc
+            t_diff = t_now - t_rlc
             print(f"RLC Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
-            # with open(file_name, 'a', newline='', buffering=1024) as f:
-            #     writer = csv.writer(f)
-            #     writer.writerow([ind.id.nb_id.nb_id, ind.id.type, "RLC", t_diff])
-            # print('RLC rnti = '+ str(ind.rb_stats[0].rnti))
-
-####################
-#### PDCP INDICATION CALLBACK
-####################
 
 class PDCPCallback(ric.pdcp_cb):
-    # Define Python class 'constructor'
     def __init__(self):
-        # Call C++ base class constructor
-        ric.pdcp_cb.__init__(self)
-   # Override C++ method: virtual void handle(swig_pdcp_ind_msg_t a) = 0;
+        super().__init__()
     def handle(self, ind):
-        # Print swig_pdcp_ind_msg_t
         if len(ind.rb_stats) > 0:
             t_now = time.time_ns() / 1000.0
             t_pdcp = ind.tstamp / 1.0
             t_diff = t_now - t_pdcp
             print(f"PDCP Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
-            # with open(file_name, 'a', newline='', buffering=1024) as f:
-            #     writer = csv.writer(f)
-            #     writer.writerow([ind.id.nb_id.nb_id, ind.id.type, "PDCP", t_diff])
-            # print('PDCP rnti = '+ str(ind.rb_stats[0].rnti))
 
-####################
-#### GTP INDICATION CALLBACK
-####################
-
-# Create a callback for GTP which derived it from C++ class gtp_cb
 class GTPCallback(ric.gtp_cb):
     def __init__(self):
-        # Inherit C++ gtp_cb class
-        ric.gtp_cb.__init__(self)
-    # Create an override C++ method
+        super().__init__()
     def handle(self, ind):
         if len(ind.gtp_stats) > 0:
             t_now = time.time_ns() / 1000.0
             t_gtp = ind.tstamp / 1.0
             t_diff = t_now - t_gtp
-            print(f"GTP Indication tstamp {t_now} diff {t_diff} e2 node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
+            print(f"GTP Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
 
-####################
-#### SLICE INDICATION CALLBACK
-####################
-
-# Create a callback for SLICE which derived it from C++ class slice_cb
-class SLICECallback(ric.slice_cb):
+class SliceCallback(ric.slice_cb):
     def __init__(self):
-        # Inherit C++ gtp_cb class
-        ric.slice_cb.__init__(self)
-    # Create an override C++ method
+        super().__init__()
     def handle(self, ind):
         t_now = time.time_ns() / 1000.0
         t_slice = ind.tstamp / 1.0
         t_diff = t_now - t_slice
-        print(f"SLICE Indication tstamp {t_now} diff {t_diff} e2 node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
+        print(f"SLICE Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
 
+# -----------------------------------------------------------------------------
+# Main Application Class
+# -----------------------------------------------------------------------------
 
-def get_cust_tti(tti):
-    if tti == 1:
-        return ric.Interval_ms_1
-    elif tti == 2:
-        return ric.Interval_ms_2
-    elif tti == 5:
-        return ric.Interval_ms_5
-    elif tti == 10:
-        return ric.Interval_ms_10
-    elif tti == 100:
-        return ric.Interval_ms_100
-    elif tti == 1000:
-        return ric.Interval_ms_1000
-    else:
-        print(f"Unknown tti {tti}")
-        exit()
+class MoniXApp:
+    def __init__(self, argv):
+        ric.init(argv)
+        
+        self.shutdown_flag = False
+        self.mac_hndlr = {}
+        self.rlc_hndlr = {}
+        self.pdcp_hndlr = {}
+        self.gtp_hndlr = {}
+        self.slice_hndlr = {}
 
-mac_hndlr = []
-rlc_hndlr = []
-pdcp_hndlr = []
-gtp_hndlr = []
-slice_hndlr = []
-####################
-####  GENERAL 
-####################
-if __name__ == '__main__':
+        self.mac_cbs = []
+        self.rlc_cbs = []
+        self.pdcp_cbs = []
+        self.gtp_cbs = []
+        self.slice_cbs = []
 
-    # file_name = "ind_output.csv"
-    # file_col = ['e2node-nb-id', 'e2node-ran-type', 'SM', 'latency']
-    # if file already exists, remove it
-    # if os.path.exists(file_name):
-    #     os.remove(file_name)
-    # # create new csv file and write headers
-    # with open(file_name, 'w', newline='') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(file_col)
+        self.e2nodes_map = {}
+        self.cust_sm = ric.get_sub_cust_sm_conf(argv)
+        
+        signal.signal(signal.SIGINT, self._sig_handler)
 
-    # Start
-    ric.init(sys.argv)
-    cust_sm = ric.get_sub_cust_sm_conf(sys.argv) #get_cust_sm_conf()
+    def _sig_handler(self, signum, frame):
+        print("Ctrl-C Detected")
+        self.shutdown_flag = True
 
-    conn = ric.conn_e2_nodes()
-    assert(len(conn) > 0)
-    for i in range(0, len(conn)):
-        print("Global E2 Node [" + str(i) + "]: PLMN MCC = " + str(conn[i].id.plmn.mcc))
-        print("Global E2 Node [" + str(i) + "]: PLMN MNC = " + str(conn[i].id.plmn.mnc))
+    def _get_ngran_name(self, ran_type):
+        return {
+            0: "ngran_eNB", 2: "ngran_gNB",
+            5: "ngran_gNB_CU", 7: "ngran_gNB_DU"
+        }.get(ran_type, "Unknown")
 
+    def _gen_id_key(self, node_id):
+        plmn = "PLMN_" + str(node_id.plmn.mcc) + str(node_id.plmn.mnc)
+        nb_id = "NBID_" + str(node_id.nb_id.nb_id)
+        ran_type = self._get_ngran_name(node_id.type)
+        return plmn + "-" + nb_id + "-" + ran_type
 
-    for sm_info in cust_sm.sub_cust_sm:
-        sm_name = sm_info.name.upper()
-        sm_time = sm_info.periodicity_ms
-        tti = get_cust_tti(sm_time)
+    def _get_tti(self, tti_ms):
+        return {
+            1: ric.Interval_ms_1, 2: ric.Interval_ms_2, 5: ric.Interval_ms_5,
+            10: ric.Interval_ms_10, 100: ric.Interval_ms_100,
+            500: ric.Interval_ms_500, 1000: ric.Interval_ms_1000
+        }.get(tti_ms)
 
-        if sm_name == "MAC":
-            for i in range(0, len(conn)):
-                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_DU or conn[i].id.type == ric.e2ap_ngran_eNB):
-                    # MAC
-                    mac_cb = MACCallback()
-                    hndlr = ric.report_mac_sm(conn[i].id, tti, mac_cb)
-                    mac_hndlr.append(hndlr)
-                    time.sleep(1)
-        elif sm_name == "RLC":
-            for i in range(0, len(conn)):
-                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_DU or conn[i].id.type == ric.e2ap_ngran_eNB):
-                    # RLC
-                    rlc_cb = RLCCallback()
-                    hndlr = ric.report_rlc_sm(conn[i].id, tti, rlc_cb)
-                    rlc_hndlr.append(hndlr)
-                    time.sleep(1)
-        elif sm_name == "PDCP":
-            for i in range(0, len(conn)):
-                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_gNB_CU or conn[i].id.type == ric.e2ap_ngran_eNB):
-                    # PDCP
-                    pdcp_cb = PDCPCallback()
-                    hndlr = ric.report_pdcp_sm(conn[i].id, tti, pdcp_cb)
-                    pdcp_hndlr.append(hndlr)
-                    time.sleep(1)
-        elif sm_name == "GTP":
-            for i in range(0, len(conn)):
-                if (conn[i].id.type == ric.e2ap_ngran_gNB):
-                    # GTP
-                    gtp_cb = GTPCallback()
-                    hndlr = ric.report_gtp_sm(conn[i].id, tti, gtp_cb)
-                    gtp_hndlr.append(hndlr)
-                    time.sleep(1)
-        elif sm_name == "SLICE":
-            for i in range(0, len(conn)):
-                if (conn[i].id.type == ric.e2ap_ngran_gNB or conn[i].id.type == ric.e2ap_ngran_eNB):
-                    # SLICE
-                    slice_cb = SLICECallback()
-                    hndlr = ric.report_slice_sm(conn[i].id, tti, slice_cb)
-                    slice_hndlr.append(hndlr)
-                    time.sleep(1)
-        else:
-            print(f"not yet implemented function to send subscription for {sm_name}")
+    def _send_subscription_req(self, node):
+        for sm_info in self.cust_sm.sub_cust_sm:
+            sm_name = sm_info.name.upper()
+            tti = self._get_tti(sm_info.periodicity_ms)
+            if tti is None:
+                print(f"Unknown tti {sm_info.periodicity_ms}")
+                continue
 
-    time.sleep(cust_sm.runtime_sec)
+            print(f"<<<< Subscribe to {sm_name} with time period {sm_info.periodicity_ms} >>>>")
+            key = self._gen_id_key(node.id)
+            
+            if sm_name == "MAC" and (node.id.type in [ric.e2ap_ngran_gNB, ric.e2ap_ngran_gNB_DU, ric.e2ap_ngran_eNB]):
+                mac_cb = MACCallback()
+                self.mac_cbs.append(mac_cb)
+                hndlr = ric.report_mac_sm(node.id, tti, mac_cb)
+                self.mac_hndlr.setdefault(key, []).append(hndlr)
+            elif sm_name == "RLC" and (node.id.type in [ric.e2ap_ngran_gNB, ric.e2ap_ngran_gNB_DU, ric.e2ap_ngran_eNB]):
+                rlc_cb = RLCCallback()
+                self.rlc_cbs.append(rlc_cb)
+                hndlr = ric.report_rlc_sm(node.id, tti, rlc_cb)
+                self.rlc_hndlr.setdefault(key, []).append(hndlr)
+            elif sm_name == "PDCP" and (node.id.type in [ric.e2ap_ngran_gNB, ric.e2ap_ngran_gNB_CU, ric.e2ap_ngran_eNB]):
+                pdcp_cb = PDCPCallback()
+                self.pdcp_cbs.append(pdcp_cb)
+                hndlr = ric.report_pdcp_sm(node.id, tti, pdcp_cb)
+                self.pdcp_hndlr.setdefault(key, []).append(hndlr)
+            elif sm_name == "GTP" and (node.id.type in [ric.e2ap_ngran_gNB]):
+                gtp_cb = GTPCallback()
+                self.gtp_cbs.append(gtp_cb)
+                hndlr = ric.report_gtp_sm(node.id, tti, gtp_cb)
+                self.gtp_hndlr.setdefault(key, []).append(hndlr)
+            elif sm_name == "SLICE" and (node.id.type in [ric.e2ap_ngran_gNB, ric.e2ap_ngran_eNB]):
+                slice_cb = SliceCallback()
+                self.slice_cbs.append(slice_cb)
+                hndlr = ric.report_slice_sm(node.id, tti, slice_cb)
+                self.slice_hndlr.setdefault(key, []).append(hndlr)
+            else:
+                print(f"Subscription for {sm_name} not implemented or invalid for this node type.")
 
-    ### End
-    for i in range(0, len(mac_hndlr)):
-        ric.rm_report_mac_sm(mac_hndlr[i])
+    def _unsubscribe_node(self, node_id):
+        key_to_remove = self._gen_id_key(node_id)
+        
+        rm_funcs = {
+            "MAC": ric.rm_report_mac_sm, "RLC": ric.rm_report_rlc_sm,
+            "PDCP": ric.rm_report_pdcp_sm, "GTP": ric.rm_report_gtp_sm,
+            "SLICE": ric.rm_report_slice_sm
+        }
 
-    for i in range(0, len(rlc_hndlr)):
-        ric.rm_report_rlc_sm(rlc_hndlr[i])
+        hndlr_map = {
+            "MAC": self.mac_hndlr, "RLC": self.rlc_hndlr, "PDCP": self.pdcp_hndlr,
+            "GTP": self.gtp_hndlr, "SLICE": self.slice_hndlr
+        }
 
-    for i in range(0, len(pdcp_hndlr)):
-        ric.rm_report_pdcp_sm(pdcp_hndlr[i])
+        for sm_name, hndlr_dict in hndlr_map.items():
+            if key_to_remove in hndlr_dict:
+                for h in hndlr_dict[key_to_remove]:
+                    rm_funcs[sm_name](h)
+                del hndlr_dict[key_to_remove]
 
-    for i in range(0, len(gtp_hndlr)):
-        ric.rm_report_gtp_sm(gtp_hndlr[i])
+    def _print_e2_nodes(self):
+        conn = ric.conn_e2_nodes()
+        headers = ["idx", "nb_id", "mcc", "mnc", "ran_type"]
+        e2nodes_data = [
+            [i, node.id.nb_id.nb_id, node.id.plmn.mcc, node.id.plmn.mnc, self._get_ngran_name(node.id.type)]
+            for i, node in enumerate(conn)
+        ]
+        print(tabulate(e2nodes_data, headers=headers, tablefmt="grid"))
 
-    for i in range(0, len(slice_hndlr)):
-        ric.rm_report_slice_sm(slice_hndlr[i])
+    def _handle_node_changes(self):
+        conn = ric.conn_e2_nodes()
+        
+        current_nodes_map = {}
+        for i, node in enumerate(conn):
+            plmn = "PLMN_" + str(node.id.plmn.mcc) + str(node.id.plmn.mnc)
+            nbid = "NBID_" + str(node.id.nb_id.nb_id)
+            ran_type = self._get_ngran_name(node.id.type)
+            info = frozenset({nbid, plmn, ran_type})
+            current_nodes_map[info] = node
 
-    # Avoid deadlock. ToDo revise architecture
-    while ric.try_stop == 0:
-        time.sleep(1)
+        current_set = set(current_nodes_map.keys())
+        previous_set = set(self.e2nodes_map.keys())
 
-    print("Test finished")
+        new_sets = current_set - previous_set
+        leave_sets = previous_set - current_set
+
+        if not conn and not leave_sets:
+            print("No E2 nodes connected. Waiting...")
+            return
+
+        if leave_sets:
+            print("Left E2-Nodes: ", leave_sets)
+            for info in leave_sets:
+                node_to_remove = self.e2nodes_map[info]
+                self._unsubscribe_node(node_to_remove.id)
+
+        if new_sets:
+            print("New E2-Nodes: ", new_sets)
+            for info in new_sets:
+                new_node = current_nodes_map[info]
+                self._send_subscription_req(new_node)
+        
+        self.e2nodes_map = current_nodes_map
+        
+        if new_sets or leave_sets:
+            print("Update connected E2 nodes")
+            self._print_e2_nodes()
+
+    def run(self):
+        print("xApp running. Waiting for E2 nodes to connect...")
+        start_time = time.time()
+        timeout = self.cust_sm.runtime_sec
+
+        while not self.shutdown_flag:
+            self._handle_node_changes()
+
+            if timeout > 0 and (time.time() - start_time) > timeout:
+                print(f"Timeout of {timeout} seconds reached.")
+                break
+            
+            time.sleep(1)
+        
+        self.stop()
+
+    def stop(self):
+        print("Deregistering subscriptions...")
+        for node in self.e2nodes_map.values():
+            self._unsubscribe_node(node.id)
+            
+        # Avoid deadlock. ToDo revise architecture
+        while ric.try_stop == 0:
+            time.sleep(1)
+
+        print("xApp stopped")
+        os._exit(0)
+
+if __name__ == "__main__":
+    app = MoniXApp(sys.argv)
+    app.run()

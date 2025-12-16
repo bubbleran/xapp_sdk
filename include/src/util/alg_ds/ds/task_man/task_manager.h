@@ -39,6 +39,7 @@ typedef struct{
   size_t len_thr;
   atomic_uint_fast64_t index;
   void* q_arr;
+  _Atomic uint64_t sz_tasks;
 } task_manager_t;
 
 void init_task_manager(task_manager_t* man, uint32_t num_threads);

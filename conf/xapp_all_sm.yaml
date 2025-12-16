@@ -19,15 +19,20 @@ xapp:
     # if no database is needed/used
     db:
         ip: 127.0.0.1
-        dir: /tmp/
-        filename: testdb
-        usr: xapp
-        psw: BubbleRAN
+        port: 8428
+        filename: scenario  #This refers to the scenario name (tag) in victoria metrics
+
+        ## mysql parameters (not used for victoria metrics)
+        #dir: /tmp/
+        #usr: xapp
+        #psw: BubbleRAN
+        #filename: testdb
         # Commands for setting up mysql
         # $ sudo mysql
         # $ mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
         # $ mysql> grant all privileges on *.* to 'username'@'localhost';
         # $ mysql> exit
+
 xapp_sub_cust_sm:
     runtime_sec: 10
     # runtime_sec is ignored in xapp_all_moni
@@ -35,14 +40,15 @@ xapp_sub_cust_sm:
     1:
         name: mac  
         # periodicity possible values: 
-        # 1, 2, 5, 10, 100, or 1000
-        periodicity_ms: 10
+        # 500 or 1000
+        periodicity_ms: 500
     2:
         name: rlc  
-        periodicity_ms: 100
+        periodicity_ms: 500
     3:
         name: pdcp  
-        periodicity_ms: 5
+        periodicity_ms: 500
+
 
 xapp_sub_oran_sm:
     runtime_sec: 42
@@ -50,7 +56,7 @@ xapp_sub_oran_sm:
     # only be used in xapp_oran_moni & xapp_cust_moni
     1:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 500 # 1000 and 500 is supported
         format: 4
         ran_type: ngran_gNB
         actions:
@@ -66,10 +72,10 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
             - name: CARR.MUPDSCHMCSDist.BinX
-            - name: CARR.WBCQIDist.BinX.BinY.BinZ
+            - name: CARR.WBCQIDist.BinX.BinY.BinZ 
     2:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 500
         format: 4
         ran_type: ngran_gNB_DU
         actions:
@@ -84,7 +90,7 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailUl
     3:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 500
         format: 4
         ran_type: ngran_gNB_CU
         actions:

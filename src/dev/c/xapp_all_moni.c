@@ -466,6 +466,7 @@ char* tbl_period_ms[] = {
   "5_ms",
   "10_ms", 
   "100_ms",
+  "500_ms",
   "1000_ms",
 };
 
@@ -482,8 +483,10 @@ char* convert_size_to_string(size_t periodicity_ms)
     return tbl_period_ms[3];
   } else if(periodicity_ms == 100){
     return tbl_period_ms[4];
-  } else if(periodicity_ms == 1000){
+  } else if(periodicity_ms == 500){
     return tbl_period_ms[5];
+  } else if(periodicity_ms == 1000){
+    return tbl_period_ms[6];
   } else {
     assert(0!=0 && "unknown value!");
   }

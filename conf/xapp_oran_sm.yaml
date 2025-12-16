@@ -19,10 +19,14 @@ xapp:
     # if no database is needed/used
     db:
         ip: 127.0.0.1
-        dir: /tmp/
-        filename: testdb
-        usr: xapp
-        psw: BubbleRAN
+        port: 8428
+        filename: scenario  #This refers to the scenario name (tag) in victoria metrics
+        
+        ## mysql parameters (not used for victoria metrics)
+        #dir: /tmp/
+        #usr: xapp
+        #psw: BubbleRAN
+        #filename: testdb
         # Commands for setting up mysql
         # $ sudo mysql
         # $ mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
@@ -35,7 +39,7 @@ xapp_sub_oran_sm:
     # only be used in xapp_oran_moni & xapp_cust_moni
     1:
         name: kpm
-        periodicity_ms: 1000 # 1000, 100, 10, 5, 2, 1 supported
+        periodicity_ms: 500 # 1000 and 500 is supported
         format: 4
         ran_type: ngran_gNB
         actions:
@@ -54,7 +58,7 @@ xapp_sub_oran_sm:
             - name: CARR.WBCQIDist.BinX.BinY.BinZ 
     2:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 500
         format: 4
         ran_type: ngran_gNB_DU
         actions:
@@ -69,7 +73,7 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailUl
     3:
         name: kpm
-        periodicity_ms: 1000
+        periodicity_ms: 500
         format: 4
         ran_type: ngran_gNB_CU
         actions:

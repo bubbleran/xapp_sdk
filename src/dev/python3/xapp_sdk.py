@@ -2074,6 +2074,7 @@ Interval_ms_2 = _xapp_sdk_python.Interval_ms_2
 Interval_ms_5 = _xapp_sdk_python.Interval_ms_5
 Interval_ms_10 = _xapp_sdk_python.Interval_ms_10
 Interval_ms_100 = _xapp_sdk_python.Interval_ms_100
+Interval_ms_500 = _xapp_sdk_python.Interval_ms_500
 Interval_ms_1000 = _xapp_sdk_python.Interval_ms_1000
 class swig_mac_ind_msg_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")

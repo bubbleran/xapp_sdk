@@ -4,6 +4,7 @@
 #include "../include/src/sm/pdcp_sm/pdcp_sm_id.h"
 #include "../include/src/sm/gtp_sm/gtp_sm_id.h"
 #include "../include/src/sm/slice_sm/slice_sm_id.h"
+#include "../include/src/sm/tc_sm/tc_sm_id.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -79,6 +80,20 @@ static void cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node
          now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
+static void cb_tc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
+{
+  assert(rd != NULL);
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  assert(rd->ind.type == TC_STATS_V0);
+
+  tc_ind_msg_t const* msg = &rd->ind.tc.msg;
+
+  int64_t now = time_now_us_xapp_api();
+  printf("TC ind_msg latency = %ld μs from E2-node type %d ID %u\n",
+         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+}
+
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed");
@@ -100,20 +115,24 @@ int main(int argc, char *argv[])
   assert(mac_hndl.success == true);
 
   // RLC subscribe
-  sm_ans_xapp_t rlc_hndl = report_sm_xapp_api(e2_node, SM_RLC_ID, "2_ms", cb_rlc);
+  sm_ans_xapp_t rlc_hndl = report_sm_xapp_api(e2_node, SM_RLC_ID, "1_ms", cb_rlc);
   assert(rlc_hndl.success == true);
 
   // PDCP subscribe
-  sm_ans_xapp_t pdcp_hndl = report_sm_xapp_api(e2_node, SM_PDCP_ID, "5_ms", cb_pdcp);
+  sm_ans_xapp_t pdcp_hndl = report_sm_xapp_api(e2_node, SM_PDCP_ID, "1_ms", cb_pdcp);
   assert(pdcp_hndl.success == true);
 
   // GTP subscribe
-  sm_ans_xapp_t gtp_hndl = report_sm_xapp_api(e2_node, SM_GTP_ID, "100_ms", cb_gtp);
+  sm_ans_xapp_t gtp_hndl = report_sm_xapp_api(e2_node, SM_GTP_ID, "1_ms", cb_gtp);
   assert(gtp_hndl.success == true);
 
   // SLICE subscribe
-  sm_ans_xapp_t slice_hndl = report_sm_xapp_api(e2_node, SM_SLICE_ID, "1000_ms", cb_slice);
+  sm_ans_xapp_t slice_hndl = report_sm_xapp_api(e2_node, SM_SLICE_ID, "1_ms", cb_slice);
   assert(slice_hndl.success == true);
+
+  // TC subscribe
+  sm_ans_xapp_t tc_hndl = report_sm_xapp_api(e2_node, SM_TC_ID, "1_ms", cb_tc);
+  assert(tc_hndl.success == true);
 
   // Run for 10 seconds
   sleep(10);
@@ -124,6 +143,7 @@ int main(int argc, char *argv[])
   rm_report_sm_xapp_api(pdcp_hndl.u.handle);
   rm_report_sm_xapp_api(gtp_hndl.u.handle);
   rm_report_sm_xapp_api(slice_hndl.u.handle);
+  rm_report_sm_xapp_api(tc_hndl.u.handle);
 
   // Free the memory
   free_e2_node_arr_xapp(&nodes);

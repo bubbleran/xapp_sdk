@@ -153,7 +153,7 @@ bool check_node_sm(char const* name, e2_node_connected_xapp_t const* n){
 
 static 
 const char* str_periodicity[] = {
-  "1_ms", "2_ms", "5_ms", "10_ms", "100_ms", "1000_ms"
+  "1_ms", "2_ms", "5_ms", "10_ms", "100_ms", "500_ms", "1000_ms"
 };
 
 static
@@ -169,8 +169,10 @@ const char* convert_periodicity(size_t v)
     return str_periodicity[3];     
   } else if (v == 100){
     return str_periodicity[4];     
+  } else if (v == 500){
+    return str_periodicity[5];
   } else if (v == 1000){
-    return str_periodicity[5];     
+    return str_periodicity[6];
   } else {
     assert(0 != 0 && "Unsupported value!");
   }

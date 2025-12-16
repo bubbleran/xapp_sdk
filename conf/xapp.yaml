@@ -17,12 +17,16 @@ xapp:
         # e.g., level = 2 -> level = info
     # Comment the database section
     # if no database is needed/used
-    db:
-        ip: 127.0.0.1
-        dir: /tmp/
-        filename: testdb
-        usr: xapp
-        psw: BubbleRAN
+    #db:
+        #ip: 127.0.0.1
+        #port: 8428
+        #filename: scenario  #This refers to the scenario name (tag) in victoria metrics
+        
+        ## mysql parameters (not used for victoria metrics)
+        #dir: /tmp/
+        #usr: xapp
+        #psw: BubbleRAN
+        #filename: testdb
         # Commands for setting up mysql
         # $ sudo mysql
         # $ mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
