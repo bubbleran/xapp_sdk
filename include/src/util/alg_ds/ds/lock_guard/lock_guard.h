@@ -47,8 +47,10 @@ void mir_dummy_lock_guard_const();
   do{ CHECK_TYPE_INLINE(X, pthread_mutex_t*);\
      int rc = pthread_mutex_lock(X);  \
      if (rc != 0){ \
-        fprintf(stdout, "Error while locking, possibly the lock is already locked: %s\n", strerror(rc)); \
-        fflush(stdout); \
+        int rc2 = fprintf(stdout, "Error while locking, possibly the lock is already locked: %s\n", strerror(rc)); \
+        assert(rc2 > 0); \
+        rc2 = fflush(stdout); \
+        assert(rc2 == 0); \
         assert(0 != 0); \
      } \
   } while(0); \

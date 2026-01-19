@@ -86,39 +86,41 @@ bool eq_rlc_ind_hdr(rlc_ind_hdr_t* m0, rlc_ind_hdr_t* m1);
 /////////////////////////////////////
 
 typedef struct {
+  uint32_t ran_ue_id;
+
   /* PDU stats */
   /* TX */
   uint32_t txpdu_pkts;         /* aggregated number of transmitted RLC PDUs */
-  uint32_t txpdu_bytes;        /* aggregated amount of transmitted bytes in RLC PDUs */
+  uint64_t txpdu_bytes;        /* aggregated amount of transmitted bytes in RLC PDUs */
   uint32_t txpdu_wt_ms;        /* TODO: aggregated head-of-line tx packet waiting time to be transmitted (i.e. send to the MAC layer) */
   uint32_t txpdu_dd_pkts;      /* aggregated number of dropped or discarded tx packets by RLC */
-  uint32_t txpdu_dd_bytes;     /* aggregated amount of bytes dropped or discarded tx packets by RLC */
+  uint64_t txpdu_dd_bytes;     /* aggregated amount of bytes dropped or discarded tx packets by RLC */
   uint32_t txpdu_retx_pkts;    /* aggregated number of tx pdus/pkts to be re-transmitted (only applicable to RLC AM) */
-  uint32_t txpdu_retx_bytes;   /* aggregated amount of bytes to be re-transmitted (only applicable to RLC AM) */
+  uint64_t txpdu_retx_bytes;   /* aggregated amount of bytes to be re-transmitted (only applicable to RLC AM) */
   uint32_t txpdu_segmented;    /* aggregated number of segmentations */
   uint32_t txpdu_status_pkts;  /* aggregated number of tx status pdus/pkts (only applicable to RLC AM) */
-  uint32_t txpdu_status_bytes; /* aggregated amount of tx status bytes  (only applicable to RLC AM) */
-  uint32_t txbuf_occ_bytes;    /* (IMPLEMENTED) transmitting bytes currently in buffer */
+  uint64_t txpdu_status_bytes; /* aggregated amount of tx status bytes  (only applicable to RLC AM) */
   uint32_t txbuf_occ_pkts;     /* TODO: current tx buffer occupancy in terms of number of packets (average: NOT IMPLEMENTED) */
+  uint64_t txbuf_occ_bytes;    /* (IMPLEMENTED) transmitting bytes currently in buffer */
 
   /* txbuf_wd_ms: the time window for which the txbuf  occupancy value is obtained - NOT IMPLEMENTED */
 
   /* RX */
   uint32_t rxpdu_pkts;         /* aggregated number of received RLC PDUs */
-  uint32_t rxpdu_bytes;        /* amount of bytes received by the RLC */
+  uint64_t rxpdu_bytes;        /* amount of bytes received by the RLC */
   uint32_t rxpdu_dup_pkts;     /* aggregated number of duplicate packets */
-  uint32_t rxpdu_dup_bytes;    /* aggregated amount of duplicated bytes */
+  uint64_t rxpdu_dup_bytes;    /* aggregated amount of duplicated bytes */
   uint32_t rxpdu_dd_pkts;      /* aggregated number of rx packets dropped or discarded by RLC */
-  uint32_t rxpdu_dd_bytes;     /* aggregated amount of rx bytes dropped or discarded by RLC */
+  uint64_t rxpdu_dd_bytes;     /* aggregated amount of rx bytes dropped or discarded by RLC */
   uint32_t rxpdu_ow_pkts;      /* aggregated number of out of window received RLC pdu */
-  uint32_t rxpdu_ow_bytes;     /* aggregated number of out of window bytes received RLC pdu */
+  uint64_t rxpdu_ow_bytes;     /* aggregated number of out of window bytes received RLC pdu */
   uint32_t rxpdu_status_pkts;  /* aggregated number of rx status pdus/pkts (only applicable to RLC AM) */
-  uint32_t rxpdu_status_bytes; /* aggregated amount of rx status bytes  (only applicable to RLC AM) */
+  uint64_t rxpdu_status_bytes; /* aggregated amount of rx status bytes  (only applicable to RLC AM) */
   /* rxpdu_rotout_ms: flag indicating rx reordering  timeout in ms - NOT IMPLEMENTED */
   /* rxpdu_potout_ms: flag indicating the poll retransmit time out in ms - NOT IMPLEMENTED */
   /* rxpdu_sptout_ms: flag indicating status prohibit timeout in ms - NOT IMPLEMENTED */
-  uint32_t rxbuf_occ_bytes;    /* (IMPLEMENTED) received bytes currently in buffer */
   uint32_t rxbuf_occ_pkts;     /* TODO: current rx buffer occupancy in terms of number of packets (average: NOT IMPLEMENTED) */
+  uint64_t rxbuf_occ_bytes;    /* (IMPLEMENTED) received bytes currently in buffer */
 
 
   /* SDU stats */
@@ -139,7 +141,7 @@ typedef struct {
   uint32_t rxsdu_pkts;         /* number of SDUs received */
   uint64_t rxsdu_bytes;        /* (UPDATED) number of SDUs bytes arrived so far (counter) */
   uint32_t rxsdu_dd_pkts;      /* number of dropped or discarded SDUs */
-  uint32_t rxsdu_dd_bytes;     /* number of bytes of SDUs dropped or discarded */
+  uint64_t rxsdu_dd_bytes;     /* number of bytes of SDUs dropped or discarded */
 
   uint32_t rnti;
   uint8_t mode;               /* 0: RLC AM, 1: RLC UM, 2: RLC TM */

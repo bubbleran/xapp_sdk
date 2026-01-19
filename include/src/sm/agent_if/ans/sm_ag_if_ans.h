@@ -31,6 +31,7 @@
 #include "../../isac_sm/ie/isac_data_ie.h"
 #include "../../rc_sm/ie/rc_data_ie.h"
 #include "../../ccc_sm/ie/ccc_data_ie.h"
+#include "../../llc_sm/ie/llc_data_ie.h"
 
 #include "../write/subscription_aperiod.h"
 #include "../write/subscription_period.h"
@@ -60,6 +61,7 @@ typedef enum{
   RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0,
   CCC_V3_0_AGENT_IF_CTRL_ANS_V0,
   ISAC_AGENT_IF_CTRL_ANS_V0, 
+  LLC_V1_0_AGENT_IF_CTRL_ANS_V0,
 
   SM_AGENT_IF_CTRL_ANS_V0_END,
 } sm_ag_if_ans_ctrl_e;
@@ -76,6 +78,7 @@ typedef struct{
     e2sm_rc_ctrl_out_t rc;
     e2sm_ccc_ctrl_out_t ccc;
     isac_ctrl_out_t isac;
+    e2sm_llc_ctrl_out_t llc;
   };
   expected_cause_t exp;
 } sm_ag_if_ans_ctrl_t;
@@ -101,7 +104,7 @@ typedef struct{
   union {
     susbcription_period_t per;
     susbcription_aperiod_t aper;
-    exp_ind_data_t rc_ind;
+    exp_ind_data_t exp_ind;
   };
 
 } sm_ag_if_ans_subs_t;

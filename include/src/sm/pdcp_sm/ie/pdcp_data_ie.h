@@ -85,21 +85,22 @@ bool eq_pdcp_ind_hdr(pdcp_ind_hdr_t* m0, pdcp_ind_hdr_t* m1);
 /////////////////////////////////////
 
 typedef struct{
+  uint32_t ran_ue_id;
   uint32_t txpdu_pkts;     /* aggregated number of tx packets */
-  uint32_t txpdu_bytes;    /* aggregated bytes of tx packets */
+  uint64_t txpdu_bytes;    /* aggregated bytes of tx packets */
   uint32_t txpdu_sn;       /* current sequence number of last tx packet (or TX_NEXT) */
   uint32_t rxpdu_pkts;     /* aggregated number of rx packets */
-  uint32_t rxpdu_bytes;    /* aggregated bytes of rx packets */
+  uint64_t rxpdu_bytes;    /* aggregated bytes of rx packets */
   uint32_t rxpdu_sn;       /* current sequence number of last rx packet (or  RX_NEXT) */
   uint32_t rxpdu_oo_pkts;       /* aggregated number of out-of-order rx pkts  (or RX_REORD) */
-  uint32_t rxpdu_oo_bytes; /* aggregated amount of out-of-order rx bytes */
+  uint64_t rxpdu_oo_bytes; /* aggregated amount of out-of-order rx bytes */
   uint32_t rxpdu_dd_pkts;  /* aggregated number of duplicated discarded packets */
-  uint32_t rxpdu_dd_bytes; /* aggregated amount of discarded packets' bytes */
+  uint64_t rxpdu_dd_bytes; /* aggregated amount of discarded packets' bytes */
   uint32_t rxpdu_ro_count; /* this state variable indicates the COUNT value */
   uint32_t txsdu_pkts;     /* number of SDUs delivered */
-  uint32_t txsdu_bytes;    /* number of bytes of SDUs delivered */
+  uint64_t txsdu_bytes;    /* number of bytes of SDUs delivered */
   uint32_t rxsdu_pkts;     /* number of SDUs received */
-  uint32_t rxsdu_bytes;    /* number of bytes of SDUs received */
+  uint64_t rxsdu_bytes;    /* number of bytes of SDUs received */
   uint32_t rnti;
   uint8_t  mode;               /* 0: PDCP AM, 1: PDCP UM, 2: PDCP TM */
   uint8_t  rbid;

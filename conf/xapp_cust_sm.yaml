@@ -19,10 +19,14 @@ xapp:
     # if no database is needed/used
     db:
         ip: 127.0.0.1
-        dir: /tmp/
-        filename: testdb
-        usr: xapp
-        psw: BubbleRAN
+        port: 8428
+        filename: scenario  #This refers to the scenario name (tag) in victoria metrics
+        
+        ## mysql parameters (not used for victoria metrics)
+        #dir: /tmp/
+        #usr: xapp
+        #psw: BubbleRAN
+        #filename: testdb
         # Commands for setting up mysql
         # $ sudo mysql
         # $ mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
@@ -36,12 +40,12 @@ xapp_sub_cust_sm:
     1:
         name: mac  
         # periodicity possible values: 
-        # 1, 2, 5, 10, 100, or 1000
-        periodicity_ms: 10
+        # 500 or 1000
+        periodicity_ms: 500
     2:
         name: rlc  
-        periodicity_ms: 100
+        periodicity_ms: 500
     3:
         name: pdcp  
-        periodicity_ms: 5
+        periodicity_ms: 500
 

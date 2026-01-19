@@ -98,6 +98,7 @@ typedef enum{
   SLICE_ALG_SM_V0_EDF = 4,
   SLICE_ALG_SM_V0_EEDF = 5,
   SLICE_ALG_SM_V0_PR = 6,
+  SLICE_ALG_SM_V0_EPR = 7,
 
   SLICE_ALG_SM_V0_END
 } slice_algorithm_e;
@@ -310,6 +311,7 @@ typedef struct{
     edf_slice_t edf;
     eedf_slice_t eedf;
     pr_slice_t pr;
+    pr_slice_t epr;
   } slice_params_u;
 
 
@@ -349,7 +351,9 @@ typedef struct{
 } slice_conf_t ;
 
 typedef struct{
-  uint32_t dl_id;
+  uint32_t ran_ue_id;
+  uint32_t len_dl;
+  uint32_t* dl_id;
   uint32_t ul_id;
   uint16_t rnti;
 } ue_slice_assoc_t; 
@@ -418,6 +422,7 @@ typedef enum{
   SLICE_CTRL_SM_V0_ADD,
   SLICE_CTRL_SM_V0_DEL,
   SLICE_CTRL_SM_V0_UE_SLICE_ASSOC,
+  SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC,
 
   SLICE_CTRL_SM_V0_END
 } slice_ctrl_msg_e ;

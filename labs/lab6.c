@@ -232,10 +232,19 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
   /// SET RNTI ///
   assoc->ues[0].rnti = assoc_rnti;
   /// SET DL ID ///
-  assoc->ues[0].dl_id = 1; // dl_id = -1 means UE will not perform DL association
-  if ((int32_t)assoc->ues[0].dl_id != -1){
-    printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[0].rnti, assoc->ues[0].dl_id);
+  assoc->ues[0].len_dl = 1;
+  if(assoc->ues[0].len_dl > 0) {
+    assoc->ues[0].dl_id = calloc(assoc->ues[0].len_dl, sizeof(uint32_t));
+    assert(assoc->ues[0].dl_id != NULL && "Memory exhausted");
   }
+  uint32_t dl_id[1] = {1}; // dl_id = -1 means UE will not perform DL association
+  for (uint32_t j = 0; j < assoc->ues[0].len_dl; ++j) {
+    assoc->ues[0].dl_id[j] = dl_id[j];
+    if ((int32_t)assoc->ues[0].dl_id[j] != -1){
+      printf("ASSOC DL SLICE: 0x%x, id %u\n", assoc->ues[0].rnti, assoc->ues[0].dl_id[j]);
+    }
+  }
+
   /// SET UL ID ///
   assoc->ues[0].ul_id = -1; // ul_id = -1 means UE will not perform UL association
   if ((int32_t)assoc->ues[0].ul_id != -1){

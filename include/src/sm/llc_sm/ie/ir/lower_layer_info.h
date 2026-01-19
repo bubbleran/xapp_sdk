@@ -1,0 +1,11 @@
+#ifndef LOWER_LAYER_INFORMATION_TYPE_MIR_H
+#define LOWER_LAYER_INFORMATION_TYPE_MIR_H 
+
+// 8.3.15
+typedef enum{
+  SRS_LOWER_LAYER_INFO_E,
+  CSI_LOWER_LAYER_INFO_E,
+  END_LOWER_LAYER_INFO_E
+} lower_layer_info_e;
+
+#endif

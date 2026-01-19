@@ -14,7 +14,7 @@ import xapp_sdk as ric
 ####################
 ####  SLICE INDICATION MSG TO JSON
 ####################
-assoc_rnti = 0
+assoc_ran_ue_id = 0
 def slice_ind_to_dict_json(ind):
 
     slice_stats = {
@@ -47,6 +47,8 @@ def slice_ind_to_dict_json(ind):
                 slice_algo = "EEDF"
             elif s.params.type == 6:
                 slice_algo = "PR"
+            elif s.params.type == 7:
+                slice_algo = "EPR"
             else:
                 slice_algo = "unknown"
             dl_dict.update({"slice_sched_algo" : slice_algo})
@@ -107,6 +109,12 @@ def slice_ind_to_dict_json(ind):
                     "min_ratio" : s.params.u.pr.min_ratio,
                     "dedicated_ratio" : s.params.u.pr.dedicated_ratio
                 }
+            elif dl_dict["slice_sched_algo"] == "EPR":
+                slices_dict["slice_algo_params"] = {
+                    "max_ratio" : s.params.u.epr.max_ratio,
+                    "min_ratio" : s.params.u.epr.min_ratio,
+                    "dedicated_ratio" : s.params.u.epr.dedicated_ratio
+                }
             else:
                 print("unknown slice algorithm, cannot handle params")
             dl_dict["slices"].append(slices_dict)
@@ -133,6 +141,8 @@ def slice_ind_to_dict_json(ind):
                 slice_algo = "EEDF"
             elif s.params.type == 6:
                 slice_algo = "PR"
+            elif s.params.type == 7:
+                slice_algo = "EPR"
             else:
                 slice_algo = "unknown"
             ul_dict.update({"slice_sched_algo" : slice_algo})
@@ -193,12 +203,18 @@ def slice_ind_to_dict_json(ind):
                     "min_ratio" : s.params.u.pr.min_ratio,
                     "dedicated_ratio" : s.params.u.pr.dedicated_ratio
                 }
+            elif ul_dict["slice_sched_algo"] == "EPR":
+                slices_dict["slice_algo_params"] = {
+                    "max_ratio" : s.params.u.epr.max_ratio,
+                    "min_ratio" : s.params.u.epr.min_ratio,
+                    "dedicated_ratio" : s.params.u.epr.dedicated_ratio
+                }
             else:
                 print("unknown slice algorithm, cannot handle params")
             ul_dict["slices"].append(slices_dict)
 
     # UE
-    global assoc_rnti
+    global assoc_ran_ue_id
     ue_dict = slice_stats["UE"]
     if ind.ue_slice_stats.len_ue_slice <= 0:
         ue_dict["num_of_ues"] = ind.ue_slice_stats.len_ue_slice
@@ -209,17 +225,21 @@ def slice_ind_to_dict_json(ind):
             ues_dict = {}
             dl_id = "null"
             ul_id = "null"
-            if u.dl_id >= 0 and dl_dict["num_of_slices"] > 0:
-                dl_id = u.dl_id
+            if u.len_dl > 0 and dl_dict["num_of_slices"] > 0:
+                dl_id = ""
+                for id in u.dl_id:
+                    dl_id += str(id) + ","
+                dl_id = dl_id.rstrip(",")
             if u.ul_id >= 0 and ul_dict["num_of_slices"] > 0:
                 ul_id = u.ul_id
             ues_dict = {
+                "ran_ue_id" : u.ran_ue_id,
                 "rnti" : hex(u.rnti),
                 "assoc_dl_slice_id" : dl_id,
                 "assoc_ul_slice_id" : ul_id
             }
             ue_dict["ues"].append(ues_dict)
-            assoc_rnti = u.rnti
+            assoc_ran_ue_id = u.ran_ue_id
 
     ind_dict = slice_stats
     ind_json = json.dumps(ind_dict)
@@ -242,12 +262,17 @@ class SLICECallback(ric.slice_cb):
     # Override C++ method: virtual void handle(swig_slice_ind_msg_t a) = 0;
     def handle(self, ind):
         # Print swig_slice_ind_msg_t
-        # if (ind.slice_stats.dl.len_slices > 0):
-        #     print('SLICE Indication tstamp = ' + str(ind.tstamp))
-        #     print('SLICE STATE: len_slices = ' + str(ind.slice_stats.dl.len_slices))
-        #     print('SLICE STATE: sched_name = ' + str(ind.slice_stats.dl.sched_name[0]))
-        # if (ind.ue_slice_stats.len_ue_slice > 0):
-        #    print('UE ASSOC SLICE STATE: len_ue_slice = ' + str(ind.ue_slice_stats.len_ue_slice))
+        print('SLICE Indication tstamp = ' + str(ind.tstamp))
+        for s in ind.slice_stats.dl.slices:
+            print(f'SLICE STATE: num slice {ind.slice_stats.dl.len_slices}, id {s.id}, algo {s.params.type}, name {ind.slice_stats.dl.sched_name[0]}')
+        for ue in ind.ue_slice_stats.ues:
+            if ue.len_dl > 0:
+                dl_id = []
+                for id in ue.dl_id:
+                    dl_id.append(id)
+                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl id {dl_id}')
+            else:
+                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl len {ue.len_dl}')
         slice_ind_to_dict_json(ind)
 
 ####################
@@ -309,6 +334,11 @@ def create_slice(slice_params, slice_sched_algo):
         s.params.u.pr.max_ratio = slice_params["slice_algo_params"]["max_ratio"]
         s.params.u.pr.min_ratio = slice_params["slice_algo_params"]["min_ratio"]
         s.params.u.pr.dedicated_ratio = slice_params["slice_algo_params"]["dedicated_ratio"]
+    elif slice_sched_algo == "EPR":
+        s.params.type = ric.SLICE_ALG_SM_V0_EPR
+        s.params.u.epr.max_ratio = slice_params["slice_algo_params"]["max_ratio"]
+        s.params.u.epr.min_ratio = slice_params["slice_algo_params"]["min_ratio"]
+        s.params.u.epr.dedicated_ratio = slice_params["slice_algo_params"]["dedicated_ratio"]
     else:
         print("Unkown slice algo type")
 
@@ -491,6 +521,31 @@ add_pr_slices = {
     ]
 }
 
+add_epr_slices = {
+    "num_slices" : 3,
+    "slice_sched_algo" : "EPR",
+    "slices" : [
+        {
+            "id" : 0,
+            "label" : "s1",
+            "ue_sched_algo" : "PF",
+            "slice_algo_params" : {"max_ratio" : 100, "min_ratio" : 0, "dedicated_ratio" : 0},
+        },
+        {
+            "id" : 1,
+            "label" : "s2",
+            "ue_sched_algo" : "PF",
+            "slice_algo_params" : {"max_ratio" : 20, "min_ratio" : 20, "dedicated_ratio" : 20},
+        },
+        {
+            "id" : 2,
+            "label" : "s3",
+            "ue_sched_algo" : "PF",
+            "slice_algo_params" : {"max_ratio" : 40, "min_ratio" : 20, "dedicated_ratio" : 0},
+        }
+    ]
+}
+
 reset_slices = {
     "num_slices" : 0
 }
@@ -512,13 +567,26 @@ assoc_ue_slice = {
     "num_ues" : 1,
     "ues" : [
         {
-            "rnti" : assoc_rnti, # TODO: get rnti from slice_ind_to_dict_json()
+            "ran_ue_id" : assoc_ran_ue_id,
             "assoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
             "assoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
         }
     ]
 }
 
+####################
+####  SLICE CONTROL PARAMETER EXAMPLE - DEASSOC UE SLICE
+####################
+deassoc_ue_slice = {
+    "num_ues" : 1,
+    "ues" : [
+        {
+            "ran_ue_id" : assoc_ran_ue_id,
+            "deassoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
+            "deassoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
+        }
+    ]
+}
 
 def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
     msg = ric.slice_ctrl_msg_t()
@@ -587,12 +655,36 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
         assoc = ric.ue_slice_assoc_array(ctrl_msg["num_ues"])
         for i in range(ctrl_msg["num_ues"]):
             a = ric.ue_slice_assoc_t()
-            a.rnti = ctrl_msg["ues"][i]["rnti"] # TODO: assign the rnti after get the indication msg from slice_ind_to_dict_json()
-            a.dl_id = ctrl_msg["ues"][i]["assoc_dl_slice_id"]
+            a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
             a.ul_id = ctrl_msg["ues"][i]["assoc_ul_slice_id"]
+
+            a.len_dl = 1 # each ctrl msg only allow ctrl one slice
+            assoc_dl_id = ric.assoc_dl_array(a.len_dl)
+            assoc_dl_id[0] = ctrl_msg["ues"][i]["assoc_dl_slice_id"]
+            a.dl_id = assoc_dl_id
+
             assoc[i] = a
-            # print("ASSOC DL SLICE: <rnti:", a.rnti, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
+            # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
         msg.u.ue_slice.ues = assoc
+
+    elif (ctrl_type == "DEASSOC_UE_SLICE"):
+        msg.type = ric.SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC
+
+        msg.u.ue_slice.len_ue_slice = ctrl_msg["num_ues"]
+        deassoc = ric.ue_slice_assoc_array(ctrl_msg["num_ues"])
+        for i in range(ctrl_msg["num_ues"]):
+            a = ric.ue_slice_assoc_t()
+            a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
+            a.ul_id = ctrl_msg["ues"][i]["deassoc_ul_slice_id"]
+
+            a.len_dl = 1 # each ctrl msg only allow ctrl one slice
+            deassoc_dl_id = ric.assoc_dl_array(a.len_dl)
+            deassoc_dl_id[0] = ctrl_msg["ues"][i]["deassoc_dl_slice_id"]
+            a.dl_id = deassoc_dl_id
+
+            deassoc[i] = a
+            # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
+        msg.u.ue_slice.ues = deassoc
 
     return msg
 
@@ -634,6 +726,41 @@ time.sleep(5)
 ####################
 
 ul_dl_conf = {
+    "dl_conf": add_epr_slices,
+    #"ul_conf": add_nvs_slices_cap
+}
+
+msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
+ric.control_slice_sm(conn[node_idx].id, msg)
+time.sleep(5)
+
+####################
+####  SLICE CTRL ASSOC
+####################
+while(assoc_ran_ue_id == 0):
+    time.sleep(1)
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
+msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+ric.control_slice_sm(conn[node_idx].id, msg)
+time.sleep(5)
+
+####################
+####  SLICE CTRL DEASSOC
+####################
+while(assoc_ran_ue_id == 0):
+    time.sleep(1)
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
+msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
+ric.control_slice_sm(conn[node_idx].id, msg)
+time.sleep(5)
+
+####################
+####  SLICE CTRL ADD
+####################
+
+ul_dl_conf = {
     "dl_conf": add_pr_slices,
     #"ul_conf": add_nvs_slices_cap
 }
@@ -645,9 +772,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -669,9 +796,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -693,9 +820,9 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
@@ -717,11 +844,22 @@ time.sleep(5)
 ####################
 ####  SLICE CTRL ASSOC
 ####################
-while(assoc_rnti == 0):
+while(assoc_ran_ue_id == 0):
     time.sleep(1)
-assoc_ue_slice["ues"][0]["rnti"] = assoc_rnti
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
 assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
 msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+ric.control_slice_sm(conn[node_idx].id, msg)
+time.sleep(5)
+
+####################
+####  SLICE CTRL DEASSOC
+####################
+while(assoc_ran_ue_id == 0):
+    time.sleep(1)
+assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
+msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
 ric.control_slice_sm(conn[node_idx].id, msg)
 time.sleep(5)
 

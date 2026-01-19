@@ -1905,29 +1905,6 @@ class ACT_NAME_ID_Vector(object):
 
 # Register ACT_NAME_ID_Vector in _xapp_sdk_python:
 _xapp_sdk_python.ACT_NAME_ID_Vector_swigregister(ACT_NAME_ID_Vector)
-class ue_slice_assoc_array(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, nelements):
-        _xapp_sdk_python.ue_slice_assoc_array_swiginit(self, _xapp_sdk_python.new_ue_slice_assoc_array(nelements))
-    __swig_destroy__ = _xapp_sdk_python.delete_ue_slice_assoc_array
-
-    def __getitem__(self, index):
-        return _xapp_sdk_python.ue_slice_assoc_array___getitem__(self, index)
-
-    def __setitem__(self, index, value):
-        return _xapp_sdk_python.ue_slice_assoc_array___setitem__(self, index, value)
-
-    def cast(self):
-        return _xapp_sdk_python.ue_slice_assoc_array_cast(self)
-
-    @staticmethod
-    def frompointer(t):
-        return _xapp_sdk_python.ue_slice_assoc_array_frompointer(t)
-
-# Register ue_slice_assoc_array in _xapp_sdk_python:
-_xapp_sdk_python.ue_slice_assoc_array_swigregister(ue_slice_assoc_array)
 class slice_array(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -1951,6 +1928,52 @@ class slice_array(object):
 
 # Register slice_array in _xapp_sdk_python:
 _xapp_sdk_python.slice_array_swigregister(slice_array)
+class ue_slice_assoc_array(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _xapp_sdk_python.ue_slice_assoc_array_swiginit(self, _xapp_sdk_python.new_ue_slice_assoc_array(nelements))
+    __swig_destroy__ = _xapp_sdk_python.delete_ue_slice_assoc_array
+
+    def __getitem__(self, index):
+        return _xapp_sdk_python.ue_slice_assoc_array___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _xapp_sdk_python.ue_slice_assoc_array___setitem__(self, index, value)
+
+    def cast(self):
+        return _xapp_sdk_python.ue_slice_assoc_array_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _xapp_sdk_python.ue_slice_assoc_array_frompointer(t)
+
+# Register ue_slice_assoc_array in _xapp_sdk_python:
+_xapp_sdk_python.ue_slice_assoc_array_swigregister(ue_slice_assoc_array)
+class assoc_dl_array(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _xapp_sdk_python.assoc_dl_array_swiginit(self, _xapp_sdk_python.new_assoc_dl_array(nelements))
+    __swig_destroy__ = _xapp_sdk_python.delete_assoc_dl_array
+
+    def __getitem__(self, index):
+        return _xapp_sdk_python.assoc_dl_array___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _xapp_sdk_python.assoc_dl_array___setitem__(self, index, value)
+
+    def cast(self):
+        return _xapp_sdk_python.assoc_dl_array_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _xapp_sdk_python.assoc_dl_array_frompointer(t)
+
+# Register assoc_dl_array in _xapp_sdk_python:
+_xapp_sdk_python.assoc_dl_array_swigregister(assoc_dl_array)
 class del_dl_array(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2051,6 +2074,7 @@ Interval_ms_2 = _xapp_sdk_python.Interval_ms_2
 Interval_ms_5 = _xapp_sdk_python.Interval_ms_5
 Interval_ms_10 = _xapp_sdk_python.Interval_ms_10
 Interval_ms_100 = _xapp_sdk_python.Interval_ms_100
+Interval_ms_500 = _xapp_sdk_python.Interval_ms_500
 Interval_ms_1000 = _xapp_sdk_python.Interval_ms_1000
 class swig_mac_ind_msg_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -2214,6 +2238,21 @@ class swig_slice_conf_t(object):
 
 # Register swig_slice_conf_t in _xapp_sdk_python:
 _xapp_sdk_python.swig_slice_conf_t_swigregister(swig_slice_conf_t)
+class swig_ue_slice_assoc_t(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_set)
+    len_dl = property(_xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_set)
+    dl_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_set)
+    ul_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_set)
+    rnti = property(_xapp_sdk_python.swig_ue_slice_assoc_t_rnti_get, _xapp_sdk_python.swig_ue_slice_assoc_t_rnti_set)
+
+    def __init__(self):
+        _xapp_sdk_python.swig_ue_slice_assoc_t_swiginit(self, _xapp_sdk_python.new_swig_ue_slice_assoc_t())
+    __swig_destroy__ = _xapp_sdk_python.delete_swig_ue_slice_assoc_t
+
+# Register swig_ue_slice_assoc_t in _xapp_sdk_python:
+_xapp_sdk_python.swig_ue_slice_assoc_t_swigregister(swig_ue_slice_assoc_t)
 class swig_ue_slice_conf_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2829,6 +2868,7 @@ class mac_ue_stats_impl_t(object):
     ul_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_harq_set)
     dl_num_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_dl_num_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_dl_num_harq_set)
     ul_num_harq = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_num_harq_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_num_harq_set)
+    ran_ue_id = property(_xapp_sdk_python.mac_ue_stats_impl_t_ran_ue_id_get, _xapp_sdk_python.mac_ue_stats_impl_t_ran_ue_id_set)
     rnti = property(_xapp_sdk_python.mac_ue_stats_impl_t_rnti_get, _xapp_sdk_python.mac_ue_stats_impl_t_rnti_set)
     dl_aggr_prb = property(_xapp_sdk_python.mac_ue_stats_impl_t_dl_aggr_prb_get, _xapp_sdk_python.mac_ue_stats_impl_t_dl_aggr_prb_set)
     ul_aggr_prb = property(_xapp_sdk_python.mac_ue_stats_impl_t_ul_aggr_prb_get, _xapp_sdk_python.mac_ue_stats_impl_t_ul_aggr_prb_set)
@@ -3134,6 +3174,7 @@ def eq_rlc_ind_hdr(m0, m1):
 class rlc_radio_bearer_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_ran_ue_id_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_ran_ue_id_set)
     txpdu_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_pkts_set)
     txpdu_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_bytes_set)
     txpdu_wt_ms = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_wt_ms_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_wt_ms_set)
@@ -3144,8 +3185,8 @@ class rlc_radio_bearer_stats_t(object):
     txpdu_segmented = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_segmented_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_segmented_set)
     txpdu_status_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_status_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_status_pkts_set)
     txpdu_status_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_status_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txpdu_status_bytes_set)
-    txbuf_occ_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_bytes_set)
     txbuf_occ_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_pkts_set)
+    txbuf_occ_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txbuf_occ_bytes_set)
     rxpdu_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_pkts_set)
     rxpdu_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_bytes_set)
     rxpdu_dup_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_dup_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_dup_pkts_set)
@@ -3156,8 +3197,8 @@ class rlc_radio_bearer_stats_t(object):
     rxpdu_ow_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_ow_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_ow_bytes_set)
     rxpdu_status_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_status_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_status_pkts_set)
     rxpdu_status_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_status_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxpdu_status_bytes_set)
-    rxbuf_occ_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_bytes_set)
     rxbuf_occ_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_pkts_set)
+    rxbuf_occ_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_rxbuf_occ_bytes_set)
     txsdu_pkts = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_pkts_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_pkts_set)
     txsdu_bytes = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_bytes_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_bytes_set)
     txsdu_avg_time_to_tx = property(_xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_avg_time_to_tx_get, _xapp_sdk_python.rlc_radio_bearer_stats_t_txsdu_avg_time_to_tx_set)
@@ -3440,6 +3481,7 @@ def eq_pdcp_ind_hdr(m0, m1):
 class pdcp_radio_bearer_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_ran_ue_id_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_ran_ue_id_set)
     txpdu_pkts = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_pkts_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_pkts_set)
     txpdu_bytes = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_bytes_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_bytes_set)
     txpdu_sn = property(_xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_sn_get, _xapp_sdk_python.pdcp_radio_bearer_stats_t_txpdu_sn_set)
@@ -3733,6 +3775,7 @@ SLICE_ALG_SM_V0_SCN19 = _xapp_sdk_python.SLICE_ALG_SM_V0_SCN19
 SLICE_ALG_SM_V0_EDF = _xapp_sdk_python.SLICE_ALG_SM_V0_EDF
 SLICE_ALG_SM_V0_EEDF = _xapp_sdk_python.SLICE_ALG_SM_V0_EEDF
 SLICE_ALG_SM_V0_PR = _xapp_sdk_python.SLICE_ALG_SM_V0_PR
+SLICE_ALG_SM_V0_EPR = _xapp_sdk_python.SLICE_ALG_SM_V0_EPR
 SLICE_ALG_SM_V0_END = _xapp_sdk_python.SLICE_ALG_SM_V0_END
 class static_slice_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -3965,6 +4008,7 @@ class slice_params_u(object):
     edf = property(_xapp_sdk_python.slice_params_u_edf_get, _xapp_sdk_python.slice_params_u_edf_set)
     eedf = property(_xapp_sdk_python.slice_params_u_eedf_get, _xapp_sdk_python.slice_params_u_eedf_set)
     pr = property(_xapp_sdk_python.slice_params_u_pr_get, _xapp_sdk_python.slice_params_u_pr_set)
+    epr = property(_xapp_sdk_python.slice_params_u_epr_get, _xapp_sdk_python.slice_params_u_epr_set)
 
     def __init__(self):
         _xapp_sdk_python.slice_params_u_swiginit(self, _xapp_sdk_python.new_slice_params_u())
@@ -4029,6 +4073,8 @@ _xapp_sdk_python.slice_conf_t_swigregister(slice_conf_t)
 class ue_slice_assoc_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_set)
+    len_dl = property(_xapp_sdk_python.ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.ue_slice_assoc_t_dl_id_set)
     ul_id = property(_xapp_sdk_python.ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.ue_slice_assoc_t_ul_id_set)
     rnti = property(_xapp_sdk_python.ue_slice_assoc_t_rnti_get, _xapp_sdk_python.ue_slice_assoc_t_rnti_set)
@@ -4122,6 +4168,7 @@ def eq_slice_ctrl_hdr(m0, m1):
 SLICE_CTRL_SM_V0_ADD = _xapp_sdk_python.SLICE_CTRL_SM_V0_ADD
 SLICE_CTRL_SM_V0_DEL = _xapp_sdk_python.SLICE_CTRL_SM_V0_DEL
 SLICE_CTRL_SM_V0_UE_SLICE_ASSOC = _xapp_sdk_python.SLICE_CTRL_SM_V0_UE_SLICE_ASSOC
+SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC = _xapp_sdk_python.SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC
 SLICE_CTRL_SM_V0_END = _xapp_sdk_python.SLICE_CTRL_SM_V0_END
 class del_slice_conf_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -4356,6 +4403,7 @@ def eq_gtp_ind_hdr(m0, m1):
 class gtp_ngu_t_stats_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    ran_ue_id = property(_xapp_sdk_python.gtp_ngu_t_stats_t_ran_ue_id_get, _xapp_sdk_python.gtp_ngu_t_stats_t_ran_ue_id_set)
     rnti = property(_xapp_sdk_python.gtp_ngu_t_stats_t_rnti_get, _xapp_sdk_python.gtp_ngu_t_stats_t_rnti_set)
     teidgnb = property(_xapp_sdk_python.gtp_ngu_t_stats_t_teidgnb_get, _xapp_sdk_python.gtp_ngu_t_stats_t_teidgnb_set)
     teidupf = property(_xapp_sdk_python.gtp_ngu_t_stats_t_teidupf_get, _xapp_sdk_python.gtp_ngu_t_stats_t_teidupf_set)

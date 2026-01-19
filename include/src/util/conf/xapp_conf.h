@@ -13,6 +13,7 @@ typedef struct{
   char* filename;
   char* usr;
   char* psw;
+  uint32_t port;
 } db_xapp_conf_t;
 
 void free_db_xapp_conf(db_xapp_conf_t* db);

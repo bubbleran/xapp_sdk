@@ -34,6 +34,7 @@
 #include "../../kpm_sm/kpm_data_ie_wrapper.h"
 #include "../../rc_sm/ie/rc_data_ie.h"
 #include "../../ccc_sm/ie/ccc_data_ie.h"
+#include "../../llc_sm/ie/llc_data_ie.h"
 
 //////////////////////
 //////////////////////
@@ -52,6 +53,7 @@ typedef enum{
   RAN_CONTROL_CTRL_V1_03 = 6,
   CCC_CTRL_REQ_V3_0 = 7,
   ISAC_CTRL_REQ_V0 = 8,
+  LLC_CTRL_V1_0 = 9,
   SM_AGENT_IF_WRITE_CTRL_V0_END,
 } sm_ag_if_ctrl_e;
 
@@ -67,6 +69,7 @@ typedef struct{
     rc_ctrl_req_data_t rc_ctrl;
     ccc_ctrl_req_data_t ccc_ctrl;
     isac_ctrl_req_data_t isac_ctrl;
+    llc_ctrl_req_data_t llc_ctrl;
   };
 }  sm_ag_if_wr_ctrl_t;
 
@@ -88,6 +91,8 @@ typedef enum{
   RAN_CTRL_SUBS_V1_03,
   CCC_SUBS_V3_0,
   ISAC_SUBS_V0, 
+  LLC_SUBS_V1_0,
+
   SM_AGENT_IF_WRITE_SUBS_V0_END,
 } sm_ag_if_subs_e;
 
@@ -106,6 +111,11 @@ typedef struct{
   isac_sub_data_t isac;
 } wr_isac_sub_data_t;
 
+typedef struct{ 
+  uint32_t ric_req_id;
+  llc_sub_data_t llc;
+} wr_llc_sub_data_t;
+
 typedef struct{
   sm_ag_if_subs_e type;
   union{
@@ -119,9 +129,9 @@ typedef struct{
     wr_rc_sub_data_t wr_rc;
     wr_ccc_sub_data_t wr_ccc;
     wr_isac_sub_data_t wr_isac;
+    wr_llc_sub_data_t wr_llc;
   };
 } sm_ag_if_wr_subs_t;
-
 
 //////////////////////
 //////////////////////

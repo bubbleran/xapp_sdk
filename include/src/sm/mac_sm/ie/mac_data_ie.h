@@ -110,6 +110,7 @@ typedef struct
   uint32_t dl_num_harq;
   uint32_t ul_num_harq;
 
+  uint32_t ran_ue_id;
   uint32_t rnti;
   uint32_t dl_aggr_prb; 
   uint32_t ul_aggr_prb;

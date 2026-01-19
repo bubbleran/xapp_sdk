@@ -140,15 +140,19 @@ void cb(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
     if(ue_id == NULL){
       ue_id = calloc(1, sizeof(ue_id_e2sm_t));
       assert(ue_id != NULL && "Memory exhausted");
-      *ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[0].ue_id);   
+      size_t last_ueidx = frmt_4->sz_seq_ue_info - 1;
+      *ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[last_ueidx].ue_id);
+      printf("Control ran_ue_id %ld\n", *ue_id->gnb.ran_ue_id);
 
       src_e2_node = calloc(1, sizeof(global_e2_node_id_t)); 
       assert(src_e2_node != NULL && "Memory exhausted");
       *src_e2_node = cp_global_e2_node_id(n);
 
-      int const idx = find_idx_seq_cell_info(&frmt_4->seq_ue_info[0], frmt_4->seq_cell_info_2, frmt_4->sz_seq_cell_info_2);
+      int const idx = find_idx_seq_cell_info(&frmt_4->seq_ue_info[last_ueidx], frmt_4->seq_cell_info_2, frmt_4->sz_seq_cell_info_2);
       assert(idx > -1 && "No matching cell for this UE found");
 
+      assert(frmt_4->seq_cell_info_2[idx].neighbour_rela_tbl->sz_nghbr_cell != 0 && "No neighbor cell found");
+      // note: in here, we always get the first neighbor cell's info
       nr_nghbr_cell_t const* nghbr_cell = &frmt_4->seq_cell_info_2[idx].neighbour_rela_tbl->nghbr_cell[0];
       target_cell = nghbr_cell->pci;
      
@@ -288,7 +292,7 @@ int main(int argc, char *argv[])
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
   defer({ free_e2_node_arr_xapp(&arr); });
  
-  assert(arr.len > 0 && arr.len < 3 && "1-2 nodes needed to perform a hand over");
+  assert(arr.len >= 2 && "at least 2 nodes needed to perform a hand over");
   sm_ans_xapp_t* hndl = calloc(arr.len, sizeof(sm_ans_xapp_t)); 
   defer({ free(hndl); });
 
@@ -312,9 +316,10 @@ int main(int argc, char *argv[])
   
   assert(ue_id != NULL && "No UE connected!");
   assert(src_e2_node != NULL);
-  assert(target_cell != 0); 
+  //assert(target_cell != 0); avoid assertion that OAI uses target_cell = 0
   assert(ssb_nr_arfcn != NULL);
 
+  printf("Send handover ctrl msg: target_pci %u target_ssb_nr_arfcn %lu\n", target_cell, *ssb_nr_arfcn);
   // Generate RAN CONTROL Control msg 
   rc_ctrl_req_data_t ho = hand_over_rc_ctrl_msg(ue_id, target_cell, *ssb_nr_arfcn); 
   defer( { free_rc_ctrl_req_data(&ho); });
