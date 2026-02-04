@@ -34,7 +34,7 @@ xapp:
         # $ mysql> exit
 
 xapp_sub_oran_sm:
-    runtime_sec: 42
+    runtime_sec: 10
     # runtime_sec is ignored in xapp_all_moni
     # only be used in xapp_oran_moni & xapp_cust_moni
     1:

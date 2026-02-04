@@ -79,12 +79,12 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 
 #if defined(KPM_V2_01) || defined (KPM_V2_03)
         // collectStartTime (32bit) unit is second
-    printf("KPM-v2 ind_msg latency > %ld s (minimum time unit is in second) from E2-node type %d ID %d\n",
+    printf("\nKPM-v2 ind_msg latency > %ld s (minimum time unit is in second) from E2-node type %d ID %d\n",
            now/1000000 - hdr_frm_1->collectStartTime,
            e2_node->type, e2_node->nb_id.nb_id);
 #elif defined(KPM_V3_00)
         // collectStartTime (64bit) unit is micro-second
-    printf("KPM-v3 ind_msg latency = %lu μs from E2-node type %d ID %u\n",
+        printf("\nKPM-v3 ind_msg latency = %lu μs from E2-node type %d ID %u\n",
            now - hdr_frm_1->collectStartTime,
            e2_node->type, e2_node->nb_id.nb_id);
 #else
@@ -92,57 +92,49 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 #endif
 
         if (hdr_frm_1->fileformat_version)
-          printf("FileFormat Version {%s} ", hdr_frm_1->fileformat_version->buf);
+          printf("FileFormat Version {%s}\n", hdr_frm_1->fileformat_version->buf);
         if (hdr_frm_1->sender_name)
-          printf("Sender Name {%s} ", hdr_frm_1->sender_name->buf);
+          printf("Sender Name {%s}\n", hdr_frm_1->sender_name->buf);
         if (hdr_frm_1->sender_type)
-          printf("Sender Type {%s} ", hdr_frm_1->sender_type->buf);
+          printf("Sender Type {%s}\n", hdr_frm_1->sender_type->buf);
         if (hdr_frm_1->vendor_name)
-          printf("Vendor Name {%s} ", hdr_frm_1->vendor_name->buf);
-        printf("\n");
+          printf("Vendor Name {%s}\n", hdr_frm_1->vendor_name->buf);
 
         if (kpm->msg.type == FORMAT_1_INDICATION_MESSAGE) {
           kpm_ind_msg_format_1_t const* msg_frm_1 = &kpm->msg.frm_1;
           for (size_t i = 0; i < msg_frm_1->meas_data_lst_len; i++) {
+            if (i == 0) {
+              printf("KPM Format 1 Indication Message: Meas data list length %ld, Meas info list length %ld, Meas record list length %ld\n",
+                     msg_frm_1->meas_data_lst_len, msg_frm_1->meas_info_lst_len, msg_frm_1->meas_data_lst[i].meas_record_len);
+            }
             for (size_t j = 0; j < msg_frm_1->meas_data_lst[i].meas_record_len; j++) {
-              if (msg_frm_1->meas_info_lst_len > 0) {
-                switch (msg_frm_1->meas_info_lst[j].meas_type.type) {
-                  case NAME_MEAS_TYPE:
+              switch (msg_frm_1->meas_info_lst[j].meas_type.type) {
+                case NAME_MEAS_TYPE:
+                {
+                  // Get the Measurement Name
+                  char meas_info_name_str[msg_frm_1->meas_info_lst[j].meas_type.name.len + 1];
+                  memcpy(meas_info_name_str, msg_frm_1->meas_info_lst[j].meas_type.name.buf, msg_frm_1->meas_info_lst[j].meas_type.name.len);
+                  meas_info_name_str[msg_frm_1->meas_info_lst[j].meas_type.name.len] = '\0';
+
+                  // Get the value of the Measurement
+                  switch (msg_frm_1->meas_data_lst[i].meas_record_lst[j].value)
                   {
-                    // Get the Measurement Name
-                    char meas_info_name_str[msg_frm_1->meas_info_lst[j].meas_type.name.len + 1];
-                    memcpy(meas_info_name_str, msg_frm_1->meas_info_lst[j].meas_type.name.buf,
-                           msg_frm_1->meas_info_lst[j].meas_type.name.len);
-                    meas_info_name_str[msg_frm_1->meas_info_lst[j].meas_type.name.len] = '\0';
-                    // Get the value of the Measurement
-                    switch (msg_frm_1->meas_data_lst[i].meas_record_lst[j].value)
-                    {
-                      case INTEGER_MEAS_VALUE: {
-                        //printf("meas record INTEGER_MEAS_VALUE value %d\n",msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
-                        printf("%s = %u\n", meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
-                        break;
-                      }
+                    case REAL_MEAS_VALUE:
+                      printf("%lu: %s = %.2f\n", j+1, meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].real_val);
+                      break;
 
-                      case REAL_MEAS_VALUE: {
-                        //printf("meas record REAL_MEAS_VALUE value %f\n", msg_frm_1->meas_data_lst[i].meas_record_lst[j].real_val);
-                        printf("%s = %.2f\n", meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].real_val);
-                        break;
-                      }
+                    case INTEGER_MEAS_VALUE:
+                      printf("%lu: %s = %u\n", j+1, meas_info_name_str, msg_frm_1->meas_data_lst[i].meas_record_lst[j].int_val);
+                      break;
 
-                      case NO_VALUE_MEAS_VALUE: {
-                        printf("meas record NO_VALUE_MEAS_VALUE value\n");
-                        break;
-                      }
-
-                      default:
-                        assert("Value not recognized");
-                    }
-                    break;
+                    default:
+                      assert("Value not recognized");
                   }
-
-                  default:
-                    assert(false && "Measurement Type not yet implemented");
+                  break;
                 }
+
+                default:
+                  assert(false && "Measurement Type not yet implemented");
               }
             }
           }
@@ -150,19 +142,25 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
           kpm_ind_msg_format_3_t const* msg_frm_3 = &kpm->msg.frm_3;
           // Reported list of measurements per UE
           for (size_t i = 0; i < msg_frm_3->ue_meas_report_lst_len; i++) {
+            kpm_ind_msg_format_1_t const* msg_frm_1 = &msg_frm_3->meas_report_per_ue[i].ind_msg_format_1;
+            if (i == 0) {
+              printf("KPM Format 3 Indication Message: Meas data list length %ld, Meas info list length %ld, Meas record list length %ld\n",
+                     msg_frm_1->meas_data_lst_len, msg_frm_1->meas_info_lst_len, msg_frm_1->meas_data_lst[i].meas_record_len);
+            }
+
             switch (msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.type)
             {
               case GNB_UE_ID_E2SM:
                 if (msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.gnb_cu_ue_f1ap_lst != NULL) {
                   for (size_t j = 0; j < msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.gnb_cu_ue_f1ap_lst_len; j++)
-                    printf("UE ID type = gNB-CU, gnb_cu_ue_f1ap = %u\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.gnb_cu_ue_f1ap_lst[j]);
+                    printf("UE ID type = gNB-CU, amf_ue_ngap_id = %lu, gnb_cu_ue_f1ap = %u, ", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.amf_ue_ngap_id, msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.gnb_cu_ue_f1ap_lst[j]);
                 } else {
-                  if (msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.ran_ue_id != NULL) {
-                    printf("UE ID type = gNB, RAN UE ID = %lu, AMF UE NGAP ID = %lu\n",
-                           *msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.ran_ue_id,
-                           msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.amf_ue_ngap_id);
-                  }
+                  printf("UE ID type = gNB, amf_ue_ngap_id = %lu, ", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.amf_ue_ngap_id);
                 }
+                if (msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.ran_ue_id != NULL) {
+                  printf("ran_ue_id = %lu", *msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.ran_ue_id);
+                }
+                printf("\n");
                 break;
 
               case GNB_DU_UE_ID_E2SM:
@@ -175,8 +173,6 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
               default:
                 assert(false && "UE ID type not yet implemented");
             }
-
-            kpm_ind_msg_format_1_t const* msg_frm_1 = &msg_frm_3->meas_report_per_ue[i].ind_msg_format_1;
 
             // UE Measurements per granularity period
             for (size_t j = 0; j<msg_frm_1->meas_data_lst_len; j++) {
@@ -194,11 +190,11 @@ void sm_cb_all(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
                       switch (msg_frm_1->meas_data_lst[j].meas_record_lst[z].value)
                       {
                         case REAL_MEAS_VALUE:
-                          printf("%s = %.2f\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].real_val);
+                          printf("%lu: %s = %.2f\n", z+1, meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].real_val);
                           break;
 
                         case INTEGER_MEAS_VALUE:
-                          printf("%s = %u\n", meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
+                          printf("%lu: %s = %u\n", z+1, meas_info_name_str, msg_frm_1->meas_data_lst[j].meas_record_lst[z].int_val);
                           break;
 
                         default:
