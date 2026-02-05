@@ -49,16 +49,16 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes = %d\n", nodes.len);
 
   // MAC subscribe
-  sm_ans_xapp_t mac_hndl = report_sm_xapp_api(e2_node, SM_MAC_ID, "1_ms", cb_mac);
+  sm_ans_xapp_t mac_hndl = report_sm_xapp_api(e2_node, SM_MAC_ID, "500_ms", cb_mac);
   assert(mac_hndl.success == true);
 
   // RLC subscribe
   // Step 1
-  // Subscribe to RLC with a periodicity of 2 ms
+  // Subscribe to RLC with a periodicity of 100 ms
 
   // PDCP subscribe
   // Step 2
-  // Subscribe to PDCP with a periodicity of 2 ms
+  // Subscribe to PDCP with a periodicity of 10 ms
 
   // GTP subscribe
   // Step 3

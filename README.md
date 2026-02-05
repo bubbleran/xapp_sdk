@@ -74,7 +74,7 @@ pip3 install tabulate
 
 List of options in CMakeList:
 
-* XAPP_DB=SQLITE3_XAPP/MYSQL_XAPP/NONE_XAPP (NONE_XAPP by default)
+* XAPP_DB=VICTORIAMETRICS_XAPP/MYSQL_XAPP/NONE_XAPP (NONE_XAPP by default)
 
 ```
 mkdir build
