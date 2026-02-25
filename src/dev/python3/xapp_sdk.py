@@ -2441,7 +2441,7 @@ _xapp_sdk_python.swig_ue_id_e2sm_t_swigregister(swig_ue_id_e2sm_t)
 class swig_meas_report_per_ue_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    ue_meas_report_lst = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ue_meas_report_lst_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ue_meas_report_lst_set)
+    ue_id = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ue_id_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ue_id_set)
     ind_msg_format_1 = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ind_msg_format_1_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ind_msg_format_1_set)
 
     def __init__(self):
