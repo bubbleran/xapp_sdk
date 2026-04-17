@@ -98,7 +98,7 @@ class KPMCallback(ric.kpm_cb):
 
     def _handle_kpm_format_3(self, frm_3):
         for ue_meas in frm_3.meas_report_per_ue:
-            self._print_kpm_ue_id(ue_meas.ue_meas_report_lst)
+            self._print_kpm_ue_id(ue_meas.ue_id)
             self._handle_kpm_format_1(ue_meas.ind_msg_format_1)
 
     def _print_kpm_meas_record(self, meas_record, meas_info):

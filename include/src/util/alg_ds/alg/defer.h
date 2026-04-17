@@ -40,6 +40,9 @@ SOFTWARE.
 
 #if defined __clang__  // requires -fblocks (lambdas) and -lBlocksRuntime in the linker
 
+#if __has_include(<stddefer.h>)
+#include <stddefer.h>
+#else
 void cleanup_deferred (void (^*d) (void));
 
 #define defer(...)       \
@@ -49,6 +52,7 @@ __attribute__((__cleanup__ (cleanup_deferred))) \
 __attribute__((unused)) void (^FUNC_DEFER) (void) = ^__VA_ARGS__ \
 _Pragma("clang diagnostic pop") \
 
+#endif
 /*
 //#define defer(...)\
 //__attribute__((__cleanup__ (cleanup_deferred)))\

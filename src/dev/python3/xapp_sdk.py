@@ -1974,6 +1974,29 @@ class assoc_dl_array(object):
 
 # Register assoc_dl_array in _xapp_sdk_python:
 _xapp_sdk_python.assoc_dl_array_swigregister(assoc_dl_array)
+class assoc_ul_array(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _xapp_sdk_python.assoc_ul_array_swiginit(self, _xapp_sdk_python.new_assoc_ul_array(nelements))
+    __swig_destroy__ = _xapp_sdk_python.delete_assoc_ul_array
+
+    def __getitem__(self, index):
+        return _xapp_sdk_python.assoc_ul_array___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _xapp_sdk_python.assoc_ul_array___setitem__(self, index, value)
+
+    def cast(self):
+        return _xapp_sdk_python.assoc_ul_array_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _xapp_sdk_python.assoc_ul_array_frompointer(t)
+
+# Register assoc_ul_array in _xapp_sdk_python:
+_xapp_sdk_python.assoc_ul_array_swigregister(assoc_ul_array)
 class del_dl_array(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -2244,6 +2267,7 @@ class swig_ue_slice_assoc_t(object):
     ran_ue_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ran_ue_id_set)
     len_dl = property(_xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.swig_ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_dl_id_set)
+    len_ul = property(_xapp_sdk_python.swig_ue_slice_assoc_t_len_ul_get, _xapp_sdk_python.swig_ue_slice_assoc_t_len_ul_set)
     ul_id = property(_xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.swig_ue_slice_assoc_t_ul_id_set)
     rnti = property(_xapp_sdk_python.swig_ue_slice_assoc_t_rnti_get, _xapp_sdk_python.swig_ue_slice_assoc_t_rnti_set)
 
@@ -2441,7 +2465,7 @@ _xapp_sdk_python.swig_ue_id_e2sm_t_swigregister(swig_ue_id_e2sm_t)
 class swig_meas_report_per_ue_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
-    ue_meas_report_lst = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ue_meas_report_lst_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ue_meas_report_lst_set)
+    ue_id = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ue_id_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ue_id_set)
     ind_msg_format_1 = property(_xapp_sdk_python.swig_meas_report_per_ue_t_ind_msg_format_1_get, _xapp_sdk_python.swig_meas_report_per_ue_t_ind_msg_format_1_set)
 
     def __init__(self):
@@ -4076,6 +4100,7 @@ class ue_slice_assoc_t(object):
     ran_ue_id = property(_xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_get, _xapp_sdk_python.ue_slice_assoc_t_ran_ue_id_set)
     len_dl = property(_xapp_sdk_python.ue_slice_assoc_t_len_dl_get, _xapp_sdk_python.ue_slice_assoc_t_len_dl_set)
     dl_id = property(_xapp_sdk_python.ue_slice_assoc_t_dl_id_get, _xapp_sdk_python.ue_slice_assoc_t_dl_id_set)
+    len_ul = property(_xapp_sdk_python.ue_slice_assoc_t_len_ul_get, _xapp_sdk_python.ue_slice_assoc_t_len_ul_set)
     ul_id = property(_xapp_sdk_python.ue_slice_assoc_t_ul_id_get, _xapp_sdk_python.ue_slice_assoc_t_ul_id_set)
     rnti = property(_xapp_sdk_python.ue_slice_assoc_t_rnti_get, _xapp_sdk_python.ue_slice_assoc_t_rnti_set)
 

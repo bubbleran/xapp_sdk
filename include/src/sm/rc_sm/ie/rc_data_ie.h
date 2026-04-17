@@ -112,6 +112,69 @@ extern "C" {
 #include "ir/ran_func_def_ctrl.h"
 #include "ir/ran_func_def_policy.h"
 
+/////////////////////////////////////
+// RAN Parameter IDs
+/////////////////////////////////////
+
+// 8.2.1 RAN Parameters for Report Service Style 1
+typedef enum {
+  E2SM_RC_RS1_UE_EVENT_ID = 1,
+  E2SM_RC_RS1_NI_MESSAGE = 2,
+  E2SM_RC_RS1_RRC_MESSAGE = 3,
+  E2SM_RC_RS1_UE_ID = 4,
+  E2SM_RC_RS1_OLD_AMF_UE_NGAP_ID = 5,
+  E2SM_RC_RS1_CELL_GLOBAL_ID = 6,
+
+  END_E2SM_RC_RS1_RAN_PARAM_ID
+} report_style_1_ran_param_id_e;
+
+// 8.2.2 RAN Parameters for Report Service Style 2
+typedef enum {
+  E2SM_RC_RS2_CURRENT_UE_ID = 1,
+  E2SM_RC_RS2_OLD_UE_ID = 2,
+  E2SM_RC_RS2_CURRENT_RRC_STATE = 3,
+  E2SM_RC_RS2_OLD_RRC_STATE = 4,
+  E2SM_RC_RS2_UE_CONTEXT_INFORMATION_CONTAINER = 5,
+  E2SM_RC_RS2_CELL_GLOBAL_ID = 6,
+  E2SM_RC_RS2_UE_INFORMATION = 7,
+
+  END_E2SM_RC_RS2_RAN_PARAM_ID
+} report_style_2_ran_param_id_e;
+
+// 8.2.3 RAN Parameters for Report Service Style 3
+typedef enum {
+  E2SM_RC_RS3_CELL_CONTEXT_INFORMATION = 1,
+  E2SM_RC_RS3_CELL_DELETED = 2,
+  E2SM_RC_RS3_NEIGHBOUR_RELATION_TABLE = 3,
+
+  END_E2SM_RC_RS3_RAN_PARAM_ID
+} report_style_3_ran_param_id_e;
+
+// 8.2.4 RAN Parameters for Report Service Style 4
+typedef enum {
+  E2SM_RC_RS4_UL_MAC_CE = 100,
+  E2SM_RC_RS4_DL_MAC_CE = 101,
+  E2SM_RC_RS4_DL_BUFFER_OCCUPANCY = 102,
+  E2SM_RC_RS4_CURRENT_RRC_STATE = 201,
+  E2SM_RC_RS4_RRC_STATE_CHANGED_TO = 202,
+  E2SM_RC_RS4_RRC_MESSAGE = 203,
+  E2SM_RC_RS4_OLD_UE_ID = 300,
+  E2SM_RC_RS4_CURRENT_UE_ID = 301,
+  E2SM_RC_RS4_NI_MESSAGE = 302,
+  E2SM_RC_RS4_CELL_GLOBAL_ID = 400,
+
+  END_E2SM_RC_RS4_RAN_PARAM_ID
+} report_style_4_ran_param_id_e;
+
+// 8.2.5 RAN Parameters for Report Service Style 5
+typedef enum {
+  E2SM_RC_RS5_UE_CONTEXT_INFORMATION = 1,
+  E2SM_RC_RS5_CELL_CONTEXT_INFORMATION = 2,
+  E2SM_RC_RS5_NEIGHBOUR_RELATION_TABLE = 3,
+
+  END_E2SM_RC_RS5_RAN_PARAM_ID
+} report_style_5_ran_param_id_e;
+
 //////////////////////////////////////
 // RIC Event Trigger Definition
 /////////////////////////////////////

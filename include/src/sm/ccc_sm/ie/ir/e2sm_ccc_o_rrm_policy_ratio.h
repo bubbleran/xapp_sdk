@@ -17,7 +17,7 @@
 #include "e2sm_ccc_rrm_policy_member.h"
 
 typedef enum {
-  PRB_UL_RESOURCE_TYPE,
+  PRB_UL_RESOURCE_TYPE = 1,
   PRB_DL_RESOURCE_TYPE,
   DRB_RESOURCE_TYPE,
   RRC_RESOURCE_TYPE,

@@ -173,26 +173,42 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
     srs_rx_antenna_t* rx = &frmt_1->srs.rx[i];
     for (size_t j = 0; j < rx->sz_srs_symbols; j++) {
       srs_symbol_t* symbol = &rx->symbol[j];
+      uint8_t hdr = rx->symbol->hdr;
       byte_array_t raw_iq = symbol->raw_iq;
-      // raw_iq includes three types of I/Q sample: rx srs, noise, estimated channel
-      size_t sz = raw_iq.len / 3 / 4; // rx, noise, estimated // sizeof(c16_t) = 4
-      // Offsets in bytes
-      size_t rx_offset     = 0;
-      size_t noise_offset  = 4 * sz;
-      size_t est_offset    = 4 * sz * 2;
 
-      char filename_rx[256], filename_noise[256], filename_estimated[256];
-      snprintf(filename_rx, sizeof(filename_rx),
-               "iq_srs_rx_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
+      // case1: raw_iq includes one type of I/Q sample: rx srs
+      if (hdr == 1) {
+        size_t sz = raw_iq.len / 4; // sizeof(c16_t) = 4
+        char filename_rx[256] = {0};
+        size_t rc = snprintf(filename_rx, sizeof(filename_rx),
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+        assert(rc < 256);
+        write_iq_text(filename_rx, raw_iq.buf, sz, t0);
+      }
+      // case2: raw_iq includes three types of I/Q sample: rx srs, noise, estimated channel
+      else {
+        size_t sz = raw_iq.len / 3 / 4; // rx, noise, estimated // sizeof(c16_t) = 4
+        // Offsets in bytes
+        size_t rx_offset     = 0;
+        size_t noise_offset  = 4 * sz;
+        size_t est_offset    = 4 * sz * 2;
 
-      snprintf(filename_noise, sizeof(filename_noise),
-               "iq_srs_noise_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
+        char filename_rx[256], filename_noise[256], filename_estimated[256] = {0};
+        size_t rc = snprintf(filename_rx, sizeof(filename_rx),
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+        assert(rc < 256);
+        write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
 
-      snprintf(filename_estimated, sizeof(filename_estimated),
-               "iq_srs_estimated_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
+        rc = snprintf(filename_noise, sizeof(filename_noise),
+                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+        assert(rc < 256);
+        write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
+
+        rc = snprintf(filename_estimated, sizeof(filename_estimated),
+                 "iq_srs_estimated_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
+        assert(rc < 256);
+        write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
+      }
     }
 
   }
@@ -294,6 +310,7 @@ int main(int argc, char *argv[])
 
     // Generate subscription event for the connected UE
     llc_sub_data_t llc_sub = gen_llc_sub(&ue_id);
+    defer({ free_llc_sub_data(&llc_sub); });
 
     // Retrieve information about the E2 Nodes in the callback func (cb)
     hndl = report_sm_xapp_api(target_e2node, SM_LLC_ID, &llc_sub, cb_sm_llc);
@@ -305,6 +322,11 @@ int main(int argc, char *argv[])
     rm_report_sm_xapp_api(hndl.u.handle);
     break;
   }
+
+  // stop the xApp
+  while(try_stop_xapp_api() == false)
+    poll(NULL, 0, 1000);
+  printf("Test xApp run SUCCESSFULLY\n");
 
   return 0;
 }
