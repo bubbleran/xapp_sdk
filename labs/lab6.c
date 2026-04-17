@@ -246,9 +246,18 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
   }
 
   /// SET UL ID ///
-  assoc->ues[0].ul_id = -1; // ul_id = -1 means UE will not perform UL association
-  if ((int32_t)assoc->ues[0].ul_id != -1){
-    printf("ASSOC UL SLICE: 0x%x, id %u\n", assoc->ues[0].rnti, assoc->ues[0].ul_id);
+  assoc->ues[0].len_ul = 0;
+  if(assoc->ues[0].len_ul > 0) {
+    assoc->ues[0].ul_id = calloc(assoc->ues[0].len_ul, sizeof(uint32_t));
+    assert(assoc->ues[0].ul_id != NULL && "Memory exhausted");
+
+    uint32_t ul_id[1] = {-1}; // ul_id = -1 means UE will not perform UL association
+    for (uint32_t j = 0; j < assoc->ues[0].len_ul; ++j) {
+      assoc->ues[0].ul_id[j] = ul_id[j];
+      if ((int32_t)assoc->ues[0].ul_id[j] != -1){
+        printf("ASSOC UL SLICE: 0x%x, id %u\n", assoc->ues[0].rnti, assoc->ues[0].ul_id[j]);
+      }
+    }
   }
 }
 
