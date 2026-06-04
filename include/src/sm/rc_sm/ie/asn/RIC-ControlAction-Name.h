@@ -22,11 +22,11 @@ extern "C" {
 typedef PrintableString_t	 RIC_ControlAction_Name_t;
 
 /* Implementation */
-extern asn_per_constraints_t asn_PER_type_RIC_ControlAction_Name_constr_1_rc_v1_03;
-extern asn_TYPE_descriptor_t asn_DEF_RIC_ControlAction_Name_rc_v1_03;
+extern asn_per_constraints_t asn_PER_type_RIC_ControlAction_Name_constr_1;
+extern asn_TYPE_descriptor_t asn_DEF_RIC_ControlAction_Name;
 asn_struct_free_f RIC_ControlAction_Name_free;
 asn_struct_print_f RIC_ControlAction_Name_print;
-asn_constr_check_f RIC_ControlAction_Name_constraint_rc_v1_03;
+asn_constr_check_f RIC_ControlAction_Name_constraint;
 jer_type_encoder_f RIC_ControlAction_Name_encode_jer;
 per_type_decoder_f RIC_ControlAction_Name_decode_aper;
 per_type_encoder_f RIC_ControlAction_Name_encode_aper;

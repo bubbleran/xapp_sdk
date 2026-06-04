@@ -13,8 +13,8 @@ int main(int argc, char** argv)
   global_e2_node_id_sdk_t const* node = &arr.n[0].node;
 
   int64_t now = time_now_us_sdk();
-  float const pdcp_sdu_vol_dl = e2_node_mntr_xapp_sdk(node, PDCP_SDU_VOLUME_DL); 
-  printf("pdcp_sdu_vol_dl %f elapsed time %ld\n", pdcp_sdu_vol_dl, time_now_us_sdk() - now);
+  float const ue_thp_dl = e2_node_mntr_xapp_sdk(node, UE_THP_DL);
+  printf("ue_thp_dl %f elapsed time %ld\n", ue_thp_dl, time_now_us_sdk() - now);
 
   free_arr_node_data(&arr);
 

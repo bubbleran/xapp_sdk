@@ -861,5 +861,5 @@ ric.rm_report_slice_sm(hndlr)
 while ric.try_stop == 0:
     time.sleep(1)
 
-print('Test finished' )
+print("Test xApp run SUCCESSFULLY")
 

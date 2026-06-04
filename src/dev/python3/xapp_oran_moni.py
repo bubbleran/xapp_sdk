@@ -102,9 +102,10 @@ class MoniXApp:
         self.oran_sm = ric.get_sub_oran_sm_conf(argv)
 
         signal.signal(signal.SIGINT, self._sig_handler)
+        signal.signal(signal.SIGTERM, self._sig_handler)
 
     def _sig_handler(self, signum, frame):
-        print("Ctrl-C Detected")
+        print(f"Signal {signum} detected. Stopping xApp...")
         self.shutdown_flag = True
 
     def _get_ngran_name(self, ran_type):
@@ -228,7 +229,7 @@ class MoniXApp:
         while ric.try_stop == 0:
             time.sleep(1)
 
-        print("xApp stopped")
+        print("Test xApp run SUCCESSFULLY")
         os._exit(0)
 
 if __name__ == "__main__":

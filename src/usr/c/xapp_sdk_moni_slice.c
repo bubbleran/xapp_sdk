@@ -50,8 +50,8 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
   int const max = 100;
   dedicated_prb = clamp(min, max, new_dedicated_prb); 
 
-  char* const sst = "0";
-  char* const sd = "1";
+  char* const sst = "1";
+  char* const sd = "";
   slice_xapp_sdk(node, sst, sd, dedicated_prb);
   printf("Dedicated PRBs %d\n", dedicated_prb);
 }

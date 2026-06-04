@@ -6,7 +6,7 @@
 
 void cb_fn(float val, uint32_t ric_req_id)
 {
-  printf("ric_req_id %u pdcp_sdu_volume_dl %f\n", ric_req_id, val);
+  printf("ric_req_id %u ue_thp_dl %f\n", ric_req_id, val);
 }
 
 int main(int argc, char** argv)
@@ -18,12 +18,13 @@ int main(int argc, char** argv)
 
   global_e2_node_id_sdk_t const* node = &arr.n[0].node ;
 
-  stop_token_t stop = e2_node_mntr_cb_xapp_sdk(node, PDCP_SDU_VOLUME_DL, PERIODICITY_1_MS, cb_fn); 
+  stop_token_t stop = e2_node_mntr_cb_xapp_sdk(node, UE_THP_DL, PERIODICITY_1_MS, cb_fn);
 
   sleep(1);
 
   printf("Stopping ric_req_id %u\n", stop.ric_req_id);
   stop_cb_xapp_sdk(stop);
+  sleep(1);
 
   free_arr_node_data(&arr);
 

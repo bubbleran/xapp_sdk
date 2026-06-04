@@ -19,7 +19,7 @@ call_back = Monitor().__disown__()
 
 n = nodes[0].node
 ue = nodes[0].ue_ho[0].ue
-token = xapp.mntr_ue_cb(n, ue, xapp.PDCP_SDU_VOLUME_DL, xapp.PERIODICITY_10_MS, call_back)
+token = xapp.mntr_ue_cb(n, ue, xapp.UE_THP_DL, xapp.PERIODICITY_10_MS, call_back)
 
 time.sleep(3)
 

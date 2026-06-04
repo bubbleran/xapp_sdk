@@ -17,7 +17,7 @@ assert(len(nodes) > 0 and "Needed at least one E2 node to monitor")
 
 call_back = Monitor().__disown__()
 
-token = xapp.mntr_cb(nodes[0].node, xapp.PDCP_SDU_VOLUME_DL, xapp.PERIODICITY_10_MS, call_back)
+token = xapp.mntr_cb(nodes[0].node, xapp.UE_THP_DL, xapp.PERIODICITY_1000_MS, call_back)
 
 time.sleep(3)
 

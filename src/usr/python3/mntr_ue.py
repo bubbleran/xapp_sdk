@@ -7,6 +7,7 @@ assert(len(nodes) > 0 and "Needed at least one E2 node to monitor")
 assert(len(nodes[0].ue_ho) > 0 and "Needed at least one UE to monitor")
 n = nodes[0].node
 ue = nodes[0].ue_ho[0].ue
-v = xapp.mntr_ue(n, ue, xapp.PDCP_SDU_VOLUME_DL)
+v = xapp.mntr_ue(n, ue, xapp.UE_THP_DL)
 
 print("Value " + str(v))
+print("Test xApp run SUCCESSFULLY")

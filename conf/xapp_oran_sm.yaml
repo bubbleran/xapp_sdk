@@ -45,7 +45,12 @@ xapp_sub_oran_sm:
         actions:
             - name: DRB.PdcpSduVolumeDL 
             - name: DRB.PdcpSduVolumeUL
+            - name: DRB.RlcSduTransmittedVolumeDL
+            - name: DRB.RlcSduTransmittedVolumeUL
+            - name: DRB.RlcPacketDropRateDl
             - name: DRB.RlcSduDelayDl
+            - name: DRB.RlcDelayUl
+            - name: DRB.AirIfDelayUl
             - name: DRB.UEThpDl
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
@@ -55,14 +60,25 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
             - name: CARR.MUPDSCHMCSDist.BinX
-            - name: CARR.WBCQIDist.BinX.BinY.BinZ 
+            - name: CARR.PDSCHMCSDist.BinX.BinY.BinZ
+            - name: CARR.PUSCHMCSDist.BinX.BinY.BinZ
+            - name: CARR.WBCQIDist.BinX.BinY.BinZ
+            - name: CARR.MeanTxPwr
+            - name: CQI
+            - name: RSRP
+            - name: RSRQ
     2:
         name: kpm
         periodicity_ms: 500
         format: 4
         ran_type: ngran_gNB_DU
         actions:
+            - name: DRB.RlcSduTransmittedVolumeDL
+            - name: DRB.RlcSduTransmittedVolumeUL
+            - name: DRB.RlcPacketDropRateDl
             - name: DRB.RlcSduDelayDl
+            - name: DRB.RlcDelayUl
+            - name: DRB.AirIfDelayUl
             - name: DRB.UEThpDl
             - name: DRB.UEThpUl
             - name: RRU.PrbTotDl
@@ -71,6 +87,14 @@ xapp_sub_oran_sm:
             - name: RRU.PrbUsedUl
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
+            - name: CARR.MUPDSCHMCSDist.BinX
+            - name: CARR.PDSCHMCSDist.BinX.BinY.BinZ
+            - name: CARR.PUSCHMCSDist.BinX.BinY.BinZ
+            - name: CARR.WBCQIDist.BinX.BinY.BinZ
+            - name: CARR.MeanTxPwr
+            - name: CQI
+            - name: RSRP
+            - name: RSRQ
     3:
         name: kpm
         periodicity_ms: 500
