@@ -148,7 +148,7 @@ void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group,
   SST->ran_param_val.flag_false = calloc(1, sizeof(ran_parameter_value_t));
   assert(SST->ran_param_val.flag_false != NULL && "Memory exhausted");
   SST->ran_param_val.flag_false->type = OCTET_STRING_RAN_PARAMETER_VALUE;
-  byte_array_t sst = cp_str_to_ba(sst_str); //TODO
+  byte_array_t sst = cp_str_to_ba(sst_str);
   SST->ran_param_val.flag_false->octet_str_ran.len = sst.len;
   SST->ran_param_val.flag_false->octet_str_ran.buf = sst.buf;
   // SD, ELEMENT (S-NSSAI -> SD)
@@ -158,7 +158,7 @@ void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group,
   SD->ran_param_val.flag_false = calloc(1, sizeof(ran_parameter_value_t));
   assert(SD->ran_param_val.flag_false != NULL && "Memory exhausted");
   SD->ran_param_val.flag_false->type = OCTET_STRING_RAN_PARAMETER_VALUE;
-  byte_array_t sd = cp_str_to_ba(sd_str); //TODO
+  byte_array_t sd = cp_str_to_ba(sd_str);
   SD->ran_param_val.flag_false->octet_str_ran.len = sd.len;
   SD->ran_param_val.flag_false->octet_str_ran.buf = sd.buf;
   // Max PRB Policy Ratio, ELEMENT (RRM Policy Ratio Group -> Max PRB Policy Ratio)
@@ -207,13 +207,13 @@ void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
       .mnc = 1,
       .mnc_digit_len = 2
   };
-  const char* sst_str[] = {"0", "1", "1"};
+  const char* sst_str[] = {"0", "1", "2"};
   // Note: we consider SD is always presented
-  const char* sd_str[] = {"0", "0", "1"};
+  const char* sd_str[] = {"0", "", "1"};
   assert(!strcmp(sst_str[0], "0") && !strcmp(sd_str[0], "0") && "Default slice should be set to sst = 0, sd = 0");
-  int max_ratio[] = {20, 40, 100};
-  int min_ratio[] = {20, 20, 0};
-  int dedicated_ratio[] = {20, 0, 0};
+  int max_ratio[] = {10, 30, 50};
+  int min_ratio[] = {10, 30, 50};
+  int dedicated_ratio[] = {10, 30, 50};
   for (int i = 0; i < num_slice; i++) {
     gen_rrm_policy_ratio_group(&RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param[i],
                                plmnid,

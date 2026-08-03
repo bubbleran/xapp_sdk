@@ -53,30 +53,46 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
          now - rd->ind.slice.msg.tstamp, e2_node->type, e2_node->nb_id.nb_id);
 
   slice_ind_msg_t const* ind_msg = &rd->ind.slice.msg;
+  if (ind_msg->slice_conf.dl.len_slices == 0)
+    printf("Num of DL slices is 0\n");
   for (uint32_t i = 0; i < ind_msg->slice_conf.dl.len_slices; i++) {
-    printf("Slice idx/total %d/%d, Id %d, slice sched algo %s\n",
+    printf("DL slice idx/total %d/%d, Id %d, slice sched algo %s\n",
            i,
            ind_msg->slice_conf.dl.len_slices,
            ind_msg->slice_conf.dl.slices[i].id,
            ind_msg->slice_conf.dl.sched_name);
   }
-  if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0) {
+  if (ind_msg->slice_conf.ul.len_slices == 0)
+    printf("Num of UL slices is 0\n");
+  for (uint32_t i = 0; i < ind_msg->slice_conf.ul.len_slices; i++) {
+    printf("UL slice idx/total %d/%d, Id %d, slice sched algo %s\n",
+           i,
+           ind_msg->slice_conf.ul.len_slices,
+           ind_msg->slice_conf.ul.slices[i].id,
+           ind_msg->slice_conf.ul.sched_name);
+  }
+  for (uint32_t i = 0; i < rd->ind.slice.msg.ue_slice_conf.len_ue_slice; i++) {
     // get the first rnti for later assoc ctrl
-    assoc_ran_ue_id = rd->ind.slice.msg.ue_slice_conf.ues->ran_ue_id;
-    for (uint32_t i = 0; i < rd->ind.slice.msg.ue_slice_conf.ues->len_dl; i++) {
-      printf("UE RAN_UE_ID %u, RNTI %4x, assoc dl id/total %d/%d\n",
-             rd->ind.slice.msg.ue_slice_conf.ues->ran_ue_id,
-             rd->ind.slice.msg.ue_slice_conf.ues->rnti,
-             rd->ind.slice.msg.ue_slice_conf.ues->dl_id[i],
-             rd->ind.slice.msg.ue_slice_conf.ues->len_dl);
+    if (i == 0)
+      assoc_ran_ue_id = rd->ind.slice.msg.ue_slice_conf.ues[i].ran_ue_id;
+    printf("UE RAN_UE_ID %u, RNTI %4x, Assoc DL Id (", rd->ind.slice.msg.ue_slice_conf.ues[i].ran_ue_id, rd->ind.slice.msg.ue_slice_conf.ues[i].rnti);
+    for (uint32_t j = 0; j < rd->ind.slice.msg.ue_slice_conf.ues[i].len_dl; j++) {
+      printf("%d,",rd->ind.slice.msg.ue_slice_conf.ues[i].dl_id[j]);
     }
+    printf("), Assoc UL Id (");
+    for (uint32_t j = 0; j < rd->ind.slice.msg.ue_slice_conf.ues[i].len_ul; j++) {
+      printf("%d,",rd->ind.slice.msg.ue_slice_conf.ues[i].ul_id[j]);
+    }
+    printf(")\n");
   }
 }
 
 static
-void fill_add_mod_slice(slice_conf_t* add)
+void fill_add_mod_slice(slice_conf_t* add, slice_algorithm_e dl_type, slice_algorithm_e ul_type)
 {
   assert(add != NULL);
+  assert(ul_type >= 0);
+  assert(dl_type >= 0);
 
   uint32_t dl_len_slices = 0;
   uint32_t dl_slice_id[] = {0, 2, 5};
@@ -87,9 +103,8 @@ void fill_add_mod_slice(slice_conf_t* add)
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EDF;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EEDF;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_PR;
-  slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EPR;
+  //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_EPR;
   //slice_algorithm_e dl_type = SLICE_ALG_SM_V0_NONE;
-  assert(dl_type >= 0);
   if (dl_type != 0)
     dl_len_slices = 3;
   else
@@ -133,8 +148,8 @@ void fill_add_mod_slice(slice_conf_t* add)
   uint32_t set_st_low_high_p[] = {0, 3, 4, 7, 8, 12};
   /// SET DL NVS SLICE PARAMETER///
   nvs_slice_conf_e nvs_conf[] = {SLICE_SM_NVS_V0_RATE, SLICE_SM_NVS_V0_CAPACITY, SLICE_SM_NVS_V0_RATE};
-  float mbps_rsvd = 2;
-  float mbps_ref = 10.0;
+  float mbps_rsvd = 30;
+  float mbps_ref = 180.0;
   float pct_rsvd = 0.5;
   /// SET DL EDF SLICE PARAMETER///
   int deadline[] = {20, 20, 40};
@@ -146,13 +161,13 @@ void fill_add_mod_slice(slice_conf_t* add)
   int32_t eedf_deadline = 10;
   int32_t eedf_guaranteed_rate = 40;
   /// SET DL PR SLICE PARAMETER///
-  int pr_max[] = {20, 40, 100};
-  int pr_min[] = {20, 20, 0};
-  int pr_ded[] = {0, 20, 0};
-  /// SET DL EPR SLICE PARAMETER/// // TODO: check value constraint
-  int ePR_max[] = {50, 70, 70};
-  int ePR_min[] = {20, 30, 40};
-  int ePR_ded[] = {10, 20, 30};
+  int pr_max[] = {10, 40, 100};
+  int pr_min[] = {10, 20, 50};
+  int pr_ded[] = {10, 20, 0};
+  /// SET DL EPR SLICE PARAMETER///
+  int ePR_max[] = {10, 40, 30};
+  int ePR_min[] = {10, 40, 30};
+  int ePR_ded[] = {10, 40, 30};
   // Check constraint
   for (size_t i = 0; i < dl_len_slices; i++) {
     if (dl_type == SLICE_ALG_SM_V0_PR)
@@ -255,14 +270,13 @@ void fill_add_mod_slice(slice_conf_t* add)
   }
 
   uint32_t ul_len_slices = 0;
-  uint32_t ul_slice_id[] = {0, 2};
-  char* ul_slice_label[] = {"s1", "s2"};
+  uint32_t ul_slice_id[] = {0, 3, 7};
+  char* ul_slice_label[] = {"s1", "s2", "s3"};
 
-  // slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NVS;
-  slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NONE;
-  assert(ul_type >= 0);
+  //slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NVS;
+  //slice_algorithm_e ul_type = SLICE_ALG_SM_V0_NONE;
   if (ul_type != 0)
-    ul_len_slices = 2;
+    ul_len_slices = 3;
   else
     printf("RESET UL SLICE, algo = NONE\n");
 
@@ -273,6 +287,10 @@ void fill_add_mod_slice(slice_conf_t* add)
       strcpy(ul_name, "NVS");
       len_ul_name = strlen("NVS");
       break;
+    case SLICE_ALG_SM_V0_EPR:
+      strcpy(ul_name, "EPR");
+      len_ul_name = strlen("EPR");
+      break;
     case SLICE_ALG_SM_V0_NONE:
     default:
       strcpy(ul_name, "NULL");
@@ -281,10 +299,18 @@ void fill_add_mod_slice(slice_conf_t* add)
   }
 
   /// SET UL NVS SLICE PARAMETER///
-  nvs_slice_conf_e ul_nvs_conf[] = {SLICE_SM_NVS_V0_CAPACITY, SLICE_SM_NVS_V0_CAPACITY};
-  float ul_mbps_rsvd = 2;
-  float ul_mbps_ref = 10.0;
-  float ul_pct_rsvd = 0.5;
+  nvs_slice_conf_e ul_nvs_conf[] = {SLICE_SM_NVS_V0_RATE, SLICE_SM_NVS_V0_RATE, SLICE_SM_NVS_V0_CAPACITY};
+  float ul_mbps_rsvd = 35;
+  float ul_mbps_ref = 100.0;
+  float ul_pct_rsvd = 0.2;
+  /// SET UL EPR SLICE PARAMETER///
+  int ul_ePR_max[] = {20, 40, 30};
+  int ul_ePR_min[] = {20, 40, 30};
+  int ul_ePR_ded[] = {20, 40, 30};
+  // Check constraint
+  for (size_t i = 0; i < ul_len_slices; i++) {
+      assert(100 >= ul_ePR_max[i] && ul_ePR_max[i] >= ul_ePR_min[i] && ul_ePR_min[i] >= ul_ePR_ded[i] && ul_ePR_ded[i] >= 0 && "Failed to meet RRM Policy Constraint");
+  }
   /// UL SLICE CONTROL INFO ///
   ul_dl_slice_conf_t* add_ul = &add->ul;
   add_ul->len_sched_name = len_ul_name;
@@ -328,6 +354,12 @@ void fill_add_mod_slice(slice_conf_t* add)
       } else {
         assert(0 != 0 && "Unkown NVS conf type\n");
       }
+    } else if (ul_type == SLICE_ALG_SM_V0_EPR) {
+      s->params.type = SLICE_ALG_SM_V0_EPR;
+      s->params.u.epr.max_ratio = ul_ePR_max[i];
+      s->params.u.epr.min_ratio = ul_ePR_min[i];
+      s->params.u.epr.dedicated_ratio = ul_ePR_ded[i];
+      printf("ADD ePR UL SLICE: id %u, max_ratio %d, min_ratio %d, dedicated_ratio %d\n", s->id, s->params.u.epr.max_ratio, s->params.u.epr.min_ratio, s->params.u.epr.dedicated_ratio);
     } else {
       assert(0 != 0 && "Unknown type encountered");
     }
@@ -335,34 +367,37 @@ void fill_add_mod_slice(slice_conf_t* add)
 }
 
 static
-void fill_del_slice(del_slice_conf_t* del)
+void fill_del_slice_dl(del_slice_conf_t* del, int del_id)
 {
   assert(del != NULL);
 
   /// SET DL ID ///
-  uint32_t dl_ids[] = {5};
-  del->len_dl = sizeof(dl_ids)/sizeof(dl_ids[0]);
+  del->len_dl = 1;
   if (del->len_dl > 0)
     del->dl = calloc(del->len_dl, sizeof(uint32_t));
   for (uint32_t i = 0; i < del->len_dl; i++) {
-    del->dl[i] = dl_ids[i];
-    printf("DEL DL SLICE: id %u\n", dl_ids[i]);
+    del->dl[i] = del_id;
+    printf("DEL DL SLICE: id %u\n", del->dl[i]);
   }
-
-  /// SET UL ID ///
-  uint32_t ul_ids[] = {}; //{2};
-  del->len_ul = sizeof(ul_ids)/sizeof(ul_ids[0]);
-  if (del->len_ul > 0)
-    del->ul = calloc(del->len_ul, sizeof(uint32_t));
-  for (uint32_t i = 0; i < del->len_ul; i++){
-    del->ul[i] = ul_ids[i];
-    printf("DEL UL SLICE: id %u\n", ul_ids[i]);
-  }
-
 }
 
 static
-void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
+void fill_del_slice_ul(del_slice_conf_t* del, int del_id)
+{
+  assert(del != NULL);
+
+  /// SET UL ID ///
+  del->len_ul = 1;
+  if (del->len_ul > 0)
+    del->ul = calloc(del->len_ul, sizeof(uint32_t));
+  for (uint32_t i = 0; i < del->len_ul; i++){
+    del->ul[i] = del_id;
+    printf("DEL UL SLICE: id %u\n", del->ul[i]);
+  }
+}
+
+static
+void fill_assoc_ue_slice_dl(ue_slice_conf_t* assoc, int ran_ue_id, int dl_id)
 {
   assert(assoc != NULL);
 
@@ -375,7 +410,7 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
 
   for(uint32_t i = 0; i < assoc->len_ue_slice; ++i) {
     /// SET RNTI ///
-    assoc->ues[i].ran_ue_id = assoc_ran_ue_id;
+    assoc->ues[i].ran_ue_id = ran_ue_id;
     /// SET DL ID ///
     assoc->ues[i].len_dl = 1;
     assert(assoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
@@ -384,23 +419,45 @@ void fill_assoc_ue_slice(ue_slice_conf_t* assoc)
       assert(assoc->ues[i].dl_id != NULL && "Memory exhausted");
     }
     /// SET DL ID ///
-    uint32_t dl_id[2] = {2}; // TODO: get the DL slice id from sm_cb_slice()
     for (uint32_t j = 0; j < assoc->ues[i].len_dl; ++j) {
-      assoc->ues[i].dl_id[j] = dl_id[j];
+      assoc->ues[i].dl_id[j] = dl_id;
       printf("ASSOC DL SLICE: RAN UE ID %u, id %u\n", assoc->ues[i].ran_ue_id, assoc->ues[i].dl_id[j]);
     }
-    /*
-    /// SET UL ID ///
-    assoc->ues[i].ul_id = 2; // ul_id = -1 means UE will not perform UL association
-    if ((int32_t)assoc->ues[i].ul_id != -1){
-      printf("ASSOC UL SLICE: 0x%x, id %u\n", assoc->ues[i].rnti, assoc->ues[i].ul_id); 
-    }
-    */
   }
 }
 
 static
-void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
+void fill_assoc_ue_slice_ul(ue_slice_conf_t* assoc, int ran_ue_id, int ul_id)
+{
+  assert(assoc != NULL);
+
+  /// SET ASSOC UE NUMBER ///
+  assoc->len_ue_slice = 1;
+  if(assoc->len_ue_slice > 0){
+    assoc->ues = calloc(assoc->len_ue_slice, sizeof(ue_slice_assoc_t));
+    assert(assoc->ues);
+  }
+
+  for(uint32_t i = 0; i < assoc->len_ue_slice; ++i) {
+    /// SET RNTI ///
+    assoc->ues[i].ran_ue_id = ran_ue_id;
+    /// SET UL ID ///
+    assoc->ues[i].len_ul = 1;
+    assert(assoc->ues[i].len_ul == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
+    if (assoc->ues[i].len_ul > 0) {
+      assoc->ues[i].ul_id = calloc(assoc->ues[i].len_ul, sizeof(uint32_t));
+      assert(assoc->ues[i].ul_id != NULL && "Memory exhausted");
+    }
+    /// SET UL ID ///
+    for (uint32_t j = 0; j < assoc->ues[i].len_ul; ++j) {
+      assoc->ues[i].ul_id[j] = ul_id;
+      printf("ASSOC UL SLICE: RAN UE ID %u, id %u\n", assoc->ues[i].ran_ue_id, assoc->ues[i].ul_id[j]);
+    }
+  }
+}
+
+static
+void fill_deassoc_ue_slice_dl(ue_slice_conf_t* deassoc, int ran_ue_id, int dl_id)
 {
   assert(deassoc != NULL);
 
@@ -413,7 +470,7 @@ void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
 
   for(uint32_t i = 0; i < deassoc->len_ue_slice; ++i) {
     /// SET RNTI ///
-    deassoc->ues[i].ran_ue_id = assoc_ran_ue_id;
+    deassoc->ues[i].ran_ue_id = ran_ue_id;
     /// SET DL ID ///
     deassoc->ues[i].len_dl = 1;
     assert(deassoc->ues[i].len_dl == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
@@ -421,54 +478,140 @@ void fill_deassoc_ue_slice(ue_slice_conf_t* deassoc)
       deassoc->ues[i].dl_id = calloc(deassoc->ues[i].len_dl, sizeof(uint32_t));
       assert(deassoc->ues[i].dl_id != NULL && "Memory exhausted");
     }
-    uint32_t dl_id[1] = {2}; // TODO: get the DL slice id from sm_cb_slice()
+
     for (uint32_t j = 0; j < deassoc->ues[i].len_dl; ++j) {
-      deassoc->ues[i].dl_id[j] = dl_id[j];
+      deassoc->ues[i].dl_id[j] = dl_id;
       printf("DEASSOC DL SLICE: RAN UE ID %u, id %u\n", deassoc->ues[i].ran_ue_id, deassoc->ues[i].dl_id[j]);
     }
-    /*
-    /// SET UL ID ///
-    deassoc->ues[i].ul_id = 2; // ul_id = -1 means UE will not perform UL association
-    if ((int32_t)deassoc->ues[i].ul_id != -1){
-      printf("DEASSOC UL SLICE: 0x%x, id %u\n", deassoc->ues[i].rnti, deassoc->ues[i].ul_id);
-    }
-    */
   }
 }
 
 static
-sm_ag_if_wr_t fill_slice_sm_ctrl_req(uint16_t ran_func_id, slice_ctrl_msg_e type)
+void fill_deassoc_ue_slice_ul(ue_slice_conf_t* deassoc, int ran_ue_id, int ul_id)
 {
-  assert(ran_func_id == 145);
+  assert(deassoc != NULL);
 
+  /// SET ASSOC UE NUMBER ///
+  deassoc->len_ue_slice = 1;
+  if(deassoc->len_ue_slice > 0){
+    deassoc->ues = calloc(deassoc->len_ue_slice, sizeof(ue_slice_assoc_t));
+    assert(deassoc->ues);
+  }
+
+  for(uint32_t i = 0; i < deassoc->len_ue_slice; ++i) {
+    /// SET RNTI ///
+    deassoc->ues[i].ran_ue_id = ran_ue_id;
+    /// SET DL ID ///
+    deassoc->ues[i].len_ul = 1;
+    assert(deassoc->ues[i].len_ul == 1 && "limited by oai ran func, only do association to one slice in each ctrl msg");
+    if (deassoc->ues[i].len_ul > 0) {
+      deassoc->ues[i].ul_id = calloc(deassoc->ues[i].len_ul, sizeof(uint32_t));
+      assert(deassoc->ues[i].ul_id != NULL && "Memory exhausted");
+    }
+
+    for (uint32_t j = 0; j < deassoc->ues[i].len_ul; ++j) {
+      deassoc->ues[i].ul_id[j] = ul_id;
+      printf("DEASSOC UL SLICE: RAN UE ID %u, id %u\n", deassoc->ues[i].ran_ue_id, deassoc->ues[i].ul_id[j]);
+    }
+  }
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_addmod(slice_algorithm_e dl_slice_algo, slice_algorithm_e ul_slice_algo)
+{
   sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
 
-  if (ran_func_id == 145) {
-    wr.ctrl.type = SLICE_CTRL_REQ_V0;
-    wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
 
-    if (type == SLICE_CTRL_SM_V0_ADD) {
-      /// ADD MOD ///
-      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_ADD;
-      fill_add_mod_slice(&wr.ctrl.slice_req_ctrl.msg.u.add_mod_slice);
-    } else if (type == SLICE_CTRL_SM_V0_DEL) {
-      /// DEL ///
-      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_DEL;
-      fill_del_slice(&wr.ctrl.slice_req_ctrl.msg.u.del_slice);
-    } else if (type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC) {
-      /// ASSOC SLICE ///
-      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
-      fill_assoc_ue_slice(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice);
-    } else if (type == SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC) {
-      /// DEASSOC SLICE ///
-      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC;
-      fill_deassoc_ue_slice(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice);
-    } else {
-      assert(0 != 0 && "Unknown slice ctrl type");
-    }
-  } else {
-    assert(0 !=0 && "Unknown RAN function id");
-  }
+  /// ADD MOD ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_ADD;
+  fill_add_mod_slice(&wr.ctrl.slice_req_ctrl.msg.u.add_mod_slice, dl_slice_algo, ul_slice_algo);
+  return wr;
+}
+
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_assoc_dl(int assoc_ran_ue_id, int assoc_dl_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// ASSOC SLICE ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
+  fill_assoc_ue_slice_dl(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice, assoc_ran_ue_id, assoc_dl_id);
+  return wr;
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_assoc_ul(int assoc_ran_ue_id, int assoc_dl_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// ASSOC SLICE ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
+  fill_assoc_ue_slice_ul(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice, assoc_ran_ue_id, assoc_dl_id);
+  return wr;
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_deassoc_dl(int assoc_ran_ue_id, int deassoc_dl_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// DEASSOC SLICE ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC;
+  fill_deassoc_ue_slice_dl(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice, assoc_ran_ue_id, deassoc_dl_id);
+  return wr;
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_deassoc_ul(int assoc_ran_ue_id, int deassoc_ul_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// DEASSOC SLICE ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC;
+  fill_deassoc_ue_slice_ul(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice, assoc_ran_ue_id, deassoc_ul_id);
+  return wr;
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_del_dl(int del_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// DEL ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_DEL;
+  fill_del_slice_dl(&wr.ctrl.slice_req_ctrl.msg.u.del_slice, del_id);
+  return wr;
+}
+
+static
+sm_ag_if_wr_t fill_slice_sm_ctrl_req_del_ul(int del_id)
+{
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
+
+  /// DEL ///
+  wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_DEL;
+  fill_del_slice_ul(&wr.ctrl.slice_req_ctrl.msg.u.del_slice, del_id);
   return wr;
 }
 
@@ -477,6 +620,21 @@ bool filter_node(e2_node_connected_xapp_t const* n)
   assert(n!= NULL);
   return n->id.type == e2ap_ngran_gNB_DU || n->id.type == e2ap_ngran_gNB;
 }
+
+slice_algorithm_e dl_type[] = {
+  SLICE_ALG_SM_V0_NVS,
+  SLICE_ALG_SM_V0_EDF,
+  SLICE_ALG_SM_V0_EEDF,
+  SLICE_ALG_SM_V0_PR,
+  SLICE_ALG_SM_V0_EPR,
+  SLICE_ALG_SM_V0_NONE
+};
+
+slice_algorithm_e ul_type[] = {
+  SLICE_ALG_SM_V0_EPR,
+  SLICE_ALG_SM_V0_NVS,
+  SLICE_ALG_SM_V0_NONE
+};
 
 int main(int argc, char *argv[])
 {
@@ -498,13 +656,6 @@ int main(int argc, char *argv[])
 
   // SLICE indication
   const char* inter_t = "1000_ms";
-  sm_ans_xapp_t* slice_handle = NULL;
-
-  if(nodes.len > 0){
-    slice_handle = calloc(nodes.len, sizeof(sm_ans_xapp_t) );
-    assert(slice_handle != NULL);
-  }
-
   for(size_t i = 0; i < nodes.len; ++i) {
     e2_node_connected_xapp_t *n = &nodes.n[i];
     if (filter_node(n) == false){
@@ -512,65 +663,96 @@ int main(int argc, char *argv[])
     }
     for (size_t j = 0; j < n->len_rf; ++j)
       printf("Registered ran func id = %d \n ", n->rf[j].id);
+  }
 
-    slice_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, (void*)inter_t, sm_cb_slice);
-    assert(slice_handle[i].success == true);
-    sleep(2);
+  // Assuming this xApp only support 1 node
+  int nidx = 0;
+  sm_ans_xapp_t slice_handle = report_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, (void*)inter_t, sm_cb_slice);
+  assert(slice_handle.success == true);
+  sleep(2);
 
-    while(assoc_ran_ue_id == 0) {
-      sleep(1);
-    }
-
+  // Downlink slice with diff algos and uplink slice is None
+  int num_dl_type = sizeof(dl_type) / sizeof(dl_type[0]);
+  for (int i = 0; i < num_dl_type; i++) {
     // Control ADD slice
-    sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_ADD);
-    control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_add);
-
-    sleep(5);
-
-    // Control ASSOC slice
-    sm_ag_if_wr_t ctrl_msg_assoc = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
-    control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_assoc);
-    free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg);
-
-    sleep(5);
-
-    // Control DEASSOC slice
-    if (ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.len_slices > 0 &&
-         (ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices[0].params.type == SLICE_ALG_SM_V0_NVS ||
-          ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices[0].params.type == SLICE_ALG_SM_V0_EPR)) {
-
-      sm_ag_if_wr_t ctrl_msg_deassoc = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_UE_SLICE_DEASSOC);
-      control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_deassoc);
-      free_slice_ctrl_msg(&ctrl_msg_deassoc.ctrl.slice_req_ctrl.msg);
-
-      sleep(5);
-    }
+    sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req_addmod(dl_type[i], SLICE_ALG_SM_V0_NONE);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_add);
     free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg);
+    sleep(10);
 
+    int assoc_ran_ue_id = 1;
+    int assoc_dl_id = 2;
+    // Control ASSOC slice
+    sm_ag_if_wr_t ctrl_msg_assoc = fill_slice_sm_ctrl_req_assoc_dl(assoc_ran_ue_id, assoc_dl_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_assoc);
+    free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    assoc_dl_id = 5;
+    // Control ASSOC slice
+    sm_ag_if_wr_t ctrl_msg_assoc2 = fill_slice_sm_ctrl_req_assoc_dl(assoc_ran_ue_id, assoc_dl_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_assoc2);
+    free_slice_ctrl_msg(&ctrl_msg_assoc2.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    int deassoc_dl_id = 2;
+    // Control DEASSOC slice
+    sm_ag_if_wr_t ctrl_msg_deassoc = fill_slice_sm_ctrl_req_deassoc_dl(assoc_ran_ue_id, deassoc_dl_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_deassoc);
+    free_slice_ctrl_msg(&ctrl_msg_deassoc.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    int del_id = 5;
     // Control DEL slice
-    sm_ag_if_wr_t ctrl_msg_del = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_DEL);
-    control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_del);
+    sm_ag_if_wr_t ctrl_msg_del = fill_slice_sm_ctrl_req_del_dl(del_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_del);
     free_slice_ctrl_msg(&ctrl_msg_del.ctrl.slice_req_ctrl.msg);
-
     sleep(5);
   }
 
-  while(!exit_flag) {
-    sleep(1);
+
+  // Uplink slice with diff algos and downlink slice is None
+  int num_ul_type = sizeof(ul_type) / sizeof(ul_type[0]);
+  for (int i = 0; i < num_ul_type; i++) {
+    // Control ADD slice
+    sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req_addmod(SLICE_ALG_SM_V0_NONE, ul_type[i]);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_add);
+    free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    int assoc_ran_ue_id = 1;
+    int assoc_ul_id = 3;
+    // Control ASSOC slice
+    sm_ag_if_wr_t ctrl_msg_assoc = fill_slice_sm_ctrl_req_assoc_ul(assoc_ran_ue_id, assoc_ul_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_assoc);
+    free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    assoc_ul_id = 7;
+    // Control ASSOC slice
+    sm_ag_if_wr_t ctrl_msg_assoc2 = fill_slice_sm_ctrl_req_assoc_ul(assoc_ran_ue_id, assoc_ul_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_assoc2);
+    free_slice_ctrl_msg(&ctrl_msg_assoc2.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    int deassoc_dl_id = 3;
+    // Control DEASSOC slice
+    sm_ag_if_wr_t ctrl_msg_deassoc = fill_slice_sm_ctrl_req_deassoc_ul(assoc_ran_ue_id, deassoc_dl_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_deassoc);
+    free_slice_ctrl_msg(&ctrl_msg_deassoc.ctrl.slice_req_ctrl.msg);
+    sleep(5);
+
+    int del_id = 7;
+    // Control DEL slice
+    sm_ag_if_wr_t ctrl_msg_del = fill_slice_sm_ctrl_req_del_ul(del_id);
+    control_sm_xapp_api(&nodes.n[nidx].id, SM_SLICE_ID, &ctrl_msg_del);
+    free_slice_ctrl_msg(&ctrl_msg_del.ctrl.slice_req_ctrl.msg);
+    sleep(5);
   }
+
+
   // Remove the handle previously returned
-  for(int i = 0; i < nodes.len; ++i){
-    e2_node_connected_xapp_t *n = &nodes.n[i];
-    if (filter_node(n) == false){
-      continue;
-    }
-    rm_report_sm_xapp_api(slice_handle[i].u.handle);
-  }
-
-  if(nodes.len > 0){
-    free(slice_handle);
-  }
-
+  rm_report_sm_xapp_api(slice_handle.u.handle);
   sleep(1);
 
   //Stop the xApp

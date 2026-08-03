@@ -34,7 +34,7 @@ SOFTWARE.
 
 typedef struct seq_ring_buf_s
 {
-  const size_t elt_size;
+  size_t elt_size;
   uint8_t* array;
 
   size_t cap;

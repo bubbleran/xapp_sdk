@@ -14,7 +14,6 @@ import xapp_sdk as ric
 ####################
 ####  SLICE INDICATION MSG TO JSON
 ####################
-assoc_ran_ue_id = 0
 def slice_ind_to_dict_json(ind):
 
     slice_stats = {
@@ -148,7 +147,7 @@ def slice_ind_to_dict_json(ind):
             ul_dict.update({"slice_sched_algo" : slice_algo})
 
             slices_dict = {
-                "index" : s.id,
+                "id" : s.id,
                 "label" : s.label[0],
                 "ue_sched_algo" : s.sched[0],
             }
@@ -214,7 +213,6 @@ def slice_ind_to_dict_json(ind):
             ul_dict["slices"].append(slices_dict)
 
     # UE
-    global assoc_ran_ue_id
     ue_dict = slice_stats["UE"]
     if ind.ue_slice_stats.len_ue_slice <= 0:
         ue_dict["num_of_ues"] = ind.ue_slice_stats.len_ue_slice
@@ -230,8 +228,11 @@ def slice_ind_to_dict_json(ind):
                 for id in u.dl_id:
                     dl_id += str(id) + ","
                 dl_id = dl_id.rstrip(",")
-            if u.ul_id >= 0 and ul_dict["num_of_slices"] > 0:
-                ul_id = u.ul_id
+            if u.len_ul > 0 and ul_dict["num_of_slices"] > 0:
+                ul_id = ""
+                for id in u.ul_id:
+                    ul_id += str(id) + ","
+                ul_id = ul_id.rstrip(",")
             ues_dict = {
                 "ran_ue_id" : u.ran_ue_id,
                 "rnti" : hex(u.rnti),
@@ -239,7 +240,6 @@ def slice_ind_to_dict_json(ind):
                 "assoc_ul_slice_id" : ul_id
             }
             ue_dict["ues"].append(ues_dict)
-            assoc_ran_ue_id = u.ran_ue_id
 
     ind_dict = slice_stats
     ind_json = json.dumps(ind_dict)
@@ -262,17 +262,22 @@ class SLICECallback(ric.slice_cb):
     # Override C++ method: virtual void handle(swig_slice_ind_msg_t a) = 0;
     def handle(self, ind):
         # Print swig_slice_ind_msg_t
-        print('SLICE Indication tstamp = ' + str(ind.tstamp))
+        t_now = time.time_ns() / 1000.0
+        t_slice = ind.tstamp / 1.0
+        t_diff = t_now - t_slice
+        print(f'SLICE Indication latency {t_diff} from E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}')
         for s in ind.slice_stats.dl.slices:
             print(f'SLICE STATE: num slice {ind.slice_stats.dl.len_slices}, id {s.id}, algo {s.params.type}, name {ind.slice_stats.dl.sched_name[0]}')
         for ue in ind.ue_slice_stats.ues:
+            dl_id = []
             if ue.len_dl > 0:
-                dl_id = []
                 for id in ue.dl_id:
                     dl_id.append(id)
-                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl id {dl_id}')
-            else:
-                print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl len {ue.len_dl}')
+            ul_id = []
+            if ue.len_ul > 0:
+                for id in ue.ul_id:
+                    ul_id.append(id)
+            print(f'UE ASSOC SLICE STATE: num ues {ind.ue_slice_stats.len_ue_slice}, ran ue id {ue.ran_ue_id} rnti {ue.rnti}, assoc dl id {dl_id}, assoc ul id {ul_id}')
         slice_ind_to_dict_json(ind)
 
 ####################
@@ -427,14 +432,14 @@ add_nvs_slices = {
             "slice_algo_params" : {"pct_rsvd" : 0.65},
         },
         {
-            "id" : 2,
+            "id" : 1,
             "label" : "s2",
             "ue_sched_algo" : "PF",
             "type" : "SLICE_SM_NVS_V0_RATE",
             "slice_algo_params" : {"mbps_rsvd" : 25, "mbps_ref" : 100},
         },
         {
-            "id" : 5,
+            "id" : 2,
             "label" : "s3",
             "ue_sched_algo" : "PF",
             "type" : "SLICE_SM_NVS_V0_RATE",
@@ -454,13 +459,13 @@ add_edf_slices = {
             "slice_algo_params" : {"deadline" : 10, "guaranteed_prbs" : 80, "max_replenish" : 0},
         },
         {
-            "id" : 2,
+            "id" : 1,
             "label" : "s2",
             "ue_sched_algo" : "PF",
             "slice_algo_params" : {"deadline" : 20, "guaranteed_prbs" : 50, "max_replenish" : 0},
         },
         {
-            "id" : 5,
+            "id" : 2,
             "label" : "s3",
             "ue_sched_algo" : "PF",
             "slice_algo_params" : {"deadline" : 40, "guaranteed_prbs" : 10, "max_replenish" : 0},
@@ -504,13 +509,13 @@ add_pr_slices = {
             "id" : 0,
             "label" : "s1",
             "ue_sched_algo" : "PF",
-            "slice_algo_params" : {"max_ratio" : 100, "min_ratio" : 0, "dedicated_ratio" : 0},
+            "slice_algo_params" : {"max_ratio" : 10, "min_ratio" : 10, "dedicated_ratio" : 10},
         },
         {
             "id" : 1,
             "label" : "s2",
             "ue_sched_algo" : "PF",
-            "slice_algo_params" : {"max_ratio" : 20, "min_ratio" : 20, "dedicated_ratio" : 20},
+            "slice_algo_params" : {"max_ratio" : 50, "min_ratio" : 50, "dedicated_ratio" : 50},
         },
         {
             "id" : 2,
@@ -529,19 +534,19 @@ add_epr_slices = {
             "id" : 0,
             "label" : "s1",
             "ue_sched_algo" : "PF",
-            "slice_algo_params" : {"max_ratio" : 100, "min_ratio" : 0, "dedicated_ratio" : 0},
+            "slice_algo_params" : {"max_ratio" : 20, "min_ratio" : 20, "dedicated_ratio" : 20},
         },
         {
             "id" : 1,
             "label" : "s2",
             "ue_sched_algo" : "PF",
-            "slice_algo_params" : {"max_ratio" : 20, "min_ratio" : 20, "dedicated_ratio" : 20},
+            "slice_algo_params" : {"max_ratio" : 50, "min_ratio" : 50, "dedicated_ratio" : 50},
         },
         {
             "id" : 2,
             "label" : "s3",
             "ue_sched_algo" : "PF",
-            "slice_algo_params" : {"max_ratio" : 40, "min_ratio" : 20, "dedicated_ratio" : 0},
+            "slice_algo_params" : {"max_ratio" : 100, "min_ratio" : 20, "dedicated_ratio" : 0},
         }
     ]
 }
@@ -556,7 +561,7 @@ reset_slices = {
 delete_slices = {
     "num_dl_slices" : 1,
     "delete_dl_slice_id" : [2],
-    "num_ul_slices" : 0,
+    "num_ul_slices" : 1,
     "delete_ul_slice_id" : [2]
 }
 
@@ -567,7 +572,7 @@ assoc_ue_slice = {
     "num_ues" : 1,
     "ues" : [
         {
-            "ran_ue_id" : assoc_ran_ue_id,
+            "ran_ue_id" : 0,
             "assoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
             "assoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
         }
@@ -581,7 +586,7 @@ deassoc_ue_slice = {
     "num_ues" : 1,
     "ues" : [
         {
-            "ran_ue_id" : assoc_ran_ue_id,
+            "ran_ue_id" : 0,
             "deassoc_dl_slice_id" : 2, # if set to -1, gNB will not perform DL slice association.
             "deassoc_ul_slice_id" : -1  # if set to -1, gNB will not perform UL slice association.
         }
@@ -656,12 +661,16 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
         for i in range(ctrl_msg["num_ues"]):
             a = ric.ue_slice_assoc_t()
             a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
-            a.ul_id = ctrl_msg["ues"][i]["assoc_ul_slice_id"]
 
             a.len_dl = 1 # each ctrl msg only allow ctrl one slice
             assoc_dl_id = ric.assoc_dl_array(a.len_dl)
             assoc_dl_id[0] = ctrl_msg["ues"][i]["assoc_dl_slice_id"]
             a.dl_id = assoc_dl_id
+
+            a.len_ul = 1 # each ctrl msg only allow ctrl one slice
+            assoc_ul_id = ric.assoc_ul_array(a.len_ul)
+            assoc_ul_id[0] = ctrl_msg["ues"][i]["assoc_ul_slice_id"]
+            a.ul_id = assoc_ul_id
 
             assoc[i] = a
             # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
@@ -675,12 +684,16 @@ def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
         for i in range(ctrl_msg["num_ues"]):
             a = ric.ue_slice_assoc_t()
             a.ran_ue_id = ctrl_msg["ues"][i]["ran_ue_id"]
-            a.ul_id = ctrl_msg["ues"][i]["deassoc_ul_slice_id"]
 
             a.len_dl = 1 # each ctrl msg only allow ctrl one slice
             deassoc_dl_id = ric.assoc_dl_array(a.len_dl)
             deassoc_dl_id[0] = ctrl_msg["ues"][i]["deassoc_dl_slice_id"]
             a.dl_id = deassoc_dl_id
+
+            a.len_ul = 1 # each ctrl msg only allow ctrl one slice
+            deassoc_ul_id = ric.assoc_ul_array(a.len_ul)
+            deassoc_ul_id[0] = ctrl_msg["ues"][i]["deassoc_ul_slice_id"]
+            a.ul_id = deassoc_ul_id
 
             deassoc[i] = a
             # print("ASSOC DL SLICE: <ran_ue_id:", a.ran_ue_id, "(NEED TO FIX)>, id", a.dl_id, a.ul_id)
@@ -721,168 +734,122 @@ slice_cb = SLICECallback()
 hndlr = ric.report_slice_sm(conn[node_idx].id, ric.Interval_ms_1000, slice_cb)
 time.sleep(5)
 
-####################
-####  SLICE CTRL ADD
-####################
 
-ul_dl_conf = {
-    "dl_conf": add_epr_slices,
-    #"ul_conf": add_nvs_slices_cap
-}
+dl_conf_list = [
+    add_epr_slices,
+    add_pr_slices,
+    add_eedf_slices,
+    add_edf_slices,
+    add_nvs_slices,
+    reset_slices
+]
 
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+ul_conf_list = [
+    add_epr_slices,
+    add_nvs_slices,
+    reset_slices
+]
 
-####################
-####  SLICE CTRL ASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+for dl_conf in dl_conf_list:
+    assoc_ran_ue_id = 1
 
-####################
-####  SLICE CTRL DEASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL ADD
+    ####################
+    ul_dl_conf = {
+        "dl_conf": dl_conf,
+    }
+    msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ADD
-####################
+    if dl_conf == reset_slices:
+        continue
 
-ul_dl_conf = {
-    "dl_conf": add_pr_slices,
-    #"ul_conf": add_nvs_slices_cap
-}
+    ####################
+    ####  SLICE CTRL ASSOC
+    ####################
+    assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 1
+    msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL ASSOC
+    ####################
+    assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
+    msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL DEASSOC
+    ####################
+    deassoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    deassoc_ue_slice["ues"][0]["deassoc_dl_slice_id"] = 1
+    msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ADD
-####################
+    ####################
+    ####  SLICE CTRL DEL
+    ####################
+    msg = fill_slice_ctrl_msg("DEL", delete_slices)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-ul_dl_conf = {
-    "dl_conf": add_eedf_slices,
-    #"ul_conf": add_nvs_slices_cap
-}
+for ul_conf in ul_conf_list:
+    assoc_ran_ue_id = 1
 
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL ADD
+    ####################
+    ul_dl_conf = {
+        "ul_conf": ul_conf
+    }
+    msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    if ul_conf == reset_slices:
+        continue
 
-####################
-####  SLICE CTRL ADD
-####################
+    ####################
+    ####  SLICE CTRL ASSOC
+    ####################
+    assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    assoc_ue_slice["ues"][0]["assoc_ul_slice_id"] = 1
+    msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-ul_dl_conf = {
-    "dl_conf": add_edf_slices,
-    #"ul_conf": add_nvs_slices_cap
-}
+    ####################
+    ####  SLICE CTRL ASSOC
+    ####################
+    assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    assoc_ue_slice["ues"][0]["assoc_ul_slice_id"] = 2
+    msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL DEASSOC
+    ####################
+    deassoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
+    deassoc_ue_slice["ues"][0]["deassoc_ul_slice_id"] = 1
+    msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
+    ####################
+    ####  SLICE CTRL DEL
+    ####################
+    msg = fill_slice_ctrl_msg("DEL", delete_slices)
+    ric.control_slice_sm(conn[node_idx].id, msg)
+    time.sleep(5)
 
-####################
-####  SLICE CTRL ADD
-####################
-
-ul_dl_conf = {
-    "dl_conf": add_nvs_slices,
-    #"ul_conf": add_nvs_slices_cap
-}
-
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
-
-####################
-####  SLICE CTRL ASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-assoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("ASSOC_UE_SLICE", assoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
-
-####################
-####  SLICE CTRL DEASSOC
-####################
-while(assoc_ran_ue_id == 0):
-    time.sleep(1)
-assoc_ue_slice["ues"][0]["ran_ue_id"] = assoc_ran_ue_id
-deassoc_ue_slice["ues"][0]["assoc_dl_slice_id"] = 2
-msg = fill_slice_ctrl_msg("DEASSOC_UE_SLICE", deassoc_ue_slice)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
-
-####################
-####  SLICE CTRL DEL
-####################
-
-msg = fill_slice_ctrl_msg("DEL", delete_slices)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
-
-####################
-####  SLICE CTRL RESET
-####################
-
-ul_dl_conf = {
-    "dl_conf": reset_slices,
-    #"ul_conf": reset_slices
-}
-
-msg = fill_slice_ctrl_msg("ADDMOD", ul_dl_conf)
-ric.control_slice_sm(conn[node_idx].id, msg)
-time.sleep(5)
 
 with open("rt_slice_stats.json", "w") as outfile:
     outfile.write(json.dumps({}))
@@ -894,5 +861,5 @@ ric.rm_report_slice_sm(hndlr)
 while ric.try_stop == 0:
     time.sleep(1)
 
-print('Test finished' )
+print("Test xApp run SUCCESSFULLY")
 

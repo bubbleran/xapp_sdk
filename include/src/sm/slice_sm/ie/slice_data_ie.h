@@ -354,7 +354,8 @@ typedef struct{
   uint32_t ran_ue_id;
   uint32_t len_dl;
   uint32_t* dl_id;
-  uint32_t ul_id;
+  uint32_t len_ul;
+  uint32_t* ul_id;
   uint16_t rnti;
 } ue_slice_assoc_t; 
 
