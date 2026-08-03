@@ -11,7 +11,8 @@ set(LIST_XAPP hw
               xapp_oran_moni 
               xapp_oran_rc_handover_ctrl
               xapp_oran_rc_slice_ctrl
-	          xapp_oran_llc_srs
+              xapp_oran_llc_srs
+              xapp_oran_ccc_slice_moni_ctrl
               )
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
