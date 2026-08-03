@@ -12,6 +12,9 @@ list(APPEND lst_dst "${dst_dir}/xapp_all_moni.py")
 list(APPEND lst_src "${src_dir}/xapp_oran_moni.py")
 list(APPEND lst_dst "${dst_dir}/xapp_oran_moni.py")
 
+list(APPEND lst_src "${src_dir}/xapp_slice_moni_ctrl.py")
+list(APPEND lst_dst "${dst_dir}/xapp_slice_moni_ctrl.py")
+
 list(APPEND lst_src "${src_dir}/xapp_sdk.py")
 list(APPEND lst_dst "${dst_dir}/xapp_sdk.py")
 
