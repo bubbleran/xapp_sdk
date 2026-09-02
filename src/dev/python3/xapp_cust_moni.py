@@ -2,7 +2,7 @@ import time
 import os
 import sys
 import signal
-from tabulate import tabulate
+# from tabulate import tabulate
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sdk_path = cur_dir + "/../xapp_sdk/"
@@ -70,7 +70,7 @@ class SliceCallback(ric.slice_cb):
 class MoniXApp:
     def __init__(self, argv):
         ric.init(argv)
-        
+
         self.shutdown_flag = False
         self.mac_hndlr = {}
         self.rlc_hndlr = {}
@@ -86,7 +86,7 @@ class MoniXApp:
 
         self.e2nodes_map = {}
         self.cust_sm = ric.get_sub_cust_sm_conf(argv)
-        
+
         signal.signal(signal.SIGINT, self._sig_handler)
 
     def _sig_handler(self, signum, frame):
@@ -122,7 +122,7 @@ class MoniXApp:
 
             print(f"<<<< Subscribe to {sm_name} with time period {sm_info.periodicity_ms} >>>>")
             key = self._gen_id_key(node.id)
-            
+
             if sm_name == "MAC" and (node.id.type in [ric.e2ap_ngran_gNB, ric.e2ap_ngran_gNB_DU, ric.e2ap_ngran_eNB]):
                 mac_cb = MACCallback()
                 self.mac_cbs.append(mac_cb)
@@ -153,7 +153,7 @@ class MoniXApp:
 
     def _unsubscribe_node(self, node_id):
         key_to_remove = self._gen_id_key(node_id)
-        
+
         rm_funcs = {
             "MAC": ric.rm_report_mac_sm, "RLC": ric.rm_report_rlc_sm,
             "PDCP": ric.rm_report_pdcp_sm, "GTP": ric.rm_report_gtp_sm,
@@ -171,18 +171,18 @@ class MoniXApp:
                     rm_funcs[sm_name](h)
                 del hndlr_dict[key_to_remove]
 
-    def _print_e2_nodes(self):
-        conn = ric.conn_e2_nodes()
-        headers = ["idx", "nb_id", "mcc", "mnc", "ran_type"]
-        e2nodes_data = [
-            [i, node.id.nb_id.nb_id, node.id.plmn.mcc, node.id.plmn.mnc, self._get_ngran_name(node.id.type)]
-            for i, node in enumerate(conn)
-        ]
-        print(tabulate(e2nodes_data, headers=headers, tablefmt="grid"))
+    # def _print_e2_nodes(self):
+    #     conn = ric.conn_e2_nodes()
+    #     headers = ["idx", "nb_id", "mcc", "mnc", "ran_type"]
+    #     e2nodes_data = [
+    #         [i, node.id.nb_id.nb_id, node.id.plmn.mcc, node.id.plmn.mnc, self._get_ngran_name(node.id.type)]
+    #         for i, node in enumerate(conn)
+    #     ]
+    #     print(tabulate(e2nodes_data, headers=headers, tablefmt="grid"))
 
     def _handle_node_changes(self):
         conn = ric.conn_e2_nodes()
-        
+
         current_nodes_map = {}
         for i, node in enumerate(conn):
             plmn = "PLMN_" + str(node.id.plmn.mcc) + str(node.id.plmn.mnc)
@@ -212,12 +212,12 @@ class MoniXApp:
             for info in new_sets:
                 new_node = current_nodes_map[info]
                 self._send_subscription_req(new_node)
-        
+
         self.e2nodes_map = current_nodes_map
-        
+
         if new_sets or leave_sets:
             print("Update connected E2 nodes")
-            self._print_e2_nodes()
+            #self._print_e2_nodes()
 
     def run(self):
         print("xApp running. Waiting for E2 nodes to connect...")
@@ -230,16 +230,16 @@ class MoniXApp:
             if timeout > 0 and (time.time() - start_time) > timeout:
                 print(f"Timeout of {timeout} seconds reached.")
                 break
-            
+
             time.sleep(1)
-        
+
         self.stop()
 
     def stop(self):
         print("Deregistering subscriptions...")
         for node in self.e2nodes_map.values():
             self._unsubscribe_node(node.id)
-            
+
         # Avoid deadlock. ToDo revise architecture
         while ric.try_stop == 0:
             time.sleep(1)

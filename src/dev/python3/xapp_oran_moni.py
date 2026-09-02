@@ -2,7 +2,7 @@ import time
 import os
 import sys
 import signal
-from tabulate import tabulate
+# from tabulate import tabulate
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 sdk_path = cur_dir + "/../xapp_sdk/"
@@ -24,7 +24,7 @@ class KPMCallback(ric.kpm_cb):
             t_kpm = ind.hdr.kpm_ric_ind_hdr_format_1.collectStartTime / 1.0
             t_diff = t_now - t_kpm
             print(f"KPM Indication tstamp {t_now} diff {t_diff} E2-node type {ind.id.type} nb_id {ind.id.nb_id.nb_id}")
-        
+
         # Uncomment below to enable KPM format printing
 
         if ind.msg.type == ric.FORMAT_1_INDICATION_MESSAGE:
@@ -70,7 +70,7 @@ class KPMCallback(ric.kpm_cb):
         else:
             print(f"unknown meas info type")
             return
-        
+
         print(f"Measurement name/id:value {print_name_id}:{print_value}")
 
     def _print_kpm_ue_id(self, ue):
@@ -92,7 +92,7 @@ class KPMCallback(ric.kpm_cb):
 class MoniXApp:
     def __init__(self, argv):
         ric.init(argv)
-        
+
         self.shutdown_flag = False
         self.kpm_hndlr = {}
 
@@ -100,7 +100,7 @@ class MoniXApp:
 
         self.e2nodes_map = {}
         self.oran_sm = ric.get_sub_oran_sm_conf(argv)
-        
+
         signal.signal(signal.SIGINT, self._sig_handler)
 
     def _sig_handler(self, signum, frame):
@@ -134,7 +134,7 @@ class MoniXApp:
             if tti is None:
                 print(f"Unknown tti {sm_info.periodicity_ms}")
                 continue
-            
+
             if node.id.type != ric.e2ap_ngran_eNB and sm_info.ran_type == self._get_ngran_name(node.id.type):
                 actions = [str(a.name) for a in sm_info.actions if a.name is not None]
                 key = self._gen_id_key(node.id)
@@ -149,24 +149,24 @@ class MoniXApp:
 
     def _unsubscribe_node(self, node_id):
         key_to_remove = self._gen_id_key(node_id)
-        
+
         if key_to_remove in self.kpm_hndlr:
             for h in self.kpm_hndlr[key_to_remove]:
                 ric.rm_report_kpm_sm(h)
             del self.kpm_hndlr[key_to_remove]
 
-    def _print_e2_nodes(self):
-        conn = ric.conn_e2_nodes()
-        headers = ["idx", "nb_id", "mcc", "mnc", "ran_type"]
-        e2nodes_data = [
-            [i, node.id.nb_id.nb_id, node.id.plmn.mcc, node.id.plmn.mnc, self._get_ngran_name(node.id.type)]
-            for i, node in enumerate(conn)
-        ]
-        print(tabulate(e2nodes_data, headers=headers, tablefmt="grid"))
+    # def _print_e2_nodes(self):
+    #     conn = ric.conn_e2_nodes()
+    #     headers = ["idx", "nb_id", "mcc", "mnc", "ran_type"]
+    #     e2nodes_data = [
+    #         [i, node.id.nb_id.nb_id, node.id.plmn.mcc, node.id.plmn.mnc, self._get_ngran_name(node.id.type)]
+    #         for i, node in enumerate(conn)
+    #     ]
+    #     print(tabulate(e2nodes_data, headers=headers, tablefmt="grid"))
 
     def _handle_node_changes(self):
         conn = ric.conn_e2_nodes()
-        
+
         current_nodes_map = {}
         for i, node in enumerate(conn):
             plmn = "PLMN_" + str(node.id.plmn.mcc) + str(node.id.plmn.mnc)
@@ -196,12 +196,12 @@ class MoniXApp:
             for info in new_sets:
                 new_node = current_nodes_map[info]
                 self._send_subscription_req(new_node)
-        
+
         self.e2nodes_map = current_nodes_map
-        
+
         if new_sets or leave_sets:
             print("Update connected E2 nodes")
-            self._print_e2_nodes()
+            #self._print_e2_nodes()
 
     def run(self):
         print("xApp running. Waiting for E2 nodes to connect...")
@@ -214,16 +214,16 @@ class MoniXApp:
             if timeout > 0 and (time.time() - start_time) > timeout:
                 print(f"Timeout of {timeout} seconds reached.")
                 break
-            
+
             time.sleep(1)
-        
+
         self.stop()
 
     def stop(self):
         print("Deregistering subscriptions...")
         for node in self.e2nodes_map.values():
             self._unsubscribe_node(node.id)
-            
+
         # Avoid deadlock. ToDo revise architecture
         while ric.try_stop == 0:
             time.sleep(1)
