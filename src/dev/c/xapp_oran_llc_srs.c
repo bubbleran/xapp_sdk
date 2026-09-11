@@ -177,7 +177,17 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 
   int64_t t0 = 0;
   memcpy(&t0,frmt_1->slot_tstamp.slot_start_time, 8);
-  printf("receive ind msg from gnb-du id %u, msg latency %lu us (ran_ue_id %ld)\n", n->nb_id.nb_id, time_now_us() - t0, *ue_id.gnb.ran_ue_id);
+  uint64_t cur_ran_ue_id = 0;
+  if (ue_id.type == GNB_UE_ID_E2SM) {
+    assert(ue_id.gnb.ran_ue_id != NULL && "ran_ue_id not present");
+    cur_ran_ue_id = *ue_id.gnb.ran_ue_id;
+  } else if (ue_id.type == GNB_DU_UE_ID_E2SM) {
+    assert(ue_id.gnb_du.ran_ue_id != NULL && "ran_ue_id not present");
+    cur_ran_ue_id = *ue_id.gnb_du.ran_ue_id;
+  } else {
+    assert(0 != 0 && "unknown type of ue_id");
+  }
+  printf("receive ind msg from gnb/gnb-du id %u, msg latency %lu us (ran_ue_id %lu)\n", n->nb_id.nb_id, time_now_us() - t0, cur_ran_ue_id);
 
   for(size_t i = 0; i < frmt_1->srs.sz_srs_rx_antenna; i++) {
     srs_rx_antenna_t* rx = &frmt_1->srs.rx[i];
@@ -191,7 +201,7 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
         size_t sz = raw_iq.len / 4; // sizeof(c16_t) = 4
         char filename_rx[256] = {0};
         size_t rc = snprintf(filename_rx, sizeof(filename_rx),
-                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, cur_ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_rx, raw_iq.buf, sz, t0);
@@ -206,19 +216,19 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 
         char filename_rx[256], filename_noise[256], filename_estimated[256] = {0};
         size_t rc = snprintf(filename_rx, sizeof(filename_rx),
-                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, cur_ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
 
         rc = snprintf(filename_noise, sizeof(filename_noise),
-                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, cur_ran_ue_id);
         assert(rc < 256);
         write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
 
         rc = snprintf(filename_estimated,
               sizeof(filename_estimated),
-              "iq_srs_estimated_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id,*ue_id.gnb.ran_ue_id);
+              "iq_srs_estimated_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, cur_ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
