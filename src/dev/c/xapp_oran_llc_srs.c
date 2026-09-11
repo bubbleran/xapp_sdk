@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <inttypes.h>
 
 static
 ue_id_e2sm_t ue_id;
@@ -18,7 +21,10 @@ static
 latch_cv_t latch;
 
 static
-global_e2_node_id_t src_e2_node = {0};
+uint64_t input_ran_ue_id;
+
+static
+uint32_t input_nb_id;
 
 // Event Trigger 
 static
@@ -112,27 +118,31 @@ void cb_sm_rc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   //}
 
   for (size_t i = 0; i < frmt_4->sz_seq_ue_info; i++) {
-    ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
-    if (ue_id.type == GNB_UE_ID_E2SM)
+    if (frmt_4->seq_ue_info[i].ue_id.type == GNB_UE_ID_E2SM) {
       printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb.ran_ue_id, n->nb_id.nb_id);
-    else if (ue_id.type == GNB_DU_UE_ID_E2SM)
+      if (input_ran_ue_id == *frmt_4->seq_ue_info[i].ue_id.gnb.ran_ue_id) {
+        ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
+        printf("Monitor ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
+
+        // Syncronize. Notify that one message arrived
+        count_down_latch_cv(&latch);
+        break;
+      }
+    } else if (frmt_4->seq_ue_info[i].ue_id.type == GNB_DU_UE_ID_E2SM) {
       printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB-DU) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb_du.ran_ue_id, n->nb_id.nb_id);
-    else
+      if (input_ran_ue_id == *frmt_4->seq_ue_info[i].ue_id.gnb_du.ran_ue_id) {
+        ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
+        printf("Monitor ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
+
+        // Syncronize. Notify that one message arrived
+        count_down_latch_cv(&latch);
+        break;
+      }
+    } else {
       assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
+    }
   }
-  // Change this array for getting the SRS from a second UE ID
-  //ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[0].ue_id);
-  if (ue_id.type == GNB_UE_ID_E2SM)
-    printf("Monitor ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
-  else if (ue_id.type == GNB_DU_UE_ID_E2SM)
-    printf("Monitor ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
-  else
-    assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
 
-  src_e2_node = cp_global_e2_node_id(n);
-
-  // Syncronize. Notify that one message arrived
-  count_down_latch_cv(&latch);
 }
 
 void write_iq_text(const char* filename, const uint8_t* buf, size_t len, int64_t collect_time) {
@@ -167,32 +177,52 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 
   int64_t t0 = 0;
   memcpy(&t0,frmt_1->slot_tstamp.slot_start_time, 8);
-  printf("receive ind msg from gnb-du id %u, msg latency %lu us\n", n->nb_id.nb_id, time_now_us() - t0);
+  printf("receive ind msg from gnb-du id %u, msg latency %lu us (ran_ue_id %ld)\n", n->nb_id.nb_id, time_now_us() - t0, *ue_id.gnb.ran_ue_id);
 
   for(size_t i = 0; i < frmt_1->srs.sz_srs_rx_antenna; i++) {
     srs_rx_antenna_t* rx = &frmt_1->srs.rx[i];
     for (size_t j = 0; j < rx->sz_srs_symbols; j++) {
       srs_symbol_t* symbol = &rx->symbol[j];
+      uint8_t hdr = rx->symbol->hdr;
       byte_array_t raw_iq = symbol->raw_iq;
-      // raw_iq includes three types of I/Q sample: rx srs, noise, estimated channel
-      size_t sz = raw_iq.len / 3 / 4; // rx, noise, estimated // sizeof(c16_t) = 4
-      // Offsets in bytes
-      size_t rx_offset     = 0;
-      size_t noise_offset  = 4 * sz;
-      size_t est_offset    = 4 * sz * 2;
 
-      char filename_rx[256], filename_noise[256], filename_estimated[256];
-      snprintf(filename_rx, sizeof(filename_rx),
-               "iq_srs_rx_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
+      // case1: raw_iq includes one type of I/Q sample: rx srs
+      if (hdr == 1) {
+        size_t sz = raw_iq.len / 4; // sizeof(c16_t) = 4
+        char filename_rx[256] = {0};
+        size_t rc = snprintf(filename_rx, sizeof(filename_rx),
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+        assert(rc < 256);
+        (void)rc;
+        write_iq_text(filename_rx, raw_iq.buf, sz, t0);
+      }
+      // case2: raw_iq includes three types of I/Q sample: rx srs, noise, estimated channel
+      else {
+        size_t sz = raw_iq.len / 3 / 4; // rx, noise, estimated // sizeof(c16_t) = 4
+        // Offsets in bytes
+        size_t rx_offset     = 0;
+        size_t noise_offset  = 4 * sz;
+        size_t est_offset    = 4 * sz * 2;
 
-      snprintf(filename_noise, sizeof(filename_noise),
-               "iq_srs_noise_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
+        char filename_rx[256], filename_noise[256], filename_estimated[256] = {0};
+        size_t rc = snprintf(filename_rx, sizeof(filename_rx),
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+        assert(rc < 256);
+        (void)rc;
+        write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
 
-      snprintf(filename_estimated, sizeof(filename_estimated),
-               "iq_srs_estimated_ant%lu_symbol%lu_nbid%u.txt", i, j, n->nb_id.nb_id);
-      write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
+        rc = snprintf(filename_noise, sizeof(filename_noise),
+                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+        assert(rc < 256);
+        write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
+
+        rc = snprintf(filename_estimated,
+              sizeof(filename_estimated),
+              "iq_srs_estimated_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id,*ue_id.gnb.ran_ue_id);
+        assert(rc < 256);
+        (void)rc;
+        write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
+      }
     }
 
   }
@@ -250,11 +280,18 @@ llc_sub_data_t gen_llc_sub(ue_id_e2sm_t* ue_id)
 
 int main(int argc, char *argv[])
 {
-  assert(argc == 2 && "Configuration file needed");
+  assert(argc == 4 && "Configuration file, NodeB ID ,and RAN UE ID needed, e.g., xapp_oran_llc_moni_srs xapp.conf <nb_id> <ran_ue_id>");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   poll(NULL, 0, 1000);
+
+  input_nb_id = (uint32_t)strtoull(argv[2], NULL, 10);
+  printf("input_nb_id %u\n", input_nb_id);
+
+  input_ran_ue_id = (uint64_t)strtoull(argv[3], NULL, 10);
+  printf("input_ran_ue_id %lu\n", input_ran_ue_id);
 
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
   defer({ free_e2_node_arr_xapp(&arr); });
@@ -263,6 +300,8 @@ int main(int argc, char *argv[])
   for (size_t i = 0; i < arr.len; i++) {
     e2ap_ngran_node_t const type = arr.n[i].id.type;
     uint32_t const nb_id = arr.n[i].id.nb_id.nb_id;
+    if (input_nb_id != nb_id)
+      continue;
 
     if (type == e2ap_ngran_gNB_CU) {
       printf("We don't collect SRS signal from E2 Node nb_id %d (type gNB-CU)\n", nb_id);
@@ -290,7 +329,15 @@ int main(int argc, char *argv[])
 
     // Syncronize. Wait until all the previous messages arrive using a latch
     // Wait there is a UE connect to this E2-Node
-    wait_latch_cv(&latch);
+    printf("Waiting for a UE to connect to the monitored E2-Node...\n");
+    const int timeout_sec = 10;
+    int rc = wait_timeout_latch_cv(&latch, timeout_sec);
+    if (rc == ETIMEDOUT) {
+      printf("Timeout while waiting an answer from a RC ondemand subscription");
+      return EXIT_SUCCESS;
+    }
+
+    rm_report_sm_xapp_api(hndl.u.handle);
 
     // Generate subscription event for the connected UE
     llc_sub_data_t llc_sub = gen_llc_sub(&ue_id);
@@ -303,8 +350,17 @@ int main(int argc, char *argv[])
     sleep(10);
 
     rm_report_sm_xapp_api(hndl.u.handle);
+    
+    // only handle the subscription for one e2 node in here
     break;
   }
 
-  return 0;
+
+  sleep(1);
+  // stop the xApp
+  while(try_stop_xapp_api() == false)
+    poll(NULL, 0, 1000);
+  printf("Test xApp run SUCCESSFULLY\n");
+
+  return EXIT_SUCCESS;
 }
