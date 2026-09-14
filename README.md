@@ -58,13 +58,7 @@ Important: When building xApps using this SDK, your application code can use Apa
 sudo apt install libsctp-dev python3 cmake-curses-gui python3-dev pkg-config libconfig-dev libconfig++-dev python3-pip
 ```
 
-2. Install MySQL as a storage for xApps:
-
-```
-sudo apt install libmysqlclient-dev mysql-server
-```
-
-3. Install python packages
+2. Install python packages
 
 ```
 pip3 install tabulate
@@ -74,7 +68,7 @@ pip3 install tabulate
 
 List of options in CMakeList:
 
-* XAPP_DB=VICTORIAMETRICS_XAPP/MYSQL_XAPP/NONE_XAPP (NONE_XAPP by default)
+* XAPP_DB=VICTORIAMETRICS_XAPP/NONE_XAPP (NONE_XAPP by default)
 
 ```
 mkdir build
