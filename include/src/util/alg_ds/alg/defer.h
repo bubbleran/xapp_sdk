@@ -25,50 +25,32 @@ SOFTWARE.
 #ifndef DEFER_H
 #define DEFER_H
 
-/*
- * Defer mechanism taken from http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2542.pdf
- * It may become part of the C2X standard in <stddefer.h>
- */
-
-#define CONCAT_IMPL( x, y ) x##y
-#define MACRO_CONCAT( x, y ) CONCAT_IMPL( x, y )
-#define FUNC_DEFER4 MACRO_CONCAT(DF_, __LINE__ ) 
-#define FUNC_DEFER3 MACRO_CONCAT(FUNC_DEFER4, _line_ ) 
-#define FUNC_DEFER2 MACRO_CONCAT(FUNC_DEFER3, __COUNTER__ ) 
-#define FUNC_DEFER MACRO_CONCAT(FUNC_DEFER2, _counter ) 
-#define FUNC_DEFER_IMPL MACRO_CONCAT(FUNC_DEFER3, __impl ) 
-
-#if defined __clang__  // requires -fblocks (lambdas) and -lBlocksRuntime in the linker
+///*
+// * Defer mechanism taken from http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2542.pdf
+// * It may become part of the C2X standard in <stddefer.h>
+// */
+//
 
 #if __has_include(<stddefer.h>)
-#include <stddefer.h>
+# include <stddefer.h>
+# if defined(__clang__)
+#  if __is_identifier(_Defer)
+#   error "clang may need the option -fdefer-ts for the _Defer feature"
+#  endif
+# endif
+#elif __GNUC__ > 8
+# define defer _Defer
+# define _Defer      _Defer_A(__COUNTER__)
+# define _Defer_A(N) _Defer_B(N)
+# define _Defer_B(N) _Defer_C(_Defer_func_ ## N, _Defer_var_ ## N)
+# define _Defer_C(F, V)                                                 \
+  auto void F(int*);                                                    \
+  __attribute__((__cleanup__(F), __deprecated__, __unused__))           \
+     int V;                                                             \
+  __attribute__((__always_inline__, __deprecated__, __unused__))        \
+    inline auto void F(__attribute__((__unused__)) int*V)
 #else
-void cleanup_deferred (void (^*d) (void));
-
-#define defer(...)       \
-_Pragma("clang diagnostic push") \
-_Pragma("clang diagnostic ignored \"-Wincompatible-pointer-types-discards-qualifiers\" ") \
-__attribute__((__cleanup__ (cleanup_deferred))) \
-__attribute__((unused)) void (^FUNC_DEFER) (void) = ^__VA_ARGS__ \
-_Pragma("clang diagnostic pop") \
-
-#endif
-/*
-//#define defer(...)\
-//__attribute__((__cleanup__ (cleanup_deferred)))\
-//void (^FUNC_DEFER) (void) = ^__VA_ARGS__
-*/
-
-#elif defined __GNUC__ // nested-function-in-stmt-expression
-
-void cleanup_deferred (void (**d) (void));
-
-#define defer(...)  \
-  __attribute__((__cleanup__ (cleanup_deferred)))    \
-  void (*FUNC_DEFER) (void) = ({  \
-void  FUNC_DEFER_IMPL (void) __VA_ARGS__  \
- FUNC_DEFER_IMPL; })
-
+# error "The _Defer feature seems not available"
 #endif
 
 #endif

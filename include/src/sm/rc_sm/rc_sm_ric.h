@@ -31,5 +31,10 @@ sm_ric_t* make_rc_sm_ric(void);
 
 uint16_t id_rc_sm_ric(sm_ric_t const* ); 
 
+// @Return value is a byte_array_t*. void* used to hide the type
+// Convert asn message to json
+void* nr_ul_dcch_msg_asn_to_json_sm_ric(uint8_t const* buf, size_t len); 
+void* nr_dl_dcch_msg_asn_to_json_sm_ric(uint8_t const* buf, size_t len);
+
 #endif
 

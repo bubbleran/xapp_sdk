@@ -1,19 +1,10 @@
-set(LIST_XAPP hw 
-              xapp_all_moni 
-              xapp_cust_moni 
-              xapp_cust_moni_simple 
-              xapp_cust_slice_moni_ctrl
-              xapp_cust_slice_reset
-              xapp_cust_isac_srs
-              xapp_get_mcs 
-              xapp_mcs 
-              xapp_oran_ccc_bwp_ctrl
-              xapp_oran_moni 
-              xapp_oran_rc_handover_ctrl
-              xapp_oran_rc_slice_ctrl
-              xapp_oran_llc_srs
-              xapp_oran_ccc_slice_moni_ctrl
-              )
+
+file(GLOB XAPP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.c")   
+set(LIST_XAPP "")                                                             
+foreach(XAPP_SRC ${XAPP_SOURCES})                                             
+  get_filename_component(XAPP_NAME ${XAPP_SRC} NAME_WE)                       
+  list(APPEND LIST_XAPP ${XAPP_NAME})                                         
+endforeach() 
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libe42_xapp.a")

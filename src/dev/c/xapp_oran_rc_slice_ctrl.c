@@ -192,7 +192,7 @@ void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group,
 static
 void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
 {
-  int num_slice = 3;
+  int num_slice = 2;
   // seq_ran_param_t* RRM_Policy_Ratio_List =  &dst.ran_param[0];
   RRM_Policy_Ratio_List->ran_param_id = RRM_Policy_Ratio_List_8_4_3_6;
   RRM_Policy_Ratio_List->ran_param_val.type = LIST_RAN_PARAMETER_VAL_TYPE;
@@ -207,13 +207,12 @@ void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
       .mnc = 1,
       .mnc_digit_len = 2
   };
-  const char* sst_str[] = {"0", "1", "2"};
+  const char* sst_str[] = {"1", "2"};
   // Note: we consider SD is always presented
-  const char* sd_str[] = {"0", "", "1"};
-  assert(!strcmp(sst_str[0], "0") && !strcmp(sd_str[0], "0") && "Default slice should be set to sst = 0, sd = 0");
-  int max_ratio[] = {10, 30, 50};
-  int min_ratio[] = {10, 30, 50};
-  int dedicated_ratio[] = {10, 30, 50};
+  const char* sd_str[] = {"", "1"};
+  int max_ratio[] = {70, 30};
+  int min_ratio[] = {50, 20};
+  int dedicated_ratio[] = {30, 20};
   for (int i = 0; i < num_slice; i++) {
     gen_rrm_policy_ratio_group(&RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param[i],
                                plmnid,
@@ -300,13 +299,14 @@ bool filter_node(e2_node_connected_xapp_t const* n)
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuraiton file needed!");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
   assert(nodes.len > 0);
   printf("Connected E2 nodes = %d\n", nodes.len);
 

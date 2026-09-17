@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer{ free_e2_node_arr_xapp(&nodes); };
 
   assert(nodes.len > 0);
   printf("Connected E2 nodes len = %d\n", nodes.len);
@@ -327,14 +327,14 @@ int main(int argc, char *argv[])
 
   // Control ADD slice
   sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_ADD);
-  defer({ free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg); });
+  defer{ free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg); };
   control_sm_xapp_api(&nodes.n[node_idx].id, SM_SLICE_ID, &ctrl_msg_add);
 
   sleep(5);
 
   // Control ASSOC slice
   sm_ag_if_wr_t ctrl_msg_assoc = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
-  defer({ free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg); });
+  defer{ free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg); };
   control_sm_xapp_api(&nodes.n[node_idx].id, SM_SLICE_ID, &ctrl_msg_assoc);
 
   sleep(5);

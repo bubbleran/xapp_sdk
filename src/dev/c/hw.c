@@ -31,13 +31,14 @@
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed. i.e., ./hw conf.yaml");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
 
   assert(nodes.len > 0);
 

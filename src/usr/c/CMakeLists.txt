@@ -1,13 +1,10 @@
-set(LIST_XAPP 
-  xapp_bwp_sdk
-  xapp_ho_sdk 
-  xapp_sdk_moni 
-  xapp_sdk_moni_cb 
-  xapp_sdk_moni_slice
-  xapp_sdk_moni_ue 
-  xapp_sdk_moni_ue_cb 
-  xapp_slice_sdk 
-  )
+
+file(GLOB XAPP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.c")                                       
+set(LIST_XAPP "")                                                                                                 
+foreach(XAPP_SRC ${XAPP_SOURCES})                                                                                 
+  get_filename_component(XAPP_NAME ${XAPP_SRC} NAME_WE)                                                           
+  list(APPEND LIST_XAPP ${XAPP_NAME})                                                                             
+endforeach() 
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c.a")

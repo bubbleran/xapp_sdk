@@ -2,27 +2,12 @@
 set(src_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(dst_dir "${CMAKE_CURRENT_BINARY_DIR}")
 
-# monitor
-list(APPEND lst_src "${src_dir}/ho.py")
-list(APPEND lst_dst "${dst_dir}/ho.py")
-
-list(APPEND lst_src "${src_dir}/mntr_cb.py")
-list(APPEND lst_dst "${dst_dir}/mntr_cb.py")
-
-list(APPEND lst_src "${src_dir}/mntr_ue_cb.py")
-list(APPEND lst_dst "${dst_dir}/mntr_ue_cb.py")
-
-list(APPEND lst_src "${src_dir}/mntr_ue.py")
-list(APPEND lst_dst "${dst_dir}/mntr_ue.py")
-
-list(APPEND lst_src "${src_dir}/mntr.py")
-list(APPEND lst_dst "${dst_dir}/mntr.py")
-
-list(APPEND lst_src "${src_dir}/slicing.py")
-list(APPEND lst_dst "${dst_dir}/slicing.py")
-
-list(APPEND lst_src "${src_dir}/bwp.py")
-list(APPEND lst_dst "${dst_dir}/bwp.py")
+file(GLOB lst_src CONFIGURE_DEPENDS "${src_dir}/*.py")                                                            
+set(lst_dst "")                                                                                                   
+foreach(src ${lst_src})                                                                                           
+  get_filename_component(fname "${src}" NAME)                                                                   
+  list(APPEND lst_dst "${dst_dir}/${fname}")                                                                    
+endforeach() 
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
     list(APPEND lst_src "${CMAKE_SOURCE_DIR}/lib/_xapp_usr_sdk.so")

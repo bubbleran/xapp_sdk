@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #ifndef XAPP_SDK_FLEXRIC_MIR_H
 #define XAPP_SDK_FLEXRIC_MIR_H 
 
@@ -40,6 +31,8 @@ void bwp_xapp_sdk(global_e2_node_id_sdk_t const* n, cell_global_id_sdk_t const* 
 float e2_node_mntr_xapp_sdk(global_e2_node_id_sdk_t const* n, mntr_var_e var); 
 
 stop_token_t e2_node_mntr_cb_xapp_sdk(global_e2_node_id_sdk_t const* n, mntr_var_e var, periodicity_e p, void (*fn_cb)(float val,uint32_t ric_req_id)); 
+
+stop_token_t e2_node_mntr_async_xapp_sdk(global_e2_node_id_sdk_t const* n, mntr_var_e var, void (*fn_cb)(const char* val, size_t len, uint32_t ric_req_id)); 
 
 float ue_mntr_xapp_sdk(global_e2_node_id_sdk_t const* n, ue_id_e2sm_sdk_t const* ue, mntr_var_e var);
 

@@ -22,6 +22,10 @@
 #ifndef E2AP_MSG_FREE_H
 #define E2AP_MSG_FREE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../type_defs.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,6 +220,10 @@ void e2ap_free_e42_ric_control_request(e42_ric_control_request_t* ctrl);
 // xApp -> iApp
 void e2ap_free_e42_update_e2_node_msg(e2ap_msg_t* msg);
 //void e2ap_free_e42_update_e2_node(e42_update_e2_node_t* sr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

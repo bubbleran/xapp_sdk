@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-#include <stdlib.h>
-#include <stdint.h>
+//#include <stdlib.h>
+//#include <stdint.h>
 
 #include "../../3gpp/ie/gnb.h"
 #include "../../3gpp/ie/gnb_du.h"
@@ -24,6 +24,9 @@ typedef enum{
 	NG_ENB_DU_UE_ID_E2SM,
 	EN_GNB_UE_ID_E2SM,
   ENB_UE_ID_E2SM,
+
+  // Added to represent all the UEs,
+  NONE_UE_ID_E2SM,
 
   END_UE_ID_E2SM
 

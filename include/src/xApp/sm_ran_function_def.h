@@ -35,6 +35,7 @@
 #include "../sm/ccc_sm/ie/ccc_data_ie.h"
 #include "../sm/isac_sm/ie/isac_data_ie.h"
 #include "../sm/llc_sm/ie/llc_data_ie.h"
+#include "../sm/e2x_sm/ie/e2x_data_ie.h"
 
 typedef enum {
   KPM_RAN_FUNC_DEF_E,
@@ -48,6 +49,7 @@ typedef enum {
   CCC_RAN_FUNC_DEF_E,
   ISAC_RAN_FUNC_DEF_E,
   LLC_RAN_FUNC_DEF_E,
+  E2X_RAN_FUNC_DEF_E,
 } ran_func_def_e;
 
 typedef struct{ 
@@ -64,6 +66,7 @@ typedef struct{
    e2sm_ccc_func_def_t ccc;
    isac_func_def_t isac;
    e2sm_llc_func_def_t llc;
+   e2x_func_def_t e2x;
  };
 } sm_ran_function_def_t;
 

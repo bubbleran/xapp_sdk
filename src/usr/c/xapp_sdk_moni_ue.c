@@ -14,9 +14,21 @@ int main(int argc, char** argv)
 
   global_e2_node_id_sdk_t const* node = &arr.n[0].node ;
   ue_id_e2sm_sdk_t const* ue = &arr.n[0].ue_ho[0].ue;
- 
-  float thp_dl = ue_mntr_xapp_sdk(node, ue, UE_THP_DL); 
-  printf("UE throughput in downlink %f\n", thp_dl);
+
+  // SINR,
+  // RSRP,
+  // RSRQ,
+
+  float sinr = ue_mntr_xapp_sdk(node, ue, SINR); 
+  printf("UE SINR %f\n", sinr);
+  float rsrp = ue_mntr_xapp_sdk(node, ue, RSRP); 
+  printf("UE RSRP %f\n", rsrp);
+  float rsrq = ue_mntr_xapp_sdk(node, ue, RSRQ); 
+  printf("UE RSRQ %f\n", rsrq);
+
+
+//  float thp_dl = ue_mntr_xapp_sdk(node, ue, UE_THP_DL); 
+//  printf("UE throughput in downlink %f\n", thp_dl);
 
   free_arr_node_data (&arr);
 

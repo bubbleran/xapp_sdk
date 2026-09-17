@@ -66,19 +66,19 @@ static void cb_gtp(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
          now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
 }
 
-static void cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
-{
-  assert(rd != NULL);
-  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
-
-  assert(rd->ind.type == SLICE_STATS_V0);
-
-  slice_ind_msg_t const* msg = &rd->ind.slice.msg;
-
-  int64_t now = time_now_us_xapp_api();
-  printf("SLICE ind_msg latency = %ld μs from E2-node type %d ID %u\n",
-         now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
-}
+// static void cb_slice(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
+// {
+//   assert(rd != NULL);
+//   assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+//
+//   assert(rd->ind.type == SLICE_STATS_V0);
+//
+//   slice_ind_msg_t const* msg = &rd->ind.slice.msg;
+//
+//   int64_t now = time_now_us_xapp_api();
+//   printf("SLICE ind_msg latency = %ld μs from E2-node type %d ID %u\n",
+//          now - msg->tstamp, e2_node->type, e2_node->nb_id.nb_id);
+// }
 
 static void cb_tc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 {
@@ -97,6 +97,7 @@ static void cb_tc(sm_ag_if_rd_t const* rd, global_e2_node_id_t const* e2_node)
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
@@ -126,9 +127,9 @@ int main(int argc, char *argv[])
   sm_ans_xapp_t gtp_hndl = report_sm_xapp_api(e2_node, SM_GTP_ID, "1_ms", cb_gtp);
   assert(gtp_hndl.success == true);
 
-  // SLICE subscribe
-  sm_ans_xapp_t slice_hndl = report_sm_xapp_api(e2_node, SM_SLICE_ID, "1_ms", cb_slice);
-  assert(slice_hndl.success == true);
+  // // SLICE subscribe
+  // sm_ans_xapp_t slice_hndl = report_sm_xapp_api(e2_node, SM_SLICE_ID, "1_ms", cb_slice);
+  // assert(slice_hndl.success == true);
 
   // TC subscribe
   sm_ans_xapp_t tc_hndl = report_sm_xapp_api(e2_node, SM_TC_ID, "1_ms", cb_tc);
@@ -142,7 +143,7 @@ int main(int argc, char *argv[])
   rm_report_sm_xapp_api(rlc_hndl.u.handle);
   rm_report_sm_xapp_api(pdcp_hndl.u.handle);
   rm_report_sm_xapp_api(gtp_hndl.u.handle);
-  rm_report_sm_xapp_api(slice_hndl.u.handle);
+  // rm_report_sm_xapp_api(slice_hndl.u.handle);
   rm_report_sm_xapp_api(tc_hndl.u.handle);
 
   // Free the memory

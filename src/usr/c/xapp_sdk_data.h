@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #ifndef XAPP_SDK_DATA_MIR_H
 #define XAPP_SDK_DATA_MIR_H 
 
@@ -27,7 +18,12 @@ typedef enum{
   PRB_TOT_DL,
   PRB_TOT_UL,
   PDSCH_MCS,
-
+  SINR,
+  RSRP,
+  RSRQ,
+  // The async values should be last..
+  DL_DCCH_RRC,
+  UL_DCCH_RRC,
   END_MNTR_VAR_E
 } mntr_var_e;
 
