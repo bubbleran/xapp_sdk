@@ -34,7 +34,7 @@ class Monitor(xapp.mntr_cb_fn):
 
         dedicated_prb = max(min_prb, min(max_prb, dedicated_prb)) 
 
-        sst = "0"
+        sst = "0" # if NSSAI SD value is NULL, put empty string "" or "0xffffff"
         sd = "1"
         xapp.slice(global_node, sst, sd, dedicated_prb)
 

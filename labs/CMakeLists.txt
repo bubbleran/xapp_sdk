@@ -1,4 +1,4 @@
-set(LIST_XAPP lab1 lab3 lab5 lab6)
+set(LIST_XAPP lab1 lab3 lab5)
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c.a")

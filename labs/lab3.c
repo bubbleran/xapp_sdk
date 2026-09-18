@@ -58,26 +58,22 @@ int main(int argc, char *argv[])
 
   // PDCP subscribe
   // Step 2
-  // Subscribe to PDCP with a periodicity of 10 ms
+  // Subscribe to PDCP with a periodicity of 500 ms
 
   // GTP subscribe
   // Step 3
   // Subscribe to GTP with a periodicity of 1000 ms
-
-  // SLICE subscribe
-  // Step 4
-  // Subscribe to SLICE with a periodicity of 100 ms
 
   // Run for 10 seconds
   sleep(10);
 
   // Unsubscribe
   rm_report_sm_xapp_api(mac_hndl.u.handle);
-  // Step 5
+  // Step 4
   // Unsubscribe/Remove report from previous subscriptions
 
   // Free the memory
-  // Step 6
+  // Step 5
 
   return 0;
 }

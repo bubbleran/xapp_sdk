@@ -48,7 +48,7 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
   int const max = 100;
   dedicated_prb = clamp(min, max, new_dedicated_prb); 
 
-  char* const sst = "0";
+  char* const sst = "0"; // if NSSAI SD value is NULL, put empty string "" or "0xffffff"
   char* const sd = "1";
   // Step 3
   // Call the function slice_xapp_sdk with the correct arguments 
