@@ -6,6 +6,8 @@
 #Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
 #*/
 
+# Solution for lab5.py
+
 import time
 import xapp_usr_sdk as xapp
 import sys
@@ -18,21 +20,21 @@ class Monitor(xapp.mntr_cb_fn):
     def __init__(self):
         xapp.mntr_cb_fn.__init__(self)
 
-    # Override C++ method 
+    # Override C++ method
     def cb(self, ue_thp_kbs):
         if ue_thp_kbs > 9999.9 and ue_thp_kbs < 15000.1 :
             return
 
-        global dedicated_prb 
+        global dedicated_prb
         if ue_thp_kbs < 10000.0:
-            dedicated_prb = dedicated_prb + 2; 
-        elif ue_thp_kbs > 15000.0: 
-            dedicated_prb = dedicated_prb - 2; 
+            dedicated_prb = dedicated_prb + 2;
+        elif ue_thp_kbs > 15000.0:
+            dedicated_prb = dedicated_prb - 2;
 
         min_prb = 10;
         max_prb = 100;
 
-        dedicated_prb = max(min_prb, min(max_prb, dedicated_prb)) 
+        dedicated_prb = max(min_prb, min(max_prb, dedicated_prb))
 
         # Step 3: Confirm the slice info is matched with the deployed network yaml
         sst = "1"
@@ -41,8 +43,9 @@ class Monitor(xapp.mntr_cb_fn):
 
 
 xapp.init(sys.argv)
-#Step 1 
+#Step 1
 # Retrieve the amount of E2 Nodes in the system
+nodes = xapp.e2_nodes(xapp.MONITOR_USE_CASE_e)
 
 assert(len(nodes) > 0 and "Needed at least one E2 node to monitor")
 
@@ -56,9 +59,9 @@ global_ue = ue
 
 # Step 2
 # Correctly call the function mntr_ue_cb
+token = xapp.mntr_ue_cb(n, ue, xapp.UE_THP_DL, xapp.PERIODICITY_1000_MS, call_back)
 # (Step 3 is in mntr_ue_cb)
 
 time.sleep(60)
 
 xapp.stop_mntr(token)
-

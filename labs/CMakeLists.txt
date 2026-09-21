@@ -1,4 +1,4 @@
-set(LIST_XAPP lab1 lab3 lab5)
+set(LIST_XAPP lab1 lab3 lab5 lab1-sol lab3-sol lab5-sol)
 
 if(XAPP_DB STREQUAL "NONE_XAPP")
   set(E42_SDK_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/libxapp_sdk_c.a")
@@ -41,6 +41,12 @@ list(APPEND lst_dst "${dst_dir}/lab2.py")
 
 list(APPEND lst_src "${src_dir}/lab5.py")
 list(APPEND lst_dst "${dst_dir}/lab5.py")
+
+list(APPEND lst_src "${src_dir}/lab2-sol.py")
+list(APPEND lst_dst "${dst_dir}/lab2-sol.py")
+
+list(APPEND lst_src "${src_dir}/lab5-sol.py")
+list(APPEND lst_dst "${dst_dir}/lab5-sol.py")
 
 list(APPEND lst_src "${CMAKE_SOURCE_DIR}/src/usr/python3/xapp_usr_sdk.py")
 list(APPEND lst_dst "${dst_dir}/xapp_usr_sdk.py")
