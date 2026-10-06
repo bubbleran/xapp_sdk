@@ -72,7 +72,7 @@ int main(int argc, char** argv)
   // call  ue_mntr_cb_xapp_sdk to monitor UE_THP_DL with periodicity of 1 second 
   // and the callback function  cb_fn (Step 3 & 4 are in cb_fn)
 
-  sleep(60);
+  sleep(10);
 
   // printf("Stopping ric_req_id %u\n", stop.ric_req_id);
   // Step 5

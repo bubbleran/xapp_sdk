@@ -58,7 +58,7 @@ global_ue = ue
 # Correctly call the function mntr_ue_cb
 # (Step 3 is in mntr_ue_cb)
 
-time.sleep(60)
+time.sleep(10)
 
 xapp.stop_mntr(token)
 

@@ -62,6 +62,6 @@ global_ue = ue
 token = xapp.mntr_ue_cb(n, ue, xapp.UE_THP_DL, xapp.PERIODICITY_1000_MS, call_back)
 # (Step 3 is in mntr_ue_cb)
 
-time.sleep(60)
+time.sleep(10)
 
 xapp.stop_mntr(token)

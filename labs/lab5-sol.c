@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   // and the callback function  cb_fn (Step 3 & 4 are in cb_fn)
   stop_token_t const stop = ue_mntr_cb_xapp_sdk(node, ue, UE_THP_DL, PERIODICITY_1000_MS, cb_fn);
 
-  sleep(60);
+  sleep(10);
 
   printf("Stopping ric_req_id %u\n", stop.ric_req_id);
   // Step 5

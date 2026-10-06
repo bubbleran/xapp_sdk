@@ -9,21 +9,21 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef enum{
-  PDCP_SDU_VOLUME_DL,
-  PDCP_SDU_VOLUME_UL,
-  RLC_SDU_DELAY_DL,
-  UE_THP_DL,
-  UE_THP_UL,
-  PRB_TOT_DL,
-  PRB_TOT_UL,
-  PDSCH_MCS,
-  SINR,
-  RSRP,
-  RSRQ,
+typedef enum{         // Supported vendor for each key:
+  PDCP_SDU_VOLUME_DL, // OAI, Amarisoft
+  PDCP_SDU_VOLUME_UL, // OAI, Amarisof
+  RLC_SDU_DELAY_DL,   // OAI, OCUDU
+  UE_THP_DL,          // OAI, OCUDU, Amarisoft
+  UE_THP_UL,          // OAI, OCUDU, Amarisoft
+  PRB_TOT_DL,         // OAI, OCUDU, Amarisoft
+  PRB_TOT_UL,         // OAI, OCUDU, Amarisoft
+  PDSCH_MCS,          // OAI
+  SINR,               // OAI
+  RSRP,               // OAI
+  RSRQ,               // OAI
   // The async values should be last..
-  DL_DCCH_RRC,
-  UL_DCCH_RRC,
+  DL_DCCH_RRC,        // OAI
+  UL_DCCH_RRC,        // OAI
   END_MNTR_VAR_E
 } mntr_var_e;
 
