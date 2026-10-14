@@ -1,24 +1,3 @@
-/*
- * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The OpenAirInterface Software Alliance licenses this file to You under
- * the OAI Public License, Version 1.1  (the "License"); you may not use this file
- * except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.openairinterface.org/?page_id=698
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *-------------------------------------------------------------------------------
- * For more information about the OpenAirInterface (OAI) Software Alliance:
- *      contact@openairinterface.org
- */
-
 #include "../include/src/xApp/e42_xapp_api.h"
 #include "../include/src/sm/rc_sm/ie/ir/ran_param_struct.h"
 #include "../include/src/sm/rc_sm/ie/ir/ran_param_list.h"
@@ -28,6 +7,38 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+
+typedef struct {
+  int           rrm_policy_max_ratio;
+  int           rrm_policy_min_ratio;
+  int           rrm_policy_dedicated_ratio;
+  e2ap_plmn_t   plmn_id;
+  const char*   sst;
+  const char*   sd; // if sD is NULL, put ""
+} rc_ctrl_rrm_policy_t;
+
+// Number of slices to configure. 0 sends a Control Message Format 1 with an
+// empty ranP-List (SIZE(0..)), since RANParameter-LIST requires SIZE(1..) and
+// the RRM Policy Ratio List therefore cannot be empty.
+static const size_t num_slice = 2;
+static rc_ctrl_rrm_policy_t const rrm_policy[] = {
+  {
+    .rrm_policy_max_ratio = 70,
+    .rrm_policy_min_ratio = 50,
+    .rrm_policy_dedicated_ratio = 30,
+    .plmn_id = (e2ap_plmn_t){.mcc = 1, .mnc = 1, .mnc_digit_len = 2},
+    .sst = "1",
+    .sd = ""
+  },
+  {
+    .rrm_policy_max_ratio = 30,
+    .rrm_policy_min_ratio = 20,
+    .rrm_policy_dedicated_ratio = 20,
+    .plmn_id = (e2ap_plmn_t){.mcc = 1, .mnc = 1, .mnc_digit_len = 2},
+    .sst = "2",
+    .sd = "1"
+  }
+};
 
 //static
 //void convert_plmn_to_octet(e2ap_plmn_t plmn, uint8_t* octet_str){
@@ -85,14 +96,15 @@ e2sm_rc_ctrl_hdr_t gen_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_e hdr_frmt, ue_id_e2sm_t ue_
 }
 
 static
-void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group,
-                                const e2ap_plmn_t plmnid,
-                                const char* sst_str,
-                                const char* sd_str,
-                                int max_ratio,
-                                int min_ratio,
-                                int dedicated_ratio)
+void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group, rc_ctrl_rrm_policy_t const src)
 {
+  const e2ap_plmn_t plmnid = src.plmn_id;
+  const char* sst_str = src.sst;
+  const char* sd_str = src.sd;
+  int max_ratio = src.rrm_policy_max_ratio;
+  int min_ratio = src.rrm_policy_min_ratio;
+  int dedicated_ratio = src.rrm_policy_dedicated_ratio;
+
   // Check constraint
   assert(100 >= max_ratio && max_ratio >= min_ratio && min_ratio >= dedicated_ratio && dedicated_ratio >= 0 && "Failed to meet RRM Policy Constraint");
   // RRM Policy Ratio Group, STRUCTURE (RRM Policy Ratio List -> RRM Policy Ratio Group)
@@ -192,7 +204,8 @@ void gen_rrm_policy_ratio_group(lst_ran_param_t* RRM_Policy_Ratio_Group,
 static
 void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
 {
-  int num_slice = 2;
+  assert(num_slice > 0 && "RRM Policy Ratio List needs at least 1 slice");
+  assert(num_slice <= sizeof(rrm_policy) / sizeof(rrm_policy[0]) && "num_slice exceeds rrm_policy entries");
   // seq_ran_param_t* RRM_Policy_Ratio_List =  &dst.ran_param[0];
   RRM_Policy_Ratio_List->ran_param_id = RRM_Policy_Ratio_List_8_4_3_6;
   RRM_Policy_Ratio_List->ran_param_val.type = LIST_RAN_PARAMETER_VAL_TYPE;
@@ -202,26 +215,15 @@ void gen_rrm_policy_ratio_list(seq_ran_param_t* RRM_Policy_Ratio_List)
   RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param = calloc(num_slice, sizeof(lst_ran_param_t));
   assert(RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param != NULL && "Memory exhausted");
 
-  e2ap_plmn_t plmnid = {
-      .mcc = 1,
-      .mnc = 1,
-      .mnc_digit_len = 2
-  };
-  const char* sst_str[] = {"1", "2"};
   // Note: we consider SD is always presented
-  const char* sd_str[] = {"", "1"};
-  int max_ratio[] = {70, 30};
-  int min_ratio[] = {50, 20};
-  int dedicated_ratio[] = {30, 20};
-  for (int i = 0; i < num_slice; i++) {
-    gen_rrm_policy_ratio_group(&RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param[i],
-                               plmnid,
-                               sst_str[i],
-                               sd_str[i],
-                               max_ratio[i],
-                               min_ratio[i],
-                               dedicated_ratio[i]);
+  printf("\n");
+  for (size_t i = 0; i < num_slice; i++) {
+    gen_rrm_policy_ratio_group(&RRM_Policy_Ratio_List->ran_param_val.lst->lst_ran_param[i], rrm_policy[i]);
+    printf("Send Ctrl Msg RRM Policy Ratio Group %zu: Max %d, Min %d, Dedicated %d, PLMN %03d.%02d, SST \"%s\", SD \"%s\"\n",
+          i, rrm_policy[i].rrm_policy_max_ratio, rrm_policy[i].rrm_policy_min_ratio, rrm_policy[i].rrm_policy_dedicated_ratio,
+          rrm_policy[i].plmn_id.mcc, rrm_policy[i].plmn_id.mnc, rrm_policy[i].sst, rrm_policy[i].sd);
   }
+  printf("\n");
 
   return;
 }
@@ -245,6 +247,10 @@ e2sm_rc_ctrl_msg_frmt_1_t gen_rc_ctrl_msg_frmt_1_slice_level_PRB_quota()
   // >> Max PRB Policy Ratio, ELEMENT
   // >> Dedicated PRB Policy Ratio, ELEMENT
 
+
+  // No slice: empty ranP-List, i.e., no RRM Policy Ratio List
+  if (num_slice == 0)
+    return dst;
 
   // RRM Policy Ratio List, LIST
   dst.sz_ran_param = 1;
