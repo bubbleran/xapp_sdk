@@ -20,9 +20,6 @@ ue_id_e2sm_t ue_id;
 static
 latch_cv_t latch;
 
-static
-uint64_t input_ran_ue_id;
-
 // Event Trigger 
 static
 e2sm_rc_event_trigger_t gen_ev_trig(void)
@@ -89,6 +86,21 @@ rc_sub_data_t on_demand_rc_sub(void)
   return dst;
 }
 
+// ran_ue_id is stored in a different union member for each UE ID type
+static
+uint64_t const* get_ran_ue_id(ue_id_e2sm_t const* id)
+{
+  assert(id != NULL);
+
+  if (id->type == GNB_UE_ID_E2SM)
+    return id->gnb.ran_ue_id;
+  if (id->type == GNB_DU_UE_ID_E2SM)
+    return id->gnb_du.ran_ue_id;
+
+  assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
+  return NULL;
+}
+
 static
 void cb_sm_rc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 {
@@ -108,37 +120,40 @@ void cb_sm_rc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   assert(ind->msg.format == FORMAT_4_E2SM_RC_IND_MSG);
   e2sm_rc_ind_msg_frmt_4_t const* frmt_4 = &ind->msg.frmt_4; // 9.2.1.4.4
 
-  assert(frmt_4->sz_seq_ue_info > 0 && "At least one UE connected needed for this example!");
-  //if (frmt_4->sz_seq_ue_info <= 0) {
-  //  printf("No UE connected to E2 Node id %d\n", n->nb_id.nb_id);
-  //  return;
-  //}
+  // No UE connected: the latch is not released and main() stops at its timeout
+  if (frmt_4->sz_seq_ue_info == 0) {
+    printf("No UE connected to E2 Node id %d\n", n->nb_id.nb_id);
+    return;
+  }
 
+  // This xApp monitors only the first UE with a ran_ue_id.
+  // To collect the SRS of another UE, select it by its ran_ue_id in this loop.
+  bool found = false;
   for (size_t i = 0; i < frmt_4->sz_seq_ue_info; i++) {
-    if (frmt_4->seq_ue_info[i].ue_id.type == GNB_UE_ID_E2SM) {
-      printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb.ran_ue_id, n->nb_id.nb_id);
-      if (input_ran_ue_id == *frmt_4->seq_ue_info[i].ue_id.gnb.ran_ue_id) {
-        ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
-        printf("Monitor ran_ue_id %ld\n", *ue_id.gnb.ran_ue_id);
+    ue_id_e2sm_t const* cur = &frmt_4->seq_ue_info[i].ue_id;
+    uint64_t const* ran_ue_id = get_ran_ue_id(cur);
+    // RAN UE ID is OPTIONAL (6.2.3.25), the E2 node may not report it
+    if (ran_ue_id == NULL) {
+      printf("Found UE(%lu) without ran_ue_id in E2 Node id %d, skip it\n", i, n->nb_id.nb_id);
+      continue;
+    }
 
-        // Syncronize. Notify that one message arrived
-        count_down_latch_cv(&latch);
-        break;
-      }
-    } else if (frmt_4->seq_ue_info[i].ue_id.type == GNB_DU_UE_ID_E2SM) {
-      printf("Found UE(%lu) ran_ue_id %ld in E2 Node (gNB-DU) id %d\n", i, *frmt_4->seq_ue_info[i].ue_id.gnb_du.ran_ue_id, n->nb_id.nb_id);
-      if (input_ran_ue_id == *frmt_4->seq_ue_info[i].ue_id.gnb_du.ran_ue_id) {
-        ue_id = cp_ue_id_e2sm(&frmt_4->seq_ue_info[i].ue_id);
-        printf("Monitor ran_ue_id %ld\n", *ue_id.gnb_du.ran_ue_id);
-
-        // Syncronize. Notify that one message arrived
-        count_down_latch_cv(&latch);
-        break;
-      }
-    } else {
-      assert(0 != 0 && "cannot get ran_ue_id from this unknown ue_id.type");
+    printf("Found UE(%lu) ran_ue_id %lu in E2 Node (%s) id %d\n", i, *ran_ue_id, cur->type == GNB_UE_ID_E2SM ? "gNB" : "gNB-DU", n->nb_id.nb_id);
+    if (found == false) {
+      ue_id = cp_ue_id_e2sm(cur);
+      found = true;
+      printf("Monitor ran_ue_id %lu\n", *ran_ue_id);
     }
   }
+
+  if (frmt_4->sz_seq_ue_info > 1)
+    printf("WARNING: %lu UEs found in E2 Node id %d, only the first one is monitored. "
+           "To collect the SRS of another UE, modify cb_sm_rc() in this xApp to select it by its ran_ue_id\n",
+           frmt_4->sz_seq_ue_info, n->nb_id.nb_id);
+
+  // Syncronize. Notify that one message arrived
+  if (found == true)
+    count_down_latch_cv(&latch);
 
 }
 
@@ -172,9 +187,13 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
   assert(frmt_1->ll_info_type == SRS_LL_INFO_TYPE_E && "srs samples expected");
 
 
+  // ue_id is set in cb_sm_rc only for a UE with a ran_ue_id
+  uint64_t const* ran_ue_id = get_ran_ue_id(&ue_id);
+  assert(ran_ue_id != NULL);
+
   int64_t t0 = 0;
   memcpy(&t0,frmt_1->slot_tstamp.slot_start_time, 8);
-  printf("receive ind msg from gnb-du id %u, msg latency %lu us (ran_ue_id %ld)\n", n->nb_id.nb_id, time_now_us() - t0, *ue_id.gnb.ran_ue_id);
+  printf("receive ind msg from E2 node id %u, msg latency %lu us (ran_ue_id %lu)\n", n->nb_id.nb_id, time_now_us() - t0, *ran_ue_id);
 
   for(size_t i = 0; i < frmt_1->srs.sz_srs_rx_antenna; i++) {
     srs_rx_antenna_t* rx = &frmt_1->srs.rx[i];
@@ -188,7 +207,7 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
         size_t sz = raw_iq.len / 4; // sizeof(c16_t) = 4
         char filename_rx[256] = {0};
         size_t rc = snprintf(filename_rx, sizeof(filename_rx),
-                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_rx, raw_iq.buf, sz, t0);
@@ -203,19 +222,19 @@ static void cb_sm_llc(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *n)
 
         char filename_rx[256], filename_noise[256], filename_estimated[256] = {0};
         size_t rc = snprintf(filename_rx, sizeof(filename_rx),
-                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_rx_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_rx, raw_iq.buf + rx_offset, sz, t0);
 
         rc = snprintf(filename_noise, sizeof(filename_noise),
-                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ue_id.gnb.ran_ue_id);
+                 "iq_srs_noise_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ran_ue_id);
         assert(rc < 256);
         write_iq_text(filename_noise, raw_iq.buf + noise_offset, sz, t0);
 
         rc = snprintf(filename_estimated,
               sizeof(filename_estimated),
-              "iq_srs_estimated_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id,*ue_id.gnb.ran_ue_id);
+              "iq_srs_estimated_ant%lu_symbol%lu_nbid%u_ueid%lu.txt", i, j, n->nb_id.nb_id, *ran_ue_id);
         assert(rc < 256);
         (void)rc;
         write_iq_text(filename_estimated, raw_iq.buf + est_offset, sz, t0);
@@ -277,15 +296,13 @@ llc_sub_data_t gen_llc_sub(ue_id_e2sm_t* ue_id)
 
 int main(int argc, char *argv[])
 {
-  assert(argc == 3 && "Configuration file needed, and ran_ue_id, e.g., xapp_oran_llc_moni_srs xapp.conf 1");
+  assert(argc == 2 && "Configuration file needed, e.g., xapp_oran_llc_moni_srs xapp.yaml");
   (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   poll(NULL, 0, 1000);
 
-  input_ran_ue_id = (uint64_t)strtoull(argv[2], NULL, 10);
-  printf("input_ran_ue_id %lu\n", input_ran_ue_id);
 
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
   defer { free_e2_node_arr_xapp(&arr); } ;
