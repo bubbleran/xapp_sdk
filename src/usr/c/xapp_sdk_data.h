@@ -1,12 +1,3 @@
-/*
-Copyright (C) 2021-2025 BubbleRAN SAS
-
-External application
-Last Changed: 2025-05-02
-Project: MX-XAPP
-Full License: https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)
-*/
-
 #ifndef XAPP_SDK_DATA_MIR_H
 #define XAPP_SDK_DATA_MIR_H 
 
@@ -18,16 +9,21 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef enum{
-  PDCP_SDU_VOLUME_DL,
-  PDCP_SDU_VOLUME_UL,
-  RLC_SDU_DELAY_DL,
-  UE_THP_DL,
-  UE_THP_UL,
-  PRB_TOT_DL,
-  PRB_TOT_UL,
-  PDSCH_MCS,
-
+typedef enum{         // Supported vendor for each key:
+  PDCP_SDU_VOLUME_DL, // OAI, Amarisoft
+  PDCP_SDU_VOLUME_UL, // OAI, Amarisof
+  RLC_SDU_DELAY_DL,   // OAI, OCUDU
+  UE_THP_DL,          // OAI, OCUDU, Amarisoft
+  UE_THP_UL,          // OAI, OCUDU, Amarisoft
+  PRB_TOT_DL,         // OAI, OCUDU, Amarisoft
+  PRB_TOT_UL,         // OAI, OCUDU, Amarisoft
+  PDSCH_MCS,          // OAI
+  SINR,               // OAI
+  RSRP,               // OAI
+  RSRQ,               // OAI
+  // The async values should be last..
+  DL_DCCH_RRC,        // OAI
+  UL_DCCH_RRC,        // OAI
   END_MNTR_VAR_E
 } mntr_var_e;
 

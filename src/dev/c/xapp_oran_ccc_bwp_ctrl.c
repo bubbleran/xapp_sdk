@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
   assert(nodes.len > 0);
   printf("Connected E2 nodes = %d\n", nodes.len);
 
@@ -215,16 +215,16 @@ int main(int argc, char *argv[])
   // O-NRCellCU
   // CellLocalID
   latch = init_latch_cv(nodes.len);
-  defer({free_latch_cv(&latch); });
+  defer {free_latch_cv(&latch); } ;
 
   sm_ans_xapp_t* hndl = calloc(nodes.len, sizeof(sm_ans_xapp_t));
-  defer({ free(hndl); });
+  defer { free(hndl); } ;
 
   ccc_sub_data_t ccc_sub = {0};
   ccc_sub.et = gen_ev_trig();
   ccc_sub.sz_ad = 1;
   ccc_sub.ad = calloc(ccc_sub.sz_ad, sizeof(e2sm_ccc_action_def_t));
-  defer({free_ccc_sub_data(&ccc_sub);});
+  defer {free_ccc_sub_data(&ccc_sub);} ;
   assert(ccc_sub.ad != NULL);
   ccc_sub.ad[0] = gen_act_def();
 

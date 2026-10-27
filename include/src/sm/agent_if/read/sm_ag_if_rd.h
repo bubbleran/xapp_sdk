@@ -37,6 +37,7 @@
 #include "../../rc_sm/ie/rc_data_ie.h"
 #include "../../ccc_sm/ie/ccc_data_ie.h"
 #include "../../llc_sm/ie/llc_data_ie.h"
+#include "../../e2x_sm/ie/e2x_data_ie.h"
 
 #include "../write/subscribe_timer.h"
 
@@ -57,6 +58,7 @@ typedef enum{
   CCC_STATS_V3_0,
   ISAC_STATS_V0,
   LLC_STATS_V1_0,
+  E2X_STATS_V0_1,
 
   SM_AGENT_IF_READ_V0_END,
 } sm_ag_if_rd_ind_e;
@@ -104,6 +106,7 @@ typedef struct{
     ccc_rd_ind_data_t ccc;
     isac_ind_data_t isac;
     llc_rd_ind_data_t llc;
+    e2x_ind_data_t e2x;
   };
 } sm_ag_if_rd_ind_t;
 
@@ -127,6 +130,7 @@ typedef enum{
   CCC_V3_0_AGENT_IF_E2_SETUP_ANS_V0,
   ISAC_AGENT_IF_E2_SETUP_ANS_V0,
   LLC_V1_0_AGENT_IF_E2_SETUP_ANS_V0,
+  E2X_AGENT_IF_E2_SETUP_ANS_V0,
 
   SM_AGENT_IF_E2_SETUP_ANS_V0_END,
 } sm_ag_if_rd_e2setup_e;
@@ -145,6 +149,7 @@ typedef struct{
     ccc_e2_setup_t ccc;
     isac_e2_setup_data_t isac;
     llc_e2_setup_t llc;
+    e2x_e2_setup_data_t e2x;
   };
 } sm_ag_if_rd_e2setup_t;
 
@@ -164,6 +169,7 @@ typedef enum{
   CCC_V3_0_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
   ISAC_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
   LLC_V1_0_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
+  E2X_V0_1_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
 
   SM_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0_END,
 } sm_ag_if_rd_rsu_e;
@@ -182,6 +188,7 @@ typedef struct{
     ccc_ric_service_update_t ccc;
     isac_ric_service_update_t isac;
     llc_ric_service_update_t llc;
+    e2x_ric_service_update_t e2x;
   };
 } sm_ag_if_rd_rsu_t;
 

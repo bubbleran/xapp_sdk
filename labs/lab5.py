@@ -34,8 +34,9 @@ class Monitor(xapp.mntr_cb_fn):
 
         dedicated_prb = max(min_prb, min(max_prb, dedicated_prb)) 
 
-        sst = "0"
-        sd = "1"
+        # Step 3: Confirm the slice info is matched with the deployed network yaml
+        sst = "1"
+        sd = "" # if NSSAI SD value is NULL, put empty string "" or "0xffffff"
         xapp.slice(global_node, sst, sd, dedicated_prb)
 
 
@@ -54,9 +55,10 @@ ue = nodes[0].ue_ho[0].ue
 global_ue = ue
 
 # Step 2
-# Correctly call the function mntr_ue_cb 
+# Correctly call the function mntr_ue_cb
+# (Step 3 is in mntr_ue_cb)
 
-time.sleep(60)
+time.sleep(10)
 
 xapp.stop_mntr(token)
 

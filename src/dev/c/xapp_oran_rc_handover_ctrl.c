@@ -284,26 +284,27 @@ rc_ctrl_req_data_t hand_over_rc_ctrl_msg(ue_id_e2sm_t const* ue, uint16_t target
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   poll(NULL, 0, 1000);
 
   e2_node_arr_xapp_t arr = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&arr); });
+  defer { free_e2_node_arr_xapp(&arr); } ;
  
   assert(arr.len >= 2 && "at least 2 nodes needed to perform a hand over");
   sm_ans_xapp_t* hndl = calloc(arr.len, sizeof(sm_ans_xapp_t)); 
-  defer({ free(hndl); });
+  defer { free(hndl); } ;
 
   int64_t const t0 = time_now_us_xapp_api();
   // Init latch to syncronize threads
   latch = init_latch_cv(arr.len);
-  defer({ free_latch_cv(&latch); } );
+  defer { free_latch_cv(&latch); }  ;
 
   // Generate RAN CONTROL Subscription
   rc_sub_data_t rc_sub = on_demand_rc_sub();
-  defer({ free_rc_sub_data(&rc_sub); });
+  defer { free_rc_sub_data(&rc_sub); } ;
 
   // Retrieve information about the E2 Nodes in the callback func (cb)
   for(size_t i = 0; i < arr.len; ++i){
@@ -322,7 +323,7 @@ int main(int argc, char *argv[])
   printf("Send handover ctrl msg: target_pci %u target_ssb_nr_arfcn %lu\n", target_cell, *ssb_nr_arfcn);
   // Generate RAN CONTROL Control msg 
   rc_ctrl_req_data_t ho = hand_over_rc_ctrl_msg(ue_id, target_cell, *ssb_nr_arfcn); 
-  defer( { free_rc_ctrl_req_data(&ho); });
+  defer  { free_rc_ctrl_req_data(&ho); } ;
 
   // Send the Handover cmd 
   sm_ans_xapp_t ans = control_sm_xapp_api(src_e2_node, SM_RC_ID, &ho);

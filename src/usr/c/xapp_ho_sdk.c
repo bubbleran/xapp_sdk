@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 	  sum_ue += arr.n[i].sz_ue;
   }
   assert(sum_ue > 0 && "At least one UE needed");
+  (void)sum_ue; 
 
   size_t const idx = arr.n[0].sz_ue > 0 ? 0 : 1; 
   global_e2_node_id_sdk_t const* node = &arr.n[idx].node;

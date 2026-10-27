@@ -183,13 +183,14 @@ const char* convert_periodicity(size_t v)
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
 
   assert(nodes.len > 0);
 

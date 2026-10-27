@@ -75,8 +75,27 @@ void rm_report_sm_xapp_api(int const handle);
 // return void but sm_ag_if_ans_ctrl_t should be returned. Add it in the future if needed
 sm_ans_xapp_t control_sm_xapp_api(global_e2_node_id_t* id, uint32_t rf_id, void* wr);
 
+
+/////
 // For utility in the xApp
+/////
 int64_t time_now_us_xapp_api(void);
+
+/////
+// This function clearly does not belong here!
+/////
+typedef struct{
+  uint8_t* buf;
+  size_t len;
+} json_xapp_api_t;
+
+typedef enum{
+  NR_RRC_UL_DCCH_RC_SM_ASN_TO_JSON_E,
+  NR_RRC_DL_DCCH_RC_SM_ASN_TO_JSON_E,
+  END_ASN_TO_JSON_E
+} asn_to_json_e;
+
+json_xapp_api_t asn_to_json_xapp_api(uint16_t ran_func_id, asn_to_json_e type, uint8_t* buf, size_t len);
 
 #ifdef __cplusplus
 }

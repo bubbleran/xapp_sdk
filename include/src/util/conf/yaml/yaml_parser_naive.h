@@ -20,6 +20,7 @@ typedef struct{
 } str_view_t;
 
 yaml_parser_naive_t init_yaml_parser_naive(char const* file_path);
+yaml_parser_naive_t init_yaml_parser_naive_buffer(uint8_t const* buffer, size_t sz);
 
 void free_yaml_parser_naive(yaml_parser_naive_t*);
 

@@ -48,9 +48,11 @@ static void cb_fn(float ue_thp_kbs, uint32_t ric_req_id)
   int const max = 100;
   dedicated_prb = clamp(min, max, new_dedicated_prb); 
 
-  char* const sst = "0";
-  char* const sd = "1";
-  // Step 3
+  // Step 3: Confirm the slice info is matched with the deployed network yaml
+  char* const sst = "1";
+  char* const sd = ""; // if NSSAI SD value is NULL, put empty string "" or "0xffffff"
+
+  // Step 4
   // Call the function slice_xapp_sdk with the correct arguments 
   printf("Dedicated PRBs %d\n", dedicated_prb);
 }
@@ -68,12 +70,12 @@ int main(int argc, char** argv)
 
   // Step 2
   // call  ue_mntr_cb_xapp_sdk to monitor UE_THP_DL with periodicity of 1 second 
-  // and the callback function  cb_fn
+  // and the callback function  cb_fn (Step 3 & 4 are in cb_fn)
 
-  sleep(60);
+  sleep(10);
 
   // printf("Stopping ric_req_id %u\n", stop.ric_req_id);
-  // Step 3 
+  // Step 5
   // Stop the callback
 
   free_arr_node_data(&arr_mon);

@@ -21,33 +21,23 @@ typedef struct {
 } ccc_ctrl_rrm_policy_t;
 
 
-size_t num_dl_slices = 3;
-size_t num_ul_slices = 3;
+size_t num_dl_slices = 2;
+size_t num_ul_slices = 0;
 static ccc_ctrl_rrm_policy_t const rrm_policy_dl[3] = {
   {
     .resource_type = PRB_DL_RESOURCE_TYPE,
-    .rrm_policy_max_ratio = 10,
-    .rrm_policy_min_ratio = 10,
-    .rrm_policy_dedicated_ratio = 10,
-    .plmn_id = (e2sm_plmn_t){.mcc = 1, .mnc =1, .mnc_digit_len = 2},
-    // we assume nssai 0.0 as default slice for SRB
-    .nssai.sST = 0,
-    .nssai.sD = 0
-  },
-  {
-    .resource_type = PRB_DL_RESOURCE_TYPE,
-    .rrm_policy_max_ratio = 40,
-    .rrm_policy_min_ratio = 40,
-    .rrm_policy_dedicated_ratio = 40,
+    .rrm_policy_max_ratio = 50,
+    .rrm_policy_min_ratio = 50,
+    .rrm_policy_dedicated_ratio = 50,
     .plmn_id = (e2sm_plmn_t){.mcc = 1, .mnc =1, .mnc_digit_len = 2},
     .nssai.sST = 1,
     .nssai.sD = 0xffffff // if sD is NULL, put 0xffffff
   },
   {
     .resource_type = PRB_DL_RESOURCE_TYPE,
-    .rrm_policy_max_ratio = 50,
-    .rrm_policy_min_ratio = 50,
-    .rrm_policy_dedicated_ratio = 50,
+    .rrm_policy_max_ratio = 30,
+    .rrm_policy_min_ratio = 30,
+    .rrm_policy_dedicated_ratio = 30,
     .plmn_id = (e2sm_plmn_t){.mcc = 1, .mnc =1, .mnc_digit_len = 2},
     .nssai.sST = 2,
     .nssai.sD = 0x000001
@@ -136,7 +126,7 @@ void cb(sm_ag_if_rd_t const *rd, global_e2_node_id_t const *e2_node)
     assert(ran_conf->change_type != END_CHANGE_TYPE);
 
     char* ran_conf_name = cp_ba_to_str(ran_conf->ran_conf_name);
-    defer({free(ran_conf_name);});
+    defer {free(ran_conf_name);} ;
 
     values_of_attributes_t* vals_attributes = &ran_conf->vals_attributes[0];
     assert(vals_attributes->values_of_attributes_type == VALUES_OF_ATTRIBUTES_O_RRMPolicyRatio);
@@ -260,13 +250,14 @@ bool filter_node(e2_node_connected_xapp_t const* n)
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuraiton file needed!");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   sleep(1);
 
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
   assert(nodes.len > 0);
   printf("Connected E2 nodes = %d\n", nodes.len);
 
@@ -293,7 +284,7 @@ int main(int argc, char *argv[])
   ccc_sub.et = gen_ev_trig();
   ccc_sub.sz_ad = 1;
   ccc_sub.ad = calloc(ccc_sub.sz_ad, sizeof(e2sm_ccc_action_def_t));
-  defer({free_ccc_sub_data(&ccc_sub);});
+  defer {free_ccc_sub_data(&ccc_sub);} ;
   assert(ccc_sub.ad != NULL);
   ccc_sub.ad[0] = gen_act_def();
 

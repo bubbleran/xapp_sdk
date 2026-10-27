@@ -712,9 +712,33 @@ class mntr_cb_fn(object):
 
 # Register mntr_cb_fn in _xapp_usr_sdk:
 _xapp_usr_sdk.mntr_cb_fn_swigregister(mntr_cb_fn)
+class mntr_async_cb_fn(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def cb(self, arg0):
+        return _xapp_usr_sdk.mntr_async_cb_fn_cb(self, arg0)
+    __swig_destroy__ = _xapp_usr_sdk.delete_mntr_async_cb_fn
+
+    def __init__(self):
+        if self.__class__ == mntr_async_cb_fn:
+            _self = None
+        else:
+            _self = self
+        _xapp_usr_sdk.mntr_async_cb_fn_swiginit(self, _xapp_usr_sdk.new_mntr_async_cb_fn(_self, ))
+    def __disown__(self):
+        self.this.disown()
+        _xapp_usr_sdk.disown_mntr_async_cb_fn(self)
+        return weakref.proxy(self)
+
+# Register mntr_async_cb_fn in _xapp_usr_sdk:
+_xapp_usr_sdk.mntr_async_cb_fn_swigregister(mntr_async_cb_fn)
 
 def mntr_cb(n, v, p, cb):
     return _xapp_usr_sdk.mntr_cb(n, v, p, cb)
+
+def mntr_async_cb(n, v, cb):
+    return _xapp_usr_sdk.mntr_async_cb(n, v, cb)
 
 def mntr_ue(node, ue, var):
     return _xapp_usr_sdk.mntr_ue(node, ue, var)
@@ -744,6 +768,11 @@ UE_THP_UL = _xapp_usr_sdk.UE_THP_UL
 PRB_TOT_DL = _xapp_usr_sdk.PRB_TOT_DL
 PRB_TOT_UL = _xapp_usr_sdk.PRB_TOT_UL
 PDSCH_MCS = _xapp_usr_sdk.PDSCH_MCS
+SINR = _xapp_usr_sdk.SINR
+RSRP = _xapp_usr_sdk.RSRP
+RSRQ = _xapp_usr_sdk.RSRQ
+DL_DCCH_RRC = _xapp_usr_sdk.DL_DCCH_RRC
+UL_DCCH_RRC = _xapp_usr_sdk.UL_DCCH_RRC
 END_MNTR_VAR_E = _xapp_usr_sdk.END_MNTR_VAR_E
 PERIODICITY_1_MS = _xapp_usr_sdk.PERIODICITY_1_MS
 PERIODICITY_2_MS = _xapp_usr_sdk.PERIODICITY_2_MS

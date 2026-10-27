@@ -36,7 +36,7 @@ xapp:
 xapp_sub_cust_sm:
     runtime_sec: 10
     # runtime_sec is ignored in xapp_all_moni
-    # only be used in xapp_oran_moni & xapp_cust_moni
+    # only be used in xapp_oran_kpm_moni & xapp_cust_moni
     1:
         name: mac  
         # periodicity possible values: 
@@ -53,7 +53,7 @@ xapp_sub_cust_sm:
 xapp_sub_oran_sm:
     runtime_sec: 42
     # runtime_sec is ignored in xapp_all_moni
-    # only be used in xapp_oran_moni & xapp_cust_moni
+    # only be used in xapp_oran_kpm_moni & xapp_cust_moni
     1:
         name: kpm
         periodicity_ms: 500 # 1000 and 500 is supported
@@ -72,7 +72,10 @@ xapp_sub_oran_sm:
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
             - name: CARR.MUPDSCHMCSDist.BinX
-            - name: CARR.WBCQIDist.BinX.BinY.BinZ 
+            - name: CARR.WBCQIDist.BinX.BinY.BinZ
+            - name: L1M.DL-SS-SINR.SSB
+            - name: L1M.UL-SRS-RSRP
+            - name: MR.SS-RSRQPerSSB.Bin
     2:
         name: kpm
         periodicity_ms: 500
@@ -88,6 +91,9 @@ xapp_sub_oran_sm:
             - name: RRU.PrbUsedUl
             - name: RRU.PrbAvailDl
             - name: RRU.PrbAvailUl
+            - name: L1M.DL-SS-SINR.SSB
+            - name: L1M.UL-SRS-RSRP
+            - name: MR.SS-RSRQPerSSB.Bin
     3:
         name: kpm
         periodicity_ms: 500

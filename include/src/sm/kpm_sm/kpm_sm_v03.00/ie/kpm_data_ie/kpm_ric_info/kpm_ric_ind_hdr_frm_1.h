@@ -16,8 +16,6 @@ typedef struct {
     byte_array_t *sender_name;         /* OPTIONAL */
     byte_array_t *sender_type;         /* OPTIONAL */
     byte_array_t *vendor_name;         /* OPTIONAL */
-
-
 } kpm_ric_ind_hdr_format_1_t;
 
 

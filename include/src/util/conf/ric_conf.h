@@ -9,6 +9,10 @@ typedef struct{
   uint32_t e2_port;
   uint32_t e42_port;
   uint32_t log_level;
+#ifdef LICENSE_RIC
+  char* license_path;
+  char* signature_path;
+#endif
 } ric_conf_t;
 
 ric_conf_t init_ric_conf(const char* file);

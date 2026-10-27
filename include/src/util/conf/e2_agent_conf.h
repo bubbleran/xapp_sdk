@@ -9,6 +9,11 @@ typedef struct{
   char* ip_ag;
   char* sm_dir;
   uint32_t log_level;
+#ifdef LICENSE_AGENT
+  //char* license_path;
+  char* license_br_path;
+  char* sign_path;
+#endif
 } e2_agent_conf_t;
 
 e2_agent_conf_t init_e2_agent_conf(const char* file);

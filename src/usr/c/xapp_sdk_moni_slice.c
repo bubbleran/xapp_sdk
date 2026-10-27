@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
   stop_token_t stop = ue_mntr_cb_xapp_sdk(node, ue, UE_THP_DL, PERIODICITY_1000_MS, cb_fn); 
 
-  sleep(60);
+  sleep(10);
 
   printf("Stopping ric_req_id %u\n", stop.ric_req_id);
   stop_cb_xapp_sdk(stop);

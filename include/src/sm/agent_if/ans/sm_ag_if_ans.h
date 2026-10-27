@@ -32,6 +32,7 @@
 #include "../../rc_sm/ie/rc_data_ie.h"
 #include "../../ccc_sm/ie/ccc_data_ie.h"
 #include "../../llc_sm/ie/llc_data_ie.h"
+#include "../../e2x_sm/ie/e2x_data_ie.h"
 
 #include "../write/subscription_aperiod.h"
 #include "../write/subscription_period.h"
@@ -62,6 +63,7 @@ typedef enum{
   CCC_V3_0_AGENT_IF_CTRL_ANS_V0,
   ISAC_AGENT_IF_CTRL_ANS_V0, 
   LLC_V1_0_AGENT_IF_CTRL_ANS_V0,
+  E2X_AGENT_IF_CTRL_ANS_V0, 
 
   SM_AGENT_IF_CTRL_ANS_V0_END,
 } sm_ag_if_ans_ctrl_e;
@@ -79,6 +81,7 @@ typedef struct{
     e2sm_ccc_ctrl_out_t ccc;
     isac_ctrl_out_t isac;
     e2sm_llc_ctrl_out_t llc;
+    e2x_ctrl_out_t e2x;
   };
   expected_cause_t exp;
 } sm_ag_if_ans_ctrl_t;
@@ -108,7 +111,6 @@ typedef struct{
   };
 
 } sm_ag_if_ans_subs_t;
-
 
 typedef struct{
   sm_ag_if_ans_e type; 

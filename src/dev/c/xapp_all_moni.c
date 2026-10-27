@@ -271,6 +271,7 @@ static
 e2sm_rc_event_trigger_t gen_rc_ev_trig(e2sm_rc_ev_trigger_format_e act_frm)
 {
   assert(act_frm == FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT && "Not supported format");
+  (void)act_frm; 
 
   e2sm_rc_event_trigger_t dst = {0};
 
@@ -561,7 +562,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
     if (!strcasecmp(elm->name, "kpm")) {
       sm_id = SM_KPM_ID;
       kpm_sub_data_t kpm_sub = {0};
-      defer({ free_kpm_sub_data(&kpm_sub); });
+      defer { free_kpm_sub_data(&kpm_sub); } ;
 
       // KPM Event Trigger
       uint64_t period_ms = elm->periodicity_ms;
@@ -572,7 +573,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
       kpm_sub.sz_ad = 1;
       kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
       assert(kpm_sub.ad != NULL && "Memory exhausted");
-      format_action_def_e act_type;
+      format_action_def_e act_type = END_ACTION_DEFINITION;
       if (elm->format == 1)
         act_type = FORMAT_1_ACTION_DEFINITION;
       else if (elm->format == 4)
@@ -594,7 +595,7 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
     } else if (!strcasecmp(elm->name, "rc")) {
       sm_id = SM_RC_ID;
       rc_sub_data_t rc_sub = {0};
-      defer({ free_rc_sub_data(&rc_sub); });
+      defer { free_rc_sub_data(&rc_sub); } ;
 
       // RC Event Trigger
       rc_sub.et = gen_rc_ev_trig(FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT);
@@ -630,15 +631,17 @@ void send_subscription_req(e2_node_connected_xapp_t* n, size_t n_idx, sm_ans_xap
 int main(int argc, char *argv[])
 {
   assert(argc == 2 && "Configuration file needed!");
+  (void)argc;
 
   //Init the xApp
   init_xapp_api(argv[1]);
   sub_all_sm_conf_t conf = init_sub_all_sm_conf(argv[1]);
-  defer({ free_sub_all_sm_conf(&conf); });
+  defer { free_sub_all_sm_conf(&conf); } ;
   sleep(1);
 
   void (*fp_rc)(int) = signal(SIGINT, sigint_handler);
   assert(fp_rc != SIG_ERR);
+  (void)fp_rc; 
   // we override the signal mask set in init_xapp_api()
   fp_rc = signal(SIGTERM, sigint_handler);
   assert(fp_rc != SIG_ERR);
@@ -668,7 +671,7 @@ int main(int argc, char *argv[])
   // case1: send subscription req to the original connected e2 node
   // get original e2 nodes info
   e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr_xapp(&nodes); });
+  defer { free_e2_node_arr_xapp(&nodes); } ;
   for (size_t i = 0; i < nodes.len; i++) {
     printf("Sending subscription \n");
     send_subscription_req(&nodes.n[i], i, handle, &conf);
@@ -684,7 +687,7 @@ int main(int argc, char *argv[])
       if (cur_nodes_len != 0) {
         // get the new e2 nodes info
         e2_node_arr_xapp_t cur_nodes = e2_nodes_xapp_api();
-        defer({ free_e2_node_arr_xapp(&nodes); });
+        defer { free_e2_node_arr_xapp(&nodes); } ;
 
         // TODO: send subscription request to new e2 node
         for (size_t i = 0; i < cur_nodes_len; i++) {

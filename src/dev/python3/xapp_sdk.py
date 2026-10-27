@@ -4734,6 +4734,7 @@ NG_ENB_UE_ID_E2SM = _xapp_sdk_python.NG_ENB_UE_ID_E2SM
 NG_ENB_DU_UE_ID_E2SM = _xapp_sdk_python.NG_ENB_DU_UE_ID_E2SM
 EN_GNB_UE_ID_E2SM = _xapp_sdk_python.EN_GNB_UE_ID_E2SM
 ENB_UE_ID_E2SM = _xapp_sdk_python.ENB_UE_ID_E2SM
+NONE_UE_ID_E2SM = _xapp_sdk_python.NONE_UE_ID_E2SM
 END_UE_ID_E2SM = _xapp_sdk_python.END_UE_ID_E2SM
 class ue_id_e2sm_t(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
