@@ -1,10 +1,10 @@
 # BubbleRAN O-RAN xApp SDK
 
 [![O-RAN Compatible](https://img.shields.io/badge/O--RAN_Compatible-v2.1-green)](https://www.o-ran.org)
-[![License](https://img.shields.io/badge/License-Apache_2.0_With_SDK_Addendum-blue.svg)](LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://spdx.org/licenses/AGPL-3.0.html)
 
 The BubbleRAN xApp SDK enables development of O-RAN compliant near-real-time RAN applications. 
-This repository includes both the SDK framework ([BubbleRAN Software License](https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf)) and xApps ([Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE)).
+This repository includes both the SDK framework and xApps, licensed under the [GNU Affero General Public License v3.0 or later](https://spdx.org/licenses/AGPL-3.0.html) (AGPL-3.0-or-later).
 
 ## Key Features
 - 🚀 Production-grade xApp SDK and an Open Source xApp samples
@@ -18,7 +18,7 @@ This repository includes both the SDK framework ([BubbleRAN Software License](ht
 ```bash
 
 xapp_sdk/
-├── LICENSE              # Apache 2.0 with SDK Addendum
+├── LICENSE              # GNU AGPL v3.0
 ├── NOTICES              # Attribution file
 ├── CONTRIBUTING.md      # Contribution guidelines
 ├── README.md            # Revised documentation
@@ -42,12 +42,14 @@ xapp_sdk/
 
 | Software  | License |
 | ------------- |:-------------|
-| xApp SDK				    | ([BubbleRAN Software License](https://bubbleran.com/resources/files/BubbleRAN_Licence-Agreement-1.3.pdf) |
-| BubbleRAN xApps		  | [Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE) |
-| 3rd Party xApps			| [Apache 2.0 + Addendum](https://github.com/bubbleran/xapp_sdk/blob/main/LICENSE)  | 
+| xApp SDK				    | [AGPL-3.0-or-later](https://spdx.org/licenses/AGPL-3.0.html) |
+| BubbleRAN xApps		  | [AGPL-3.0-or-later](https://spdx.org/licenses/AGPL-3.0.html) |
+| 3rd Party xApps			| [AGPL-3.0-or-later](https://spdx.org/licenses/AGPL-3.0.html)  | 
 | Documentation				| [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/deed.en)	Guides, specifications, and examples | 
 
-Important: When building xApps using this SDK, your application code can use Apache 2.0 + Addendum, but must agree with the xApp SDK License.
+Important: xApps built with (linked against) this SDK are covered works under the AGPL-3.0-or-later and must be distributed under compatible terms, including making the corresponding source available to users interacting with them over a network.
+
+Files inherited from the OpenAirInterface FlexRIC project keep their original header and remain licensed under the [OAI Public License v1.1](http://www.openairinterface.org/?page_id=698). Each file states its license in its header.
 
 ## xApp SDK Source Code
 ### Getting stated

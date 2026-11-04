@@ -1,3 +1,6 @@
+# Copyright (C) 2026 BubbleRAN
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # xapp_sdk
 set(src_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(dst_dir "${CMAKE_CURRENT_BINARY_DIR}")
