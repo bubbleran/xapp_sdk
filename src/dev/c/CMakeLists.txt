@@ -1,3 +1,5 @@
+# Copyright (C) 2026 BubbleRAN
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 file(GLOB XAPP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.c")   
 set(LIST_XAPP "")                                                             

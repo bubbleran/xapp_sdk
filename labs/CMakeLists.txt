@@ -1,3 +1,6 @@
+# Copyright (C) 2026 BubbleRAN
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 set(LIST_XAPP lab1 lab3 lab5 lab1-sol lab3-sol lab5-sol)
 
 if(XAPP_DB STREQUAL "NONE_XAPP")

@@ -1,8 +1,9 @@
 BUBBLERAN O-RAN XAPP SDK NOTICES
 
 I. COPYRIGHT
-Copyright BubbleRAN Ltd.
-SPDX-License-Identifier: Apache-2.0 WITH SDK-Addendum
+Copyright (C) 2026 BubbleRAN
+SPDX-License-Identifier: AGPL-3.0-or-later
+Full license text: see the LICENSE file or https://spdx.org/licenses/AGPL-3.0.html
 
 II. THIRD-PARTY COMPONENTS
 1. O-RAN Alliance Specifications
@@ -15,7 +16,12 @@ II. THIRD-PARTY COMPONENTS
    - Source: https://dev.mysql.com/downloads/connector/c/
    - Copyright: Oracle Corporation
 
-3. libconfig
+3. OpenAirInterface FlexRIC
+   - License: OAI Public License v1.1 (files carrying the OAI header)
+   - Source: https://gitlab.eurecom.fr/mosaic5g/flexric
+   - Copyright: OpenAirInterface Software Alliance
+
+4. libconfig
    - License: LGPL-2.1
    - Source: https://github.com/hyperrealm/libconfig
    - Copyright: Mark Lindner
